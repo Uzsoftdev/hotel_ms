@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="Google logo">
+  <rect width="24" height="24" rx="4" fill="#fff"/>
+  <path d="M12 4a8 8 0 0 1 5.66 2.34" fill="none" stroke="#4285F4" stroke-width="3" stroke-linecap="round"/>
+  <path d="M20 12a8 8 0 0 1-2.34 5.66" fill="none" stroke="#34A853" stroke-width="3" stroke-linecap="round"/>
+  <path d="M12 20a8 8 0 0 1-5.66-2.34" fill="none" stroke="#FBBC05" stroke-width="3" stroke-linecap="round"/>
+  <path d="M4 12a8 8 0 0 1 2.34-5.66" fill="none" stroke="#EA4335" stroke-width="3" stroke-linecap="round"/>
+  <path d="M12 12h8" stroke="#4285F4" stroke-width="3" stroke-linecap="round"/>
+</svg>
