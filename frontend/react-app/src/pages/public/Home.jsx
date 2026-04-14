@@ -1,212 +1,114 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import parisImage from "../../assets/images/paris_1.png";
 import baliImage from "../../assets/images/bali_1.png";
 import newyorkImage from "../../assets/images/new_york_1.png";
 import background from "../../assets/images/background.png";
-
-
-const destinations = [
-  {
-    name: "Paris",
-    detail: "The City of Light",
-    hotels: "420+ Hotels",
-    image: parisImage,
-  },
-  {
-    name: "Bali",
-    detail: "Tropical Paradise",
-    hotels: "850+ Hotels",
-    image: baliImage,
-  },
-  {
-    name: "New York",
-    detail: "The Big Apple",
-    hotels: "630+ Hotels",
-    image: newyorkImage,
-  },
-];
-
-const translations = {
-  en: {
-    navFindHotel: "Find a Hotel",
-    navManageBookings: "Manage Bookings",
-    navPartner: "Partner with Us",
-    navSelectLanguage: "Select Language",
-    navRegister: "Register",
-    navLogin: "Login",
-    heroTitle: "Luxury Awaits Your Arrival",
-    heroSubtitle:
-      "Experience world-class hospitality in the heart of the most prestigious global destinations.",
-    destinationsTitle: "Popular Destinations",
-    destinationsSubtitle: "Discover top-rated hotels and unique experiences worldwide.",
-    viewAll: "View All Destinations",
-    footerQuickLinks: "Quick Links",
-    privacyPolicy: "Privacy Policy",
-    terms: "Terms of Service",
-    helpCenter: "Help Center",
-    ourStory: "Our Story",
-  },
-  es: {
-    navFindHotel: "Buscar hotel",
-    navManageBookings: "Gestionar reservas",
-    navPartner: "Asociate con nosotros",
-    navSelectLanguage: "Seleccionar idioma",
-    navRegister: "Registrarse",
-    navLogin: "Iniciar sesion",
-    heroTitle: "El lujo te espera",
-    heroSubtitle:
-      "Disfruta hospitalidad de clase mundial en los destinos globales mas prestigiosos.",
-    destinationsTitle: "Destinos populares",
-    destinationsSubtitle:
-      "Descubre hoteles mejor valorados y experiencias unicas en todo el mundo.",
-    viewAll: "Ver todos los destinos",
-    footerQuickLinks: "Enlaces rapidos",
-    privacyPolicy: "Politica de privacidad",
-    terms: "Terminos del servicio",
-    helpCenter: "Centro de ayuda",
-    ourStory: "Nuestra historia",
-  },
-  fr: {
-    navFindHotel: "Trouver un hotel",
-    navManageBookings: "Gerer les reservations",
-    navPartner: "Devenir partenaire",
-    navSelectLanguage: "Choisir la langue",
-    navRegister: "S'inscrire",
-    navLogin: "Connexion",
-  },
-  de: {
-    navFindHotel: "Hotel finden",
-    navManageBookings: "Buchungen verwalten",
-    navPartner: "Partner werden",
-    navSelectLanguage: "Sprache auswahlen",
-    navRegister: "Registrieren",
-    navLogin: "Anmelden",
-  },
-  zh: {
-    navFindHotel: "查找酒店",
-    navManageBookings: "管理预订",
-    navPartner: "成为合作伙伴",
-    navSelectLanguage: "选择语言",
-    navRegister: "注册",
-    navLogin: "登录",
-  },
-  ja: {
-    navFindHotel: "ホテルを探す",
-    navManageBookings: "予約管理",
-    navPartner: "提携する",
-    navSelectLanguage: "言語を選択",
-    navRegister: "登録",
-    navLogin: "ログイン",
-  },
-  ko: {
-    navFindHotel: "호텔 찾기",
-    navManageBookings: "예약 관리",
-    navPartner: "파트너 등록",
-    navSelectLanguage: "언어 선택",
-    navRegister: "회원가입",
-    navLogin: "로그인",
-  },
-  it: {
-    navFindHotel: "Trova un hotel",
-    navManageBookings: "Gestisci prenotazioni",
-    navPartner: "Diventa partner",
-    navSelectLanguage: "Seleziona lingua",
-    navRegister: "Registrati",
-    navLogin: "Accedi",
-  },
-  pt: {
-    navFindHotel: "Encontrar hotel",
-    navManageBookings: "Gerenciar reservas",
-    navPartner: "Seja parceiro",
-    navSelectLanguage: "Selecionar idioma",
-    navRegister: "Cadastrar",
-    navLogin: "Entrar",
-  },
-  ar: {
-    navFindHotel: "ابحث عن فندق",
-    navManageBookings: "إدارة الحجوزات",
-    navPartner: "كن شريكا",
-    navSelectLanguage: "اختر اللغة",
-    navRegister: "تسجيل",
-    navLogin: "دخول",
-  },
-};
+import { useTranslation } from "react-i18next";
 
 const languageItems = [
-  { code: "en", label: "English", flag: "🇺🇸" },
-  { code: "es", label: "Spanish", flag: "🇪🇸" },
-  { code: "fr", label: "French", flag: "🇫🇷" },
-  { code: "de", label: "German", flag: "🇩🇪" },
-  { code: "zh", label: "Chinese", flag: "🇨🇳" },
-  { code: "ja", label: "Japanese", flag: "🇯🇵" },
-  { code: "ko", label: "Korean", flag: "🇰🇷" },
-  { code: "it", label: "Italian", flag: "🇮🇹" },
-  { code: "pt", label: "Portuguese", flag: "🇵🇹" },
-  { code: "ar", label: "Arabic", flag: "🇸🇦" },
+  { code: "en", flag: "🇺🇸" },
+  { code: "es", flag: "🇪🇸" },
+  { code: "fr", flag: "🇫🇷" },
+  { code: "de", flag: "🇩🇪" },
+  { code: "zh", flag: "🇨🇳" },
+  { code: "ja", flag: "🇯🇵" },
+  { code: "ko", flag: "🇰🇷" },
+  { code: "it", flag: "🇮🇹" },
+  { code: "pt", flag: "🇵🇹" },
+  { code: "ar", flag: "🇸🇦" },
+  { code: "ru", flag: "🇷🇺" },
 ];
 
+const destinationImages = [parisImage, baliImage, newyorkImage];
+
 export default function Home() {
-  const [language, setLanguage] = useState(() => localStorage.getItem("preferredLanguage") || "en");
+  const { t, i18n } = useTranslation("pub_translation");
+  const [language, setLanguage] = useState(i18n.language || "en");
   const [location, setLocation] = useState("");
-  const [dateLabel, setDateLabel] = useState("Select Dates");
-  const [guestsLabel, setGuestsLabel] = useState("2 Adults, 0 Children");
-  const t = { ...translations.en, ...(translations[language] || {}) };
-  const filteredDestinations = destinations.filter((destination) => {
-    if (!location.trim()) return true;
-    const q = location.trim().toLowerCase();
-    return [destination.name, destination.detail, destination.hotels].some((v) =>
-      v.toLowerCase().includes(q)
-    );
-  });
+  const [dateLabel, setDateLabel] = useState(t("home.search.select_dates"));
+  const translatedDestinations = useMemo(() => {
+    const items = t("home.destinations.items", { returnObjects: true });
+    if (!Array.isArray(items)) {
+      return [];
+    }
+    return items.map((item, index) => ({
+      ...item,
+      image: destinationImages[index],
+    }));
+  }, [t, i18n.language]);
+  const [filteredDestinations, setFilteredDestinations] = useState([]);
 
   useEffect(() => {
-    document.documentElement.lang = language;
-    localStorage.setItem("preferredLanguage", language);
-  }, [language]);
+    i18n.changeLanguage(language);
+  }, [language, i18n]);
+
+  useEffect(() => {
+    const syncLanguage = (lng) => setLanguage(lng);
+    i18n.on("languageChanged", syncLanguage);
+    return () => i18n.off("languageChanged", syncLanguage);
+  }, [i18n]);
+
+  useEffect(() => {
+    setDateLabel(t("home.search.select_dates"));
+  }, [language, t]);
+
+  useEffect(() => {
+    if (location.trim() === "") {
+      setFilteredDestinations(translatedDestinations);
+    } else {
+      const filtered = translatedDestinations.filter((dest) =>
+        dest.name.toLowerCase().includes(location.toLowerCase())
+      );
+      setFilteredDestinations(filtered);
+    }
+  }, [location, translatedDestinations]);
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
       <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Azure Horizon</h1>
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</h1>
           <div className="hidden md:flex items-center gap-10">
-            <a className="text-sm font-semibold hover:text-primary transition-colors" href="#search-experience">{t.navFindHotel}</a>
-            <Link className="text-sm font-semibold hover:text-primary transition-colors" to="/login">{t.navManageBookings}</Link>
+            <a className="text-sm font-semibold hover:text-primary transition-colors" href="#search-experience">{t("navigation.find_hotel")}</a>
+            <Link className="text-sm font-semibold hover:text-primary transition-colors" to="/login">{t("navigation.manage_bookings")}</Link>
             <Link className="text-sm font-semibold hover:text-primary transition-colors" to="/contact">
-              {t.navPartner}
+              {t("navigation.partner_with_us")}
             </Link>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative group">
               <button
-                aria-label={t.navSelectLanguage}
+                aria-label={t("navigation.select_language")}
                 className="flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
                 type="button"
               >
                 <span className="material-symbols-outlined text-xl">language</span>
               </button>
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <div className="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-slate-800 mb-1">{t.navSelectLanguage}</div>
+                <div className="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-slate-800 mb-1">{t("navigation.select_language")}</div>
                 {languageItems.map((item) => (
                   <button
                     className={`w-full text-left flex items-center gap-3 px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${language === item.code ? "font-semibold text-primary" : "text-slate-700 dark:text-slate-200"}`}
                     key={item.code}
-                    onClick={() => setLanguage(item.code)}
+                    onClick={() => {
+                      setLanguage(item.code);
+                      localStorage.setItem("app_language", item.code);
+                    }}
                     type="button"
                   >
                     <span className="text-lg">{item.flag}</span>
-                    {item.label}
+                    {t(`languages.${item.code}`)}
                   </button>
                 ))}
               </div>
             </div>
 
             <Link className="bg-transparent border border-primary text-primary hover:bg-primary/5 px-6 py-2.5 rounded-lg text-sm font-bold transition-all" to="/register">
-              {t.navRegister}
+              {t("navigation.register")}
             </Link>
             <Link className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20" to="/login">
-              {t.navLogin}
+              {t("navigation.login")}
             </Link>
           </div>
         </div>
@@ -219,8 +121,8 @@ export default function Home() {
         </div>
 
         <div className="relative z-20 max-w-5xl w-full px-6 text-center">
-          <h2 className="text-white text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">{t.heroTitle}</h2>
-          <p className="text-white/90 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-medium">{t.heroSubtitle}</p>
+          <h2 className="text-white text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">{t("home.hero.title")}</h2>
+          <p className="text-white/90 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-medium">{t("home.hero.subtitle")}</p>
         </div>
       </section>
 
@@ -234,13 +136,13 @@ export default function Home() {
             <span className="material-symbols-outlined text-slate-400 mr-3">location_on</span>
             <div className="text-left w-full">
               <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider" htmlFor="search-location">
-                Location
+                {t("home.search.location")}
               </label>
               <input
                 className="w-full border-none p-0 focus:ring-0 bg-transparent text-sm font-semibold placeholder:text-slate-400 text-slate-900 dark:text-white outline-none"
                 id="search-location"
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="Where are you going?"
+                placeholder={t("home.search.location_placeholder")}
                 type="text"
                 value={location}
               />
@@ -252,11 +154,17 @@ export default function Home() {
             <span className="material-symbols-outlined text-slate-400 mr-3">calendar_today</span>
             <div className="text-left w-full">
               <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                Check-in / Check-out
+                {t("home.search.check_in_out")}
               </label>
               <button
                 className="w-full text-left text-sm font-semibold text-slate-400 truncate"
-                onClick={() => setDateLabel(dateLabel === "Select Dates" ? "Apr 20 – Apr 25" : "Select Dates")}
+                onClick={() =>
+                  setDateLabel(
+                    dateLabel === t("home.search.select_dates")
+                      ? t("home.search.sample_date_range")
+                      : t("home.search.select_dates")
+                  )
+                }
                 type="button"
               >
                 {dateLabel}
@@ -269,13 +177,13 @@ export default function Home() {
             <span className="material-symbols-outlined text-slate-400 mr-3">group</span>
             <div className="text-left w-full">
               <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                Guests
+                {t("home.search.guests")}
               </label>
               <button
                 className="w-full text-left text-sm font-semibold text-slate-400"
                 type="button"
               >
-                {guestsLabel}
+                {t("home.search.add_guests")}
               </button>
             </div>
           </div>
@@ -286,7 +194,7 @@ export default function Home() {
             type="submit"
           >
             <span className="material-symbols-outlined">search</span>
-            <span>Search</span>
+            <span>{t("home.search.search")}</span>
           </button>
         </form>
       </section>
@@ -294,11 +202,11 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-6 py-24" id="destinations-section">
         <div className="flex justify-between items-end mb-8">
           <div>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">{t.destinationsTitle}</h3>
-            <p className="text-slate-500 dark:text-slate-400">{t.destinationsSubtitle}</p>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">{t("home.destinations.title")}</h3>
+            <p className="text-slate-500 dark:text-slate-400">{t("home.destinations.subtitle")}</p>
           </div>
           <a className="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#destinations-section">
-            {t.viewAll} <span class="material-symbols-outlined text-sm">arrow_forward</span>
+            {t("home.destinations.view_all")} <span class="material-symbols-outlined text-sm">arrow_forward</span>
           </a>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -315,7 +223,7 @@ export default function Home() {
         </div>
         {filteredDestinations.length === 0 && (
           <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
-            No destinations match your search.
+            {t("home.search.no_match")}
           </p>
         )}
       </section>
@@ -326,10 +234,10 @@ export default function Home() {
       <div class="col-span-1 md:col-span-1">
       <div class="flex items-center gap-2 mb-6">
       <span class="material-symbols-outlined text-primary text-3xl">apartment</span>
-      <h4 class="text-xl font-bold text-slate-900 dark:text-white">Azure Horizon</h4>
+        <h4 class="text-xl font-bold text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</h4>
       </div>
       <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-8">
-                          Our mission is to empower travelers with seamless booking experiences and provide hotel owners with the world's most robust management tools. We believe everyone deserves a touch of luxury on their journey.
+                  {t("home.footer.about_text")}
                       </p>
       <div class="flex items-center gap-4">
       <a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
@@ -338,44 +246,44 @@ export default function Home() {
       </div>
       </div>
       <div class="col-span-1">
-      <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm">Contact Us</h4>
+      <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm">{t("home.footer.contact.title")}</h4>
       <ul class="space-y-4">
       <li class="flex items-start gap-3">
       <span class="material-symbols-outlined text-primary">mail</span>
       <div>
-      <p class="text-sm font-bold text-slate-900 dark:text-white">Email Us</p>
-      <p class="text-sm text-slate-600 dark:text-slate-400">concierge@azurehorizon.com</p>
+      <p class="text-sm font-bold text-slate-900 dark:text-white">{t("home.footer.contact.email_label")}</p>
+      <p class="text-sm text-slate-600 dark:text-slate-400">{t("contact_page.direct_inquiry.email")}</p>
       </div>
       </li>
       <li class="flex items-start gap-3">
       <span class="material-symbols-outlined text-primary">call</span>
       <div>
-      <p class="text-sm font-bold text-slate-900 dark:text-white">Call Anytime</p>
-      <p class="text-sm text-slate-600 dark:text-slate-400">+1 (800) LUX-STAY</p>
+      <p class="text-sm font-bold text-slate-900 dark:text-white">{t("home.footer.contact.call_label")}</p>
+      <p class="text-sm text-slate-600 dark:text-slate-400">{t("home.footer.contact.call_value")}</p>
       </div>
       </li>
       <li class="flex items-start gap-3">
       <span class="material-symbols-outlined text-primary">location_on</span>
       <div>
-      <p class="text-sm font-bold text-slate-900 dark:text-white">Headquarters</p>
-      <p class="text-sm text-slate-600 dark:text-slate-400">123 Luxury Way, San Francisco, CA</p>
+      <p class="text-sm font-bold text-slate-900 dark:text-white">{t("contact_page.headquarters.label")}</p>
+      <p class="text-sm text-slate-600 dark:text-slate-400">{t("home.footer.contact.hq_value")}</p>
       </div>
       </li>
       </ul>
       </div>
       <div class="col-span-1">
-      <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm">Quick Links</h4>
+      <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm">{t("footer.quick_links.title")}</h4>
       <ul class="grid grid-cols-1 gap-3">
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Terms of Service</a></li>
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Help Center</a></li>
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Careers</a></li>
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Our Story</a></li>
+      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.privacy_policy")}</a></li>
+      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.terms_of_service")}</a></li>
+      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.help_center")}</a></li>
+      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("home.footer.careers")}</a></li>
+      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.our_story")}</a></li>
       </ul>
       </div>
       </div>
       <div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 text-center">
-      <p class="text-sm text-slate-400">© 2024 Azure Horizon Luxury Hotels &amp; Resorts. All rights reserved.</p>
+      <p class="text-sm text-slate-400">{t("footer.copyright")}</p>
       </div>
       </div>
       </section>

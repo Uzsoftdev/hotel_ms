@@ -1,64 +1,69 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import background from "../../assets/images/contact_us.png";
-
-const contactInfo = [
-  { icon: "location_on", label: "Headquarters", value: "1200 Azure Plaza, Coastal Ridge\nMonte Carlo, 98000" },
-  { icon: "call", label: "Global Concierge", value: "+1 (800) 555-AZURE\nAvailable 24/7" },
-  { icon: "mail", label: "Direct Inquiry", value: "concierge@azurehorizon.com\nResponse within 2 hours" },
-];
-
-const faqs = [
-  { q: "Can I arrange a private jet transfer?", a: "Absolutely. Our Global Concierge team coordinates with private aviation partners to ensure your arrival is effortless and discreet." },
-  { q: "What is the Azure Horizon membership?", a: "Horizon Circle is an invitation-only program providing exclusive access to off-market villas, private islands, and priority reservations." },
-  { q: "Are pet-friendly options available?", a: 'Many properties offer specialized "Canine Concierge" services including gourmet menus and bespoke bedding. Please inquire during booking.' },
-];
 
 export default function Contact() {
   const [openFaq, setOpenFaq] = useState(0);
+  const { t } = useTranslation("pub_translation");
+
+  const contactInfo = [
+    {
+      icon: "location_on",
+      label: t("contact_page.headquarters.label"),
+      value: t("contact_page.headquarters.address"),
+    },
+    {
+      icon: "call",
+      label: t("contact_page.global_concierge.label"),
+      value: `${t("contact_page.global_concierge.phone")}\n${t("contact_page.global_concierge.availability")}`,
+    },
+    {
+      icon: "mail",
+      label: t("contact_page.direct_inquiry.label"),
+      value: `${t("contact_page.direct_inquiry.email")}\n${t("contact_page.direct_inquiry.response_time")}`,
+    },
+  ];
+
+  const faqs = t("about.faqs.items", { returnObjects: true });
 
   return (
     <div className="bg-surface text-on-surface min-h-screen">
-      {/* Nav */}
       <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="text-xl font-extrabold tracking-tighter text-slate-900 dark:text-white">Azure Horizon</Link>
+          <Link to="/" className="text-xl font-extrabold tracking-tighter text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</Link>
           <div className="hidden md:flex items-center gap-8">
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/">Home</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/rooms">Rooms</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/about">About</Link>
-            <Link className="text-sm font-semibold text-primary transition-colors" to="/contact">Contact</Link>
+            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/">{t("navigation.home")}</Link>
+            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/rooms">{t("navigation.rooms")}</Link>
+            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/about">{t("navigation.about")}</Link>
+            <Link className="text-sm font-semibold text-primary transition-colors" to="/contact">{t("navigation.contact")}</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link className="bg-transparent border border-primary text-primary hover:bg-primary/5 px-5 py-2 rounded-lg text-sm font-bold transition-all" to="/register">Register</Link>
-            <Link className="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20" to="/login">Login</Link>
+            <Link className="bg-transparent border border-primary text-primary hover:bg-primary/5 px-5 py-2 rounded-lg text-sm font-bold transition-all" to="/register">{t("navigation.register")}</Link>
+            <Link className="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20" to="/login">{t("navigation.login")}</Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
       <section className="relative h-80 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-surface z-10" />
           <img alt="Luxury hotel lobby with marble floors and ambient lighting" className="w-full h-full object-cover scale-105" src={background} />
         </div>
         <div className="relative z-20 text-center px-6">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4">Get in Touch</h1>
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4">{t("contact_page.title")}</h1>
           <p className="text-white/85 text-lg font-medium max-w-xl mx-auto">
-            We are here to craft your perfect escape. Reach out anytime.
+            {t("contact_page.subtitle")}
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
       <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-
-          {/* Left: Info Cards */}
           <div className="lg:col-span-5 space-y-6">
             <div className="mb-8">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Contact Intelligence</span>
-              <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mt-2">Our Global Presence</h2>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-primary">{t("contact_page.contact_intelligence")}</span>
+              <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mt-2">{t("contact_page.global_presence")}</h2>
             </div>
             {contactInfo.map((item) => (
               <div key={item.label} className="group p-8 rounded-xl bg-surface-container-lowest shadow-lg hover:shadow-2xl transition-all border border-outline-variant/30 flex gap-6">
@@ -72,7 +77,6 @@ export default function Contact() {
               </div>
             ))}
 
-            {/* Social Links */}
             <div className="flex items-center gap-4 pt-2">
               <a className="w-10 h-10 rounded-full border border-outline-variant flex items-center justify-center text-on-surface-variant hover:text-primary hover:border-primary transition-colors" href="#">
                 <span className="material-symbols-outlined text-xl">public</span>
@@ -86,59 +90,56 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* Right: Contact Form */}
           <div className="lg:col-span-7 bg-surface-container-lowest rounded-xl shadow-2xl p-10 border border-outline-variant/30">
             <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2 border-b border-outline-variant/50 focus-within:border-primary transition-colors pb-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Full Name</label>
-                  <input className="w-full bg-transparent border-none p-0 focus:ring-0 font-bold text-on-surface placeholder:text-slate-300 outline-none" placeholder="John Doe" type="text" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("contact_page.form.full_name")}</label>
+                  <input className="w-full bg-transparent border-none p-0 focus:ring-0 font-bold text-on-surface placeholder:text-slate-300 outline-none" placeholder={t("contact_page.form.full_name_placeholder")} type="text" />
                 </div>
                 <div className="space-y-2 border-b border-outline-variant/50 focus-within:border-primary transition-colors pb-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Email Address</label>
-                  <input className="w-full bg-transparent border-none p-0 focus:ring-0 font-bold text-on-surface placeholder:text-slate-300 outline-none" placeholder="john@example.com" type="email" />
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("contact_page.form.email")}</label>
+                  <input className="w-full bg-transparent border-none p-0 focus:ring-0 font-bold text-on-surface placeholder:text-slate-300 outline-none" placeholder={t("contact_page.form.email_placeholder")} type="email" />
                 </div>
               </div>
 
               <div className="space-y-2 border-b border-outline-variant/50 focus-within:border-primary transition-colors pb-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Subject</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("contact_page.form.subject")}</label>
                 <select className="w-full bg-transparent border-none p-0 focus:ring-0 font-bold text-on-surface cursor-pointer outline-none">
-                  <option>General Inquiry</option>
-                  <option>Booking Support</option>
-                  <option>Corporate Partnership</option>
-                  <option>Private Membership</option>
-                  <option>Feedback</option>
+                  <option>{t("contact_page.form.subject_options.general")}</option>
+                  <option>{t("contact_page.form.subject_options.booking")}</option>
+                  <option>{t("contact_page.form.subject_options.partnership")}</option>
+                  <option>{t("contact_page.form.subject_options.membership")}</option>
+                  <option>{t("contact_page.form.subject_options.feedback")}</option>
                 </select>
               </div>
 
               <div className="space-y-2 border-b border-outline-variant/50 focus-within:border-primary transition-colors pb-2">
-                <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Your Message</label>
-                <textarea className="w-full bg-transparent border-none p-0 focus:ring-0 font-bold text-on-surface placeholder:text-slate-300 resize-none outline-none" placeholder="How can we elevate your journey?" rows={4} />
+                <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("contact_page.form.message")}</label>
+                <textarea className="w-full bg-transparent border-none p-0 focus:ring-0 font-bold text-on-surface placeholder:text-slate-300 resize-none outline-none" placeholder={t("contact_page.form.message_placeholder")} rows={4} />
               </div>
 
               <button className="w-full bg-primary text-white py-4 rounded-lg font-bold text-sm uppercase tracking-widest shadow-lg shadow-primary/30 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-[0.98]" type="submit">
-                Send Message
+                {t("contact_page.form.send_message")}
               </button>
             </form>
           </div>
         </div>
       </section>
 
-      {/* Map Placeholder */}
       <section className="max-w-7xl mx-auto px-6 mb-20">
         <div className="bg-slate-100 dark:bg-slate-800 rounded-xl h-64 flex flex-col items-center justify-center shadow-lg border border-outline-variant/30">
           <span className="material-symbols-outlined text-5xl text-primary">location_on</span>
-          <p className="mt-3 text-sm font-semibold text-on-surface-variant">Interactive map coming soon</p>
-          <p className="text-xs text-on-surface-variant/60 mt-1">Azure Horizon • Monte Carlo</p>
+          <p className="mt-3 text-sm font-semibold text-on-surface-variant">{t("contact_page.map")}</p>
+          <p className="text-xs text-on-surface-variant/60 mt-1">{t("contact_page.map_location")}</p>
         </div>
       </section>
 
-      {/* FAQ */}
       <section className="bg-surface-container-low py-24 border-t border-outline-variant/30">
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-14">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Concierge Wisdom</span>
-            <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mt-2">Frequently Asked</h2>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-primary">{t("contact_page.concierge_wisdom")}</span>
+            <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mt-2">{t("contact_page.frequently_asked")}</h2>
           </div>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
@@ -148,11 +149,11 @@ export default function Contact() {
                   onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
                   type="button"
                 >
-                  {faq.q}
+                  {faq.question}
                   <span className={`material-symbols-outlined text-primary transition-transform ${openFaq === i ? "rotate-180" : ""}`}>expand_more</span>
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-6 text-sm text-on-surface-variant font-medium leading-relaxed">{faq.a}</div>
+                  <div className="px-6 pb-6 text-sm text-on-surface-variant font-medium leading-relaxed">{faq.answer}</div>
                 )}
               </div>
             ))}
@@ -160,19 +161,18 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-slate-50 dark:bg-slate-950 w-full py-12 border-t border-slate-200 dark:border-slate-800">
         <div className="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto gap-8">
-          <div className="text-lg font-bold text-slate-900 dark:text-white">Azure Horizon</div>
+          <div className="text-lg font-bold text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</div>
           <div className="flex flex-wrap justify-center gap-8">
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/">Home</Link>
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/rooms">Rooms</Link>
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/about">About</Link>
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Privacy Policy</a>
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">Terms of Service</a>
+            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/">{t("footer.quick_links.home")}</Link>
+            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/rooms">{t("footer.quick_links.rooms")}</Link>
+            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/about">{t("navigation.about")}</Link>
+            <a className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.privacy_policy")}</a>
+            <a className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.terms_of_service")}</a>
           </div>
           <p className="text-xs font-medium uppercase tracking-widest text-slate-400 text-center md:text-right">
-            © 2024 Azure Horizon. All rights reserved.
+            {t("footer.copyright")}
           </p>
         </div>
       </footer>

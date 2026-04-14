@@ -1,0 +1,764 @@
+{
+  "navigation": {
+    "azure_horizon": "أزور هورايزون",
+    "home": "الرئيسية",
+    "rooms": "الغرف",
+    "about": "عننا",
+    "contact": "اتصل بنا",
+    "register": "تسجيل",
+    "login": "تسجيل الدخول",
+    "sign_up": "اشتراك",
+    "find_hotel": "ابحث عن فندق",
+    "manage_bookings": "إدارة الحجوزات",
+    "partner_with_us": "شراكة معنا",
+    "select_language": "اختر اللغة"
+  },
+  "home": {
+    "hero": {
+      "title": "الفخامة في انتظار وصولك",
+      "subtitle": "استمتع بضيافة عالمية المستوى في قلب أرقى الوجهات العالمية."
+    },
+    "destinations": {
+      "title": "وجهات شهيرة",
+      "subtitle": "اكتشف أفضل الفنادق والتجارب الفريدة في جميع أنحاء العالم.",
+      "view_all": "عرض جميع الوجهات",
+      "items": [
+        {
+          "name": "باريس",
+          "tagline": "مدينة النور",
+          "hotel_count": "+420 فندق"
+        },
+        {
+          "name": "بالي",
+          "tagline": "الجنة الاستوائية",
+          "hotel_count": "+850 فندق"
+        },
+        {
+          "name": "نيويورك",
+          "tagline": "بيج آبل",
+          "hotel_count": "+630 فندق"
+        }
+      ]
+    },
+    "search": {
+      "location": "Location",
+      "location_placeholder": "Where are you going?",
+      "check_in_out": "Check-in / Check-out",
+      "select_dates": "Select Dates",
+      "sample_date_range": "Apr 20 - Apr 25",
+      "guests": "Guests",
+      "add_guests": "Add Guests",
+      "search": "Search",
+      "no_match": "No destinations match your search."
+    },
+    "footer": {
+      "about_text": "Our mission is to empower travelers with seamless booking experiences and provide hotel owners with the world's most robust management tools. We believe everyone deserves a touch of luxury on their journey.",
+      "careers": "Careers",
+      "contact": {
+        "title": "Contact Us",
+        "email_label": "Email Us",
+        "call_label": "Call Anytime",
+        "call_value": "+1 (800) LUX-STAY",
+        "hq_value": "123 Luxury Way, San Francisco, CA"
+      }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "قصتنا",
+      "subtitle": "وُلدنا من شغف السفر، وبنينا لتقديم تجارب استثنائية في جميع أنحاء العالم."
+    },
+    "stats": {
+      "hotels": "+500 فندق",
+      "countries": "+120 دولة",
+      "guests": "+2 مليون ضيف",
+      "rating": "★4.9 تقييم"
+    },
+    "mission": {
+      "title": "ما نقف من أجله",
+      "subtitle": "رسالتنا وقيمنا",
+      "items": [
+        {
+          "title": "الضيف أولاً",
+          "description": "كل قرار نتخذه يبدأ بتجربة الضيف في الاعتبار."
+        },
+        {
+          "title": "جودة لا مثيل لها",
+          "description": "نحن نتعاون فقط مع العقارات التي تلبي معايير الجودة الفاخرة الصارمة."
+        },
+        {
+          "title": "وصول عالمي",
+          "description": "+500 عقار في +120 دولة، دائمًا قريب من حيث تريد أن تكون."
+        }
+      ]
+    },
+    "history": {
+      "title": "تاريخ الشركة",
+      "timeline": [
+        {
+          "year": "2018",
+          "event": "تأسست أزور هورايزون في سان فرانسيسكو برؤية لإعادة تعريف السفر الفاخر."
+        },
+        {
+          "year": "2020",
+          "event": "توسعت إلى 50 فندقًا شريكًا في جميع أنحاء أوروبا وآسيا والأمريكتين."
+        },
+        {
+          "year": "2022",
+          "event": "أطلقنا منصة الحجز الرقمية الخاصة بنا، وخدمنا أكثر من 500,000 ضيف."
+        },
+        {
+          "year": "2024",
+          "event": "وصلنا إلى +500 عقار في +120 دولة مع +2 مليون ضيف سعيد."
+        }
+      ]
+    },
+    "team": {
+      "title": "الفريق",
+      "members": [
+        {
+          "name": "صوفيا لوران",
+          "role": "الرئيس التنفيذي"
+        },
+        {
+          "name": "ماركوس تشين",
+          "role": "رئيس قسم الضيافة"
+        },
+        {
+          "name": "أمارا أوسي",
+          "role": "مدير الشراكات"
+        }
+      ]
+    },
+    "faqs": {
+      "title": "الأسئلة الشائعة",
+      "items": [
+        {
+          "question": "هل يمكنني ترتيب نقل بطائرة خاصة؟",
+          "answer": "بالتأكيد. فريق الكونسيرج العالمي لدينا ينسق مع شركاء الطيران الخاص لضمان وصولك بسلاسة وخصوصية."
+        },
+        {
+          "question": "ما هي عضوية أزور هورايزون؟",
+          "answer": "هورايزون سيركل هو برنامج دعوة فقط يوفر وصولاً حصريًا إلى الفيلات والجزر الخاصة والحجوزات ذات الأولوية."
+        },
+        {
+          "question": "هل تتوفر خيارات صديقة للحيوانات الأليفة؟",
+          "answer": "تقدم العديد من العقارات خدمات متخصصة للكلاب بما في ذلك قوائم طعام راقية وأسرّة مخصصة. يرجى الاستفسار أثناء الحجز."
+        }
+      ]
+    }
+  },
+  "rooms_page": {
+    "hero": {
+      "title": "غرفنا وأجنحتنا",
+      "subtitle": "من الملاذات المريحة إلى الأجنحة الرئاسية — كل غرفة هي ملاذ من الأناقة الراقية."
+    },
+    "filters": {
+      "all": "الكل",
+      "standard": "قياسية",
+      "deluxe": "ديلوكس",
+      "suite": "جناح",
+      "presidential": "رئاسي"
+    },
+    "available_rooms": [
+      {
+        "id": 1,
+        "name": "أزور ستاندرد كينغ",
+        "category": "قياسية",
+        "price_per_night": 299,
+        "description": "غرفة أنيقة تضم سرير كينغ الفاخر المميز وديكور مستوحى من الحرفية المحلية.",
+        "amenities": [
+          "واي فاي مجاني",
+          "تحكم في المناخ",
+          "بار صغير"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "جناح هورايزون ديلوكس",
+        "category": "ديلوكس",
+        "price_per_night": 450,
+        "description": "منطقة معيشة واسعة مع شرفة خاصة تطل على حدائق البحر الأبيض المتوسط الخضراء.",
+        "amenities": [
+          "سطح خاص",
+          "حوض استحمام سبا",
+          "نسبرسو"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "جراند أوشن سويت",
+        "category": "جناح",
+        "price_per_night": 750,
+        "description": "جناح واسع مع إطلالات بانورامية على البحر وصالة منفصلة وخدمة بتلر حصرية.",
+        "amenities": [
+          "وصول إلى المسبح",
+          "رصيد سبا",
+          "خدمة الغرف"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "أوشنفرونت الرئاسي",
+        "category": "رئاسي",
+        "price_per_night": 1200,
+        "description": "جوهرتنا. 2,500 قدم مربع من الفخامة الخالصة مع إطلالات بانورامية على المحيط بزاوية 270 درجة.",
+        "amenities": [
+          "بتلر",
+          "حمام سباحة",
+          "طاهٍ خاص"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "غاردن فيو توين",
+        "category": "قياسية",
+        "price_per_night": 249,
+        "description": "غرفة توين مملوءة بالضوء مع إطلالات هادئة على الحديقة وفراش فاخر لأفضل راحة.",
+        "amenities": [
+          "واي فاي مجاني",
+          "موقف سيارات",
+          "تحكم في المناخ"
+        ]
+      },
+      {
+        "id": 6,
+        "name": "سكاي لاين ديلوكس دبل",
+        "category": "ديلوكس",
+        "price_per_night": 520,
+        "description": "غرفة دبل معاصرة مع نوافذ تمتد من الأرض إلى السقف تطل على أفق المدينة المذهل.",
+        "amenities": [
+          "واي فاي مجاني",
+          "دش مطر",
+          "بار صغير"
+        ]
+      }
+    ],
+    "common": {
+      "from": "From",
+      "per_night": "/night",
+      "view_details": "View Details",
+      "no_rooms": "No rooms found for this category.",
+      "cta_title": "Can't find what you're looking for?",
+      "cta_subtitle": "Our concierge team is available 24/7 to help you find the perfect accommodation.",
+      "contact_concierge": "Contact Concierge",
+      "view_all_categories": "View All Categories"
+    }
+  },
+  "room_details": {
+    "room_name": "جناح سيليستيال تيراس",
+    "room_type": "جناح رئاسي",
+    "book_now": "احجز الآن",
+    "rating": 5,
+    "highlights": {
+      "size": "1,290 قدم مربع",
+      "bedding": "1 سرير كينغ",
+      "capacity": "3 ضيوف",
+      "outdoor": "تراس خاص"
+    },
+    "amenities": [
+      "خدمة بتلر شخصية 24/7",
+      "نقل مجاني من وإلى المطار",
+      "محطة نسبرسو فيرتو للقهوة",
+      "جهاز لوحي ذكي للتحكم في الغرفة",
+      "منتجات هيرميس للاستحمام والجسم",
+      "نظام صوتي بوز محيطي",
+      "دش مطر وحوض استحمام سبا",
+      "واي فاي فائق السرعة 6E"
+    ],
+    "reviews": [
+      {
+        "author": "ألكسندرا ستيرلينغ",
+        "date": "أكتوبر 2023",
+        "comment": "إقامة لا تنسى. المنظر من التراس عند غروب الشمس هو شيء سأعتز به إلى الأبد. كانت خدمة البتلر حذرة للغاية ولكنها متعاونة."
+      },
+      {
+        "author": "جيمس فون تراب",
+        "date": "سبتمبر 2023",
+        "comment": "الاهتمام بالتفاصيل في تصميم الغرفة مذهل. كل قطعة أثاث تبدو مقصودة. حقًا تجربة عالمية المستوى في قلب باريس."
+      }
+    ],
+    "rating_text": "4.9 / 5.0",
+    "verified_reviews": "128 Verified Reviews",
+    "location_detail": "7th Arrondissement, Paris",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "room_highlights": "Room Highlights",
+    "luxury_amenities": "Luxury Amenities",
+    "guest_reviews": "Guest Reviews",
+    "view_all_reviews": "View All Reviews",
+    "booking_widget": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "check_in": "Check In",
+      "check_out": "Check Out",
+      "guests": "Guests",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "price_line": "$2,450 × 5 nights",
+      "service_fee": "Service Fee",
+      "luxury_tax": "Luxury Tax (12%)",
+      "total": "Total",
+      "book_now": "Book Now",
+      "add_to_wishlist": "Add to Wishlist",
+      "secure_booking": "Secure encrypted booking"
+    }
+  },
+  "booking_page": {
+    "title": "أكمل حجزك",
+    "subtitle": "احجز ملاذك الآمن في أزور هورايزون",
+    "step_indicator": {
+      "step1": "الضيف",
+      "step2": "الإقامة",
+      "step3": "الدفع"
+    },
+    "percent_complete": "% مكتمل",
+    "step1": {
+      "title": "تفاصيل الضيف",
+      "first_name": "الاسم الأول",
+      "last_name": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الهاتف"
+    },
+    "step2": {
+      "title": "تفاصيل الإقامة",
+      "check_in": "تاريخ تسجيل الوصول",
+      "check_out": "تاريخ المغادرة",
+      "guests": "عدد الضيوف",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "special_requests": "Special Requests",
+      "special_requests_placeholder": "Preferred floor, dietary restrictions, arrival time..."
+    },
+    "step3": {
+      "title": "الدفع",
+      "payment_method": "Payment Method",
+      "card_number": "Card Number",
+      "expiry_date": "Expiry Date",
+      "cvv": "CVV"
+    },
+    "room_summary": {
+      "title": "ملخص الغرفة",
+      "room_name": "الجناح الملكي أزور هورايزون",
+      "type": "إطلالة على المحيط",
+      "check_in": "12 أكتوبر",
+      "check_out": "18 أكتوبر 2024",
+      "guests": "2 بالغين، 1 طفل"
+    },
+    "price_breakdown": {
+      "rate_per_night": 850,
+      "nights": 6,
+      "subtotal": 5100,
+      "resort_fee": 240,
+      "discount": -150,
+      "total": 5190
+    },
+    "common": {
+      "continue": "Continue",
+      "back": "Back",
+      "confirm_booking": "Confirm Booking",
+      "dates": "Dates",
+      "guests": "Guests",
+      "nights": "nights",
+      "resort_fee": "Resort Fee",
+      "loyalty_discount": "Loyalty Discount",
+      "total_amount": "Total Amount",
+      "usd_incl_taxes": "USD incl. taxes",
+      "secure_checkout": "Secure encrypted checkout"
+    }
+  },
+  "booking_confirmation": {
+    "title": "تم تأكيد الحجز!",
+    "message": "تم تأمين ملاذك الفاخر. تم إرسال بريد إلكتروني للتأكيد إلى صندوق الوارد الخاص بك مع جميع مستندات السفر وتعليمات تسجيل الوصول.",
+    "reference": "#AZH-2024-08471",
+    "details": {
+      "check_in": "12 أكتوبر 2024",
+      "check_out": "17 أكتوبر 2024",
+      "guests": "2 بالغين",
+      "room_type": "إطلالة على المحيط",
+      "status": "تم التأكيد",
+      "total_paid": "$5,190.00"
+    },
+    "next_steps": {
+      "title": "الخطوات التالية",
+      "steps": [
+        "تم إرسال بريد التأكيد - تم إرسال جدول الرحلة التفصيلي ومفتاح تسجيل الوصول الرقمي إلى بريدك الإلكتروني المسجل.",
+        "تسجيل الوصول من الساعة 3:00 مساءً - قد يكون تسجيل الوصول المبكر متاحًا عند الطلب. سيكون فريقنا في انتظارك للترحيب بك.",
+        "دعم الكونسيرج 24/7 - فريق الكونسيرج المتميز لدينا متاح على مدار الساعة لأي طلبات خاصة."
+      ]
+    },
+    "common": {
+      "reference": "Reference",
+      "location": "Paris, France",
+      "room_type": "Room Type",
+      "status": "Status",
+      "total_paid": "Total Paid",
+      "view_my_bookings": "View My Bookings",
+      "back_to_home": "Back to Home"
+    }
+  },
+  "search_results": {
+    "sort_options": {
+      "recommended": "موصى به",
+      "price_low_high": "السعر: من الأقل إلى الأعلى",
+      "price_high_low": "السعر: من الأعلى إلى الأقل",
+      "rating": "التقييم"
+    },
+    "amenities_filter": {
+      "wifi": "واي فاي مجاني",
+      "pool": "مسبح",
+      "spa": "سبا",
+      "parking": "موقف سيارات",
+      "restaurant": "مطعم"
+    },
+    "results": [
+      {
+        "name": "جناح سيليستيال تيراس",
+        "location": "باريس",
+        "rating": 5,
+        "badge": "اكتشاف نادر",
+        "price": 850
+      },
+      {
+        "name": "أزور هورايزون سانكتشوري",
+        "location": "بالي",
+        "rating": 4.9,
+        "badge": "متميز",
+        "price": 1200
+      },
+      {
+        "name": "ذا سكاي لاين بنتهاوس",
+        "location": "نيويورك",
+        "rating": 4.8,
+        "badge": "حديث",
+        "price": 1450
+      },
+      {
+        "name": "غراند باليه ريزيدنس",
+        "location": "باريس",
+        "rating": 4.9,
+        "badge": "تاريخي",
+        "price": 980
+      },
+      {
+        "name": "جانجل كليف فيلا",
+        "location": "بالي",
+        "rating": 4.7,
+        "badge": "بوتيك",
+        "price": 760
+      },
+      {
+        "name": "مانهاتن لوفت سويت",
+        "location": "نيويورك",
+        "rating": 4.8,
+        "badge": "فخامة حضرية",
+        "price": 1100
+      }
+    ],
+    "filter_bar": {
+      "location": "Location",
+      "location_value": "Paris, France",
+      "dates": "Dates",
+      "dates_value": "Oct 12 - Oct 18",
+      "guests": "Guests",
+      "guests_value": "2 Adults, 1 Room",
+      "modify_search": "Modify Search"
+    },
+    "sidebar": {
+      "price_range": "Price Range",
+      "star_rating": "Star Rating",
+      "room_type": "Room Type",
+      "star_5": "5 Stars Luxury",
+      "star_4": "4 Stars Premium",
+      "star_3": "3 Stars Standard",
+      "room_type_1": "Presidential Suite",
+      "room_type_2": "Executive King",
+      "room_type_3": "Deluxe Double",
+      "amenities": "Amenities"
+    },
+    "header": {
+      "title": "Luxury Stays in Paris",
+      "results_found": "{{count}} premium results found",
+      "sort_by": "Sort"
+    },
+    "card": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "details": "Details",
+      "book_now": "Book Now",
+      "toggle_favorite": "Toggle favorite"
+    },
+    "pagination": {
+      "label": "Pagination"
+    },
+    "results_details": [
+      {
+        "id": 1,
+        "location_detail": "7th Arrondissement, Paris",
+        "tags": [
+          "Eiffel View",
+          "Private Balcony",
+          "Butler Service"
+        ]
+      },
+      {
+        "id": 2,
+        "location_detail": "Ubud, Bali",
+        "tags": [
+          "Infinity Pool",
+          "Eco-Luxury",
+          "Full Spa"
+        ]
+      },
+      {
+        "id": 3,
+        "location_detail": "Upper West Side, NY",
+        "tags": [
+          "City Skyline",
+          "Chef's Kitchen",
+          "Concierge"
+        ]
+      },
+      {
+        "id": 4,
+        "location_detail": "1st Arrondissement, Paris",
+        "tags": [
+          "Garden View",
+          "Michelin Dining",
+          "Spa"
+        ]
+      },
+      {
+        "id": 5,
+        "location_detail": "Seminyak, Bali",
+        "tags": [
+          "Cliff View",
+          "Private Pool",
+          "Yoga Studio"
+        ]
+      },
+      {
+        "id": 6,
+        "location_detail": "Midtown, New York",
+        "tags": [
+          "City View",
+          "Rooftop Access",
+          "Gym"
+        ]
+      }
+    ]
+  },
+  "contact_page": {
+    "title": "تواصل معنا",
+    "subtitle": "نحن هنا لصنع هروبك المثالي. تواصل معنا في أي وقت.",
+    "contact_intelligence": "ذكاء الاتصال - وجودنا العالمي",
+    "headquarters": {
+      "label": "المقر الرئيسي",
+      "address": "1200 أزور بلازا، كوستال ريدج، مونتي كارلو، 98000"
+    },
+    "global_concierge": {
+      "label": "الكونسيرج العالمي",
+      "phone": "+1 (800) 555-AZURE",
+      "availability": "متاح 24/7"
+    },
+    "direct_inquiry": {
+      "label": "استفسار مباشر",
+      "email": "concierge@azurehorizon.com",
+      "response_time": "الرد خلال ساعتين"
+    },
+    "form": {
+      "full_name": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "subject": "الموضوع",
+      "subject_options": {
+        "general": "استفسار عام",
+        "booking": "دعم الحجوزات",
+        "partnership": "شراكة مؤسسية",
+        "membership": "عضوية خاصة",
+        "feedback": "ملاحظات"
+      },
+      "message": "رسالتك",
+      "full_name_placeholder": "John Doe",
+      "email_placeholder": "john@example.com",
+      "message_placeholder": "How can we elevate your journey?",
+      "send_message": "Send Message"
+    },
+    "map": "خريطة تفاعلية قريبًا",
+    "faq": "حكمة الكونسيرج - الأسئلة الشائعة",
+    "global_presence": "Our Global Presence",
+    "concierge_wisdom": "Concierge Wisdom",
+    "frequently_asked": "Frequently Asked",
+    "map_location": "Azure Horizon • Monte Carlo"
+  },
+  "faq_page": {
+    "title": "مساعدة وأسئلة شائعة",
+    "subtitle": "كل ما تحتاج معرفته عن أزور هورايزون",
+    "categories": {
+      "all": "الكل",
+      "bookings": "الحجوزات",
+      "payments": "المدفوعات",
+      "rooms": "الغرف",
+      "policies": "السياسات"
+    },
+    "questions": [
+      {
+        "category": "bookings",
+        "question": "كيف يمكنني تعديل حجزي؟",
+        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+      },
+      {
+        "category": "bookings",
+        "question": "ما هي سياسة الإلغاء؟",
+        "answer": "Cancellation policies vary by rate. Flexible rates allow cancellation up to 48 hours before arrival. Non-refundable rates cannot be cancelled or modified after booking."
+      },
+      {
+        "category": "bookings",
+        "question": "هل يمكنني الحجز لشخص آخر؟",
+        "answer": "Yes. During checkout, you can enter a different guest name. The primary cardholder must still complete the payment, and a valid ID will be required at check-in."
+      },
+      {
+        "category": "payments",
+        "question": "ما هي طرق الدفع المقبولة؟",
+        "answer": "We accept all major credit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and secure bank transfers for prepaid reservations."
+      },
+      {
+        "category": "payments",
+        "question": "متى يتم تحصيل الدفع؟",
+        "answer": "For flexible rates, payment is taken at check-in. For non-refundable rates, the full amount is charged at the time of booking."
+      },
+      {
+        "category": "payments",
+        "question": "هل مدفوعاتي آمنة؟",
+        "answer": "All transactions are encrypted with 256-bit SSL and processed through PCI-DSS compliant payment gateways. Your card details are never stored on our servers."
+      },
+      {
+        "category": "rooms",
+        "question": "ما هي المرافق المتضمنة؟",
+        "answer": "All rooms include complimentary high-speed WiFi, daily housekeeping, access to the fitness center, and 24/7 concierge service. Suite guests receive additional benefits including butler service."
+      },
+      {
+        "category": "policies",
+        "question": "هل مسموح بالحيوانات الأليفة؟",
+        "answer": "Many of our properties are pet-friendly. Please check the specific property details or contact our concierge for our \"Paws & Palm\" pet packages."
+      },
+      {
+        "category": "policies",
+        "question": "ما هو وقت تسجيل الوصول؟",
+        "answer": "Standard check-in begins at 3:00 PM local time. Early check-in from 12:00 PM may be available upon request and subject to availability. Late check-out until 2:00 PM can also be arranged."
+      },
+      {
+        "category": "policies",
+        "question": "هل يُسمح بالتدخين؟",
+        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+      }
+    ],
+    "still_have_questions": {
+      "title": "لا تزال لديك أسئلة؟",
+      "message": "فريق الكونسيرج لدينا متاح 24/7 لمساعدتك في تنظيم هروبك المثالي.",
+      "actions": {
+        "contact_concierge": "اتصل بالكونسيرج",
+        "call_us": "اتصل بنا"
+      }
+    }
+  },
+  "login_page": {
+    "title": "مرحبًا بعودتك",
+    "subtitle": "يرجى إدخال تفاصيلك لتسجيل الدخول",
+    "email_or_username": "البريد الإلكتروني أو اسم المستخدم",
+    "password": "كلمة المرور",
+    "forgot_password": "نسيت كلمة المرور؟",
+    "login_button": "تسجيل الدخول",
+    "continue_with": "أو تابع باستخدام",
+    "providers": {
+      "google": "جوجل",
+      "apple": "آبل",
+      "meta": "ميتا"
+    },
+    "email_placeholder": "Enter your email or username",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign Up"
+  },
+  "register_page": {
+    "title": "إنشاء حسابك",
+    "subtitle": "انضم إلى أزور هورايزون للحصول على مزايا فاخرة حصرية وحجوزات سلسة.",
+    "upload_photo": "تحميل صورة",
+    "photo_hint": "مستحسن 400×400",
+    "quote": "رحلتك إلى وجهات استثنائية تبدأ بخطوة واحدة.",
+    "form": {
+      "first_name": "الاسم الأول",
+      "last_name": "اسم العائلة",
+      "date_of_birth": "تاريخ الميلاد",
+      "origin_country": "بلد المنشأ",
+      "country_options": {
+        "us": "الولايات المتحدة",
+        "uk": "المملكة المتحدة",
+        "france": "فرنسا",
+        "japan": "اليابان",
+        "uae": "الإمارات العربية المتحدة"
+      },
+      "phone": "رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirm_password": "تأكيد كلمة المرور",
+      "first_name_placeholder": "John",
+      "last_name_placeholder": "Doe",
+      "phone_placeholder": "+1 (555) 000-0000",
+      "email_placeholder": "john.doe@luxury.com"
+    },
+    "terms_agreement": "أوافق على شروط الخدمة وسياسة الخصوصية",
+    "destinations": "Destinations",
+    "experiences": "Experiences",
+    "offers": "Offers",
+    "sign_in": "Sign In",
+    "newsletter_title": "Stay inspired",
+    "newsletter_desc": "Receive curated travel guides and exclusive offers directly in your inbox.",
+    "complete_registration": "Complete Registration",
+    "already_have_account": "Already have an account?",
+    "cookie_policy": "Cookie Policy",
+    "contact_us": "Contact Us",
+    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+  },
+  "footer": {
+    "quick_links": {
+      "title": "روابط سريعة",
+      "home": "الرئيسية",
+      "rooms": "الغرف",
+      "contact": "اتصل بنا"
+    },
+    "privacy_policy": "سياسة الخصوصية",
+    "terms_of_service": "شروط الخدمة",
+    "help_center": "مركز المساعدة",
+    "our_story": "قصتنا",
+    "copyright": "© 2024 أزور هورايزون. جميع الحقوق محفوظة."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "ar": "Arabic",
+    "ru": "Russian"
+  },
+  "forgot_password_page": {
+    "title": "Reset Password",
+    "subtitle": "Enter your email and we'll send you a link to reset your password.",
+    "email_label": "Email Address",
+    "email_placeholder": "john@example.com",
+    "send_reset_link": "Send Reset Link",
+    "back_to_sign_in": "Back to Sign In",
+    "no_account": "Don't have an account?",
+    "create_one": "Create one"
+  }
+}

@@ -1,0 +1,764 @@
+{
+  "navigation": {
+    "azure_horizon": "Azure Horizon",
+    "home": "Inicio",
+    "rooms": "Habitaciones",
+    "about": "Nosotros",
+    "contact": "Contacto",
+    "register": "Registrarse",
+    "login": "Iniciar sesión",
+    "sign_up": "Regístrate",
+    "find_hotel": "Encontrar un hotel",
+    "manage_bookings": "Gestionar reservas",
+    "partner_with_us": "Asociarse con nosotros",
+    "select_language": "Seleccionar idioma"
+  },
+  "home": {
+    "hero": {
+      "title": "El lujo espera su llegada",
+      "subtitle": "Experimente una hospitalidad de clase mundial en el corazón de los destinos más prestigiosos del mundo."
+    },
+    "destinations": {
+      "title": "Destinos populares",
+      "subtitle": "Descubra los mejores hoteles y experiencias únicas en todo el mundo.",
+      "view_all": "Ver todos los destinos",
+      "items": [
+        {
+          "name": "París",
+          "tagline": "La Ciudad de la Luz",
+          "hotel_count": "+420 Hoteles"
+        },
+        {
+          "name": "Bali",
+          "tagline": "Paraíso Tropical",
+          "hotel_count": "+850 Hoteles"
+        },
+        {
+          "name": "Nueva York",
+          "tagline": "La Gran Manzana",
+          "hotel_count": "+630 Hoteles"
+        }
+      ]
+    },
+    "search": {
+      "location": "Location",
+      "location_placeholder": "Where are you going?",
+      "check_in_out": "Check-in / Check-out",
+      "select_dates": "Select Dates",
+      "sample_date_range": "Apr 20 - Apr 25",
+      "guests": "Guests",
+      "add_guests": "Add Guests",
+      "search": "Search",
+      "no_match": "No destinations match your search."
+    },
+    "footer": {
+      "about_text": "Our mission is to empower travelers with seamless booking experiences and provide hotel owners with the world's most robust management tools. We believe everyone deserves a touch of luxury on their journey.",
+      "careers": "Careers",
+      "contact": {
+        "title": "Contact Us",
+        "email_label": "Email Us",
+        "call_label": "Call Anytime",
+        "call_value": "+1 (800) LUX-STAY",
+        "hq_value": "123 Luxury Way, San Francisco, CA"
+      }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Nuestra Historia",
+      "subtitle": "Nacidos de la pasión por viajar, construidos para ofrecer experiencias extraordinarias en todo el mundo."
+    },
+    "stats": {
+      "hotels": "+500 Hoteles",
+      "countries": "+120 Países",
+      "guests": "+2M Huéspedes",
+      "rating": "4.9★ Calificación"
+    },
+    "mission": {
+      "title": "Lo que defendemos",
+      "subtitle": "Misión y Valores",
+      "items": [
+        {
+          "title": "Primero el huésped",
+          "description": "Cada decisión que tomamos comienza pensando en la experiencia del huésped."
+        },
+        {
+          "title": "Calidad sin concesiones",
+          "description": "Solo nos asociamos con propiedades que cumplen con nuestros rigurosos estándares de lujo."
+        },
+        {
+          "title": "Alcance global",
+          "description": "+500 propiedades en +120 países, siempre cerca de donde quieres estar."
+        }
+      ]
+    },
+    "history": {
+      "title": "Historia de la empresa",
+      "timeline": [
+        {
+          "year": "2018",
+          "event": "Azure Horizon se funda en San Francisco con la visión de redefinir los viajes de lujo."
+        },
+        {
+          "year": "2020",
+          "event": "Expansión a 50 hoteles asociados en Europa, Asia y América."
+        },
+        {
+          "year": "2022",
+          "event": "Lanzamos nuestra plataforma de reservas digital, atendiendo a más de 500,000 huéspedes."
+        },
+        {
+          "year": "2024",
+          "event": "Alcanzamos +500 propiedades en +120 países con más de 2 millones de huéspedes felices."
+        }
+      ]
+    },
+    "team": {
+      "title": "Equipo",
+      "members": [
+        {
+          "name": "Sofia Laurent",
+          "role": "Directora Ejecutiva"
+        },
+        {
+          "name": "Marcus Chen",
+          "role": "Jefe de Hospitalidad"
+        },
+        {
+          "name": "Amara Osei",
+          "role": "Directora de Alianzas"
+        }
+      ]
+    },
+    "faqs": {
+      "title": "Preguntas frecuentes",
+      "items": [
+        {
+          "question": "¿Puedo organizar un traslado en jet privado?",
+          "answer": "Absolutamente. Nuestro equipo de Concierge Global coordina con socios de aviación privada para garantizar que su llegada sea sin esfuerzo y discreta."
+        },
+        {
+          "question": "¿Qué es la membresía de Azure Horizon?",
+          "answer": "Horizon Circle es un programa solo por invitación que proporciona acceso exclusivo a villas fuera del mercado, islas privadas y reservas prioritarias."
+        },
+        {
+          "question": "¿Hay opciones aptas para mascotas?",
+          "answer": "Muchas propiedades ofrecen servicios especializados de Concierge Canino que incluyen menús gourmet y ropa de cama a medida. Consulte durante la reserva."
+        }
+      ]
+    }
+  },
+  "rooms_page": {
+    "hero": {
+      "title": "Nuestras habitaciones y suites",
+      "subtitle": "Desde acogedores refugios hasta suites presidenciales, cada habitación es un santuario de elegancia refinada."
+    },
+    "filters": {
+      "all": "Todos",
+      "standard": "Estándar",
+      "deluxe": "Deluxe",
+      "suite": "Suite",
+      "presidential": "Presidencial"
+    },
+    "available_rooms": [
+      {
+        "id": 1,
+        "name": "Azure Standard King",
+        "category": "Estándar",
+        "price_per_night": 299,
+        "description": "Habitación elegantemente equipada con una cama king size de lujo y decoración artesanal de origen local.",
+        "amenities": [
+          "WiFi gratis",
+          "Control de clima",
+          "Minibar"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Horizon Deluxe Suite",
+        "category": "Deluxe",
+        "price_per_night": 450,
+        "description": "Amplia sala de estar con balcón privado con vistas a nuestros frondosos jardines mediterráneos.",
+        "amenities": [
+          "Terraza privada",
+          "Bañera de hidromasaje",
+          "Nespresso"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Grand Ocean Suite",
+        "category": "Suite",
+        "price_per_night": 750,
+        "description": "Una amplia suite con vistas panorámicas al mar, una sala de estar separada y un servicio de mayordomo personalizado.",
+        "amenities": [
+          "Acceso a piscina",
+          "Créditos para spa",
+          "Servicio a la habitación"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Oceanfront Presidencial",
+        "category": "Presidencial",
+        "price_per_night": 1200,
+        "description": "Nuestra joya de la corona. 232 metros cuadrados de puro lujo con vistas panorámicas al mar de 270 grados.",
+        "amenities": [
+          "Mayordomo",
+          "Piscina privada",
+          "Chef privado"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Garden View Twin",
+        "category": "Estándar",
+        "price_per_night": 249,
+        "description": "Habitación twin llena de luz con serenas vistas al jardín y ropa de cama premium para un descanso perfecto.",
+        "amenities": [
+          "WiFi gratis",
+          "Estacionamiento",
+          "Control de clima"
+        ]
+      },
+      {
+        "id": 6,
+        "name": "Skyline Deluxe Double",
+        "category": "Deluxe",
+        "price_per_night": 520,
+        "description": "Habitación doble contemporánea con ventanales de suelo a techo que enmarcan un impresionante horizonte urbano.",
+        "amenities": [
+          "WiFi gratis",
+          "Ducha de lluvia",
+          "Minibar"
+        ]
+      }
+    ],
+    "common": {
+      "from": "From",
+      "per_night": "/night",
+      "view_details": "View Details",
+      "no_rooms": "No rooms found for this category.",
+      "cta_title": "Can't find what you're looking for?",
+      "cta_subtitle": "Our concierge team is available 24/7 to help you find the perfect accommodation.",
+      "contact_concierge": "Contact Concierge",
+      "view_all_categories": "View All Categories"
+    }
+  },
+  "room_details": {
+    "room_name": "The Celestial Terrace Suite",
+    "room_type": "Suite Presidencial",
+    "book_now": "Reservar ahora",
+    "rating": 5,
+    "highlights": {
+      "size": "120 m²",
+      "bedding": "1 cama King Size",
+      "capacity": "3 huéspedes",
+      "outdoor": "Terraza privada"
+    },
+    "amenities": [
+      "Servicio de mayordomo personal 24/7",
+      "Traslado gratuito al aeropuerto",
+      "Estación de café Nespresso Vertuo",
+      "Tableta inteligente para control de la habitación",
+      "Productos de baño y cuerpo Hermès",
+      "Sistema de sonido envolvente Bose",
+      "Ducha de lluvia y bañera de hidromasaje",
+      "WiFi de alta velocidad 6E"
+    ],
+    "reviews": [
+      {
+        "author": "Alexandra Sterling",
+        "date": "Octubre 2023",
+        "comment": "Una estancia inolvidable. La vista desde la terraza al atardecer es algo que atesoraré para siempre. El servicio de mayordomo fue excepcionalmente discreto pero atento."
+      },
+      {
+        "author": "James von Trapp",
+        "date": "Septiembre 2023",
+        "comment": "La atención al detalle en el diseño de la habitación es fenomenal. Cada mueble parece intencional. Verdaderamente una experiencia de clase mundial en el corazón de París."
+      }
+    ],
+    "rating_text": "4.9 / 5.0",
+    "verified_reviews": "128 Verified Reviews",
+    "location_detail": "7th Arrondissement, Paris",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "room_highlights": "Room Highlights",
+    "luxury_amenities": "Luxury Amenities",
+    "guest_reviews": "Guest Reviews",
+    "view_all_reviews": "View All Reviews",
+    "booking_widget": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "check_in": "Check In",
+      "check_out": "Check Out",
+      "guests": "Guests",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "price_line": "$2,450 × 5 nights",
+      "service_fee": "Service Fee",
+      "luxury_tax": "Luxury Tax (12%)",
+      "total": "Total",
+      "book_now": "Book Now",
+      "add_to_wishlist": "Add to Wishlist",
+      "secure_booking": "Secure encrypted booking"
+    }
+  },
+  "booking_page": {
+    "title": "Complete su reserva",
+    "subtitle": "Asegure su santuario en Azure Horizon",
+    "step_indicator": {
+      "step1": "Huésped",
+      "step2": "Estancia",
+      "step3": "Pago"
+    },
+    "percent_complete": "% completo",
+    "step1": {
+      "title": "Detalles del huésped",
+      "first_name": "Nombre",
+      "last_name": "Apellido",
+      "email": "Correo electrónico",
+      "phone": "Número de teléfono"
+    },
+    "step2": {
+      "title": "Detalles de la estancia",
+      "check_in": "Fecha de entrada",
+      "check_out": "Fecha de salida",
+      "guests": "Número de huéspedes",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "special_requests": "Special Requests",
+      "special_requests_placeholder": "Preferred floor, dietary restrictions, arrival time..."
+    },
+    "step3": {
+      "title": "Pago",
+      "payment_method": "Payment Method",
+      "card_number": "Card Number",
+      "expiry_date": "Expiry Date",
+      "cvv": "CVV"
+    },
+    "room_summary": {
+      "title": "Resumen de la habitación",
+      "room_name": "Azure Horizon Royal Suite",
+      "type": "Vista al mar",
+      "check_in": "12 Oct",
+      "check_out": "18 Oct 2024",
+      "guests": "2 adultos, 1 niño"
+    },
+    "price_breakdown": {
+      "rate_per_night": 850,
+      "nights": 6,
+      "subtotal": 5100,
+      "resort_fee": 240,
+      "discount": -150,
+      "total": 5190
+    },
+    "common": {
+      "continue": "Continue",
+      "back": "Back",
+      "confirm_booking": "Confirm Booking",
+      "dates": "Dates",
+      "guests": "Guests",
+      "nights": "nights",
+      "resort_fee": "Resort Fee",
+      "loyalty_discount": "Loyalty Discount",
+      "total_amount": "Total Amount",
+      "usd_incl_taxes": "USD incl. taxes",
+      "secure_checkout": "Secure encrypted checkout"
+    }
+  },
+  "booking_confirmation": {
+    "title": "¡Reserva confirmada!",
+    "message": "Su escapada de lujo está asegurada. Se ha enviado un correo electrónico de confirmación a su bandeja de entrada con todos los documentos de viaje e instrucciones de check-in.",
+    "reference": "#AZH-2024-08471",
+    "details": {
+      "check_in": "12 de octubre de 2024",
+      "check_out": "17 de octubre de 2024",
+      "guests": "2 adultos",
+      "room_type": "Vista al mar",
+      "status": "Confirmado",
+      "total_paid": "$5,190.00"
+    },
+    "next_steps": {
+      "title": "Próximos pasos",
+      "steps": [
+        "Correo de confirmación enviado: se ha enviado un itinerario detallado y una llave de check-in digital a su correo electrónico registrado.",
+        "Check-in a partir de las 15:00 horas: hay disponibilidad de check-in anticipado bajo petición. Nuestro equipo estará listo para darle la bienvenida.",
+        "Soporte de conserjería 24/7: nuestro equipo de conserjería premium está disponible las 24 horas para cualquier solicitud especial."
+      ]
+    },
+    "common": {
+      "reference": "Reference",
+      "location": "Paris, France",
+      "room_type": "Room Type",
+      "status": "Status",
+      "total_paid": "Total Paid",
+      "view_my_bookings": "View My Bookings",
+      "back_to_home": "Back to Home"
+    }
+  },
+  "search_results": {
+    "sort_options": {
+      "recommended": "Recomendado",
+      "price_low_high": "Precio: menor a mayor",
+      "price_high_low": "Precio: mayor a menor",
+      "rating": "Calificación"
+    },
+    "amenities_filter": {
+      "wifi": "WiFi gratis",
+      "pool": "Piscina",
+      "spa": "Spa",
+      "parking": "Estacionamiento",
+      "restaurant": "Restaurante"
+    },
+    "results": [
+      {
+        "name": "The Celestial Terrace Suite",
+        "location": "París",
+        "rating": 5,
+        "badge": "Hallazgo raro",
+        "price": 850
+      },
+      {
+        "name": "Azure Horizon Sanctuary",
+        "location": "Bali",
+        "rating": 4.9,
+        "badge": "Premium",
+        "price": 1200
+      },
+      {
+        "name": "The Skyline Penthouse",
+        "location": "Nueva York",
+        "rating": 4.8,
+        "badge": "Modernista",
+        "price": 1450
+      },
+      {
+        "name": "Grand Palais Residence",
+        "location": "París",
+        "rating": 4.9,
+        "badge": "Histórico",
+        "price": 980
+      },
+      {
+        "name": "Jungle Cliff Villa",
+        "location": "Bali",
+        "rating": 4.7,
+        "badge": "Boutique",
+        "price": 760
+      },
+      {
+        "name": "Manhattan Loft Suite",
+        "location": "Nueva York",
+        "rating": 4.8,
+        "badge": "Lujo urbano",
+        "price": 1100
+      }
+    ],
+    "filter_bar": {
+      "location": "Location",
+      "location_value": "Paris, France",
+      "dates": "Dates",
+      "dates_value": "Oct 12 - Oct 18",
+      "guests": "Guests",
+      "guests_value": "2 Adults, 1 Room",
+      "modify_search": "Modify Search"
+    },
+    "sidebar": {
+      "price_range": "Price Range",
+      "star_rating": "Star Rating",
+      "room_type": "Room Type",
+      "star_5": "5 Stars Luxury",
+      "star_4": "4 Stars Premium",
+      "star_3": "3 Stars Standard",
+      "room_type_1": "Presidential Suite",
+      "room_type_2": "Executive King",
+      "room_type_3": "Deluxe Double",
+      "amenities": "Amenities"
+    },
+    "header": {
+      "title": "Luxury Stays in Paris",
+      "results_found": "{{count}} premium results found",
+      "sort_by": "Sort"
+    },
+    "card": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "details": "Details",
+      "book_now": "Book Now",
+      "toggle_favorite": "Toggle favorite"
+    },
+    "pagination": {
+      "label": "Pagination"
+    },
+    "results_details": [
+      {
+        "id": 1,
+        "location_detail": "7th Arrondissement, Paris",
+        "tags": [
+          "Eiffel View",
+          "Private Balcony",
+          "Butler Service"
+        ]
+      },
+      {
+        "id": 2,
+        "location_detail": "Ubud, Bali",
+        "tags": [
+          "Infinity Pool",
+          "Eco-Luxury",
+          "Full Spa"
+        ]
+      },
+      {
+        "id": 3,
+        "location_detail": "Upper West Side, NY",
+        "tags": [
+          "City Skyline",
+          "Chef's Kitchen",
+          "Concierge"
+        ]
+      },
+      {
+        "id": 4,
+        "location_detail": "1st Arrondissement, Paris",
+        "tags": [
+          "Garden View",
+          "Michelin Dining",
+          "Spa"
+        ]
+      },
+      {
+        "id": 5,
+        "location_detail": "Seminyak, Bali",
+        "tags": [
+          "Cliff View",
+          "Private Pool",
+          "Yoga Studio"
+        ]
+      },
+      {
+        "id": 6,
+        "location_detail": "Midtown, New York",
+        "tags": [
+          "City View",
+          "Rooftop Access",
+          "Gym"
+        ]
+      }
+    ]
+  },
+  "contact_page": {
+    "title": "Póngase en contacto",
+    "subtitle": "Estamos aquí para crear su escapada perfecta. Contáctenos en cualquier momento.",
+    "contact_intelligence": "Inteligencia de contacto - Nuestra presencia global",
+    "headquarters": {
+      "label": "Sede central",
+      "address": "1200 Azure Plaza, Coastal Ridge, Monte Carlo, 98000"
+    },
+    "global_concierge": {
+      "label": "Conserjería global",
+      "phone": "+1 (800) 555-AZURE",
+      "availability": "Disponible 24/7"
+    },
+    "direct_inquiry": {
+      "label": "Consulta directa",
+      "email": "concierge@azurehorizon.com",
+      "response_time": "Respuesta en 2 horas"
+    },
+    "form": {
+      "full_name": "Nombre completo",
+      "email": "Correo electrónico",
+      "subject": "Asunto",
+      "subject_options": {
+        "general": "Consulta general",
+        "booking": "Soporte de reservas",
+        "partnership": "Alianza corporativa",
+        "membership": "Membresía privada",
+        "feedback": "Comentarios"
+      },
+      "message": "Su mensaje",
+      "full_name_placeholder": "John Doe",
+      "email_placeholder": "john@example.com",
+      "message_placeholder": "How can we elevate your journey?",
+      "send_message": "Send Message"
+    },
+    "map": "Mapa interactivo próximamente",
+    "faq": "Sabiduría de conserjería - Preguntas frecuentes",
+    "global_presence": "Our Global Presence",
+    "concierge_wisdom": "Concierge Wisdom",
+    "frequently_asked": "Frequently Asked",
+    "map_location": "Azure Horizon • Monte Carlo"
+  },
+  "faq_page": {
+    "title": "Ayuda y preguntas frecuentes",
+    "subtitle": "Todo lo que necesita saber sobre Azure Horizon",
+    "categories": {
+      "all": "Todos",
+      "bookings": "Reservas",
+      "payments": "Pagos",
+      "rooms": "Habitaciones",
+      "policies": "Políticas"
+    },
+    "questions": [
+      {
+        "category": "bookings",
+        "question": "¿Cómo modifico mi reserva?",
+        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+      },
+      {
+        "category": "bookings",
+        "question": "¿Cuál es la política de cancelación?",
+        "answer": "Cancellation policies vary by rate. Flexible rates allow cancellation up to 48 hours before arrival. Non-refundable rates cannot be cancelled or modified after booking."
+      },
+      {
+        "category": "bookings",
+        "question": "¿Puedo reservar para otra persona?",
+        "answer": "Yes. During checkout, you can enter a different guest name. The primary cardholder must still complete the payment, and a valid ID will be required at check-in."
+      },
+      {
+        "category": "payments",
+        "question": "¿Qué métodos de pago se aceptan?",
+        "answer": "We accept all major credit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and secure bank transfers for prepaid reservations."
+      },
+      {
+        "category": "payments",
+        "question": "¿Cuándo se cobra el pago?",
+        "answer": "For flexible rates, payment is taken at check-in. For non-refundable rates, the full amount is charged at the time of booking."
+      },
+      {
+        "category": "payments",
+        "question": "¿Es seguro mi pago?",
+        "answer": "All transactions are encrypted with 256-bit SSL and processed through PCI-DSS compliant payment gateways. Your card details are never stored on our servers."
+      },
+      {
+        "category": "rooms",
+        "question": "¿Qué comodidades están incluidas?",
+        "answer": "All rooms include complimentary high-speed WiFi, daily housekeeping, access to the fitness center, and 24/7 concierge service. Suite guests receive additional benefits including butler service."
+      },
+      {
+        "category": "policies",
+        "question": "¿Se permiten mascotas?",
+        "answer": "Many of our properties are pet-friendly. Please check the specific property details or contact our concierge for our \"Paws & Palm\" pet packages."
+      },
+      {
+        "category": "policies",
+        "question": "¿Cuál es el horario de check-in?",
+        "answer": "Standard check-in begins at 3:00 PM local time. Early check-in from 12:00 PM may be available upon request and subject to availability. Late check-out until 2:00 PM can also be arranged."
+      },
+      {
+        "category": "policies",
+        "question": "¿Se permite fumar?",
+        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+      }
+    ],
+    "still_have_questions": {
+      "title": "¿Todavía tiene preguntas?",
+      "message": "Nuestro equipo de conserjería está disponible 24/7 para ayudarle a crear su escapada perfecta.",
+      "actions": {
+        "contact_concierge": "Contactar a conserjería",
+        "call_us": "Llámenos"
+      }
+    }
+  },
+  "login_page": {
+    "title": "Bienvenido de nuevo",
+    "subtitle": "Por favor, introduzca sus datos para iniciar sesión",
+    "email_or_username": "Correo electrónico o usuario",
+    "password": "Contraseña",
+    "forgot_password": "¿Olvidó su contraseña?",
+    "login_button": "Iniciar sesión",
+    "continue_with": "O continúe con",
+    "providers": {
+      "google": "Google",
+      "apple": "Apple",
+      "meta": "Meta"
+    },
+    "email_placeholder": "Enter your email or username",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign Up"
+  },
+  "register_page": {
+    "title": "Cree su cuenta",
+    "subtitle": "Únase a Azure Horizon para obtener beneficios de lujo exclusivos y reservas sin problemas.",
+    "upload_photo": "Subir foto",
+    "photo_hint": "Recomendado 400x400",
+    "quote": "Su viaje a destinos extraordinarios comienza con un solo paso.",
+    "form": {
+      "first_name": "Nombre",
+      "last_name": "Apellido",
+      "date_of_birth": "Fecha de nacimiento",
+      "origin_country": "País de origen",
+      "country_options": {
+        "us": "Estados Unidos",
+        "uk": "Reino Unido",
+        "france": "Francia",
+        "japan": "Japón",
+        "uae": "Emiratos Árabes Unidos"
+      },
+      "phone": "Número de teléfono",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "confirm_password": "Confirmar contraseña",
+      "first_name_placeholder": "John",
+      "last_name_placeholder": "Doe",
+      "phone_placeholder": "+1 (555) 000-0000",
+      "email_placeholder": "john.doe@luxury.com"
+    },
+    "terms_agreement": "Acepto los Términos de servicio y la Política de privacidad",
+    "destinations": "Destinations",
+    "experiences": "Experiences",
+    "offers": "Offers",
+    "sign_in": "Sign In",
+    "newsletter_title": "Stay inspired",
+    "newsletter_desc": "Receive curated travel guides and exclusive offers directly in your inbox.",
+    "complete_registration": "Complete Registration",
+    "already_have_account": "Already have an account?",
+    "cookie_policy": "Cookie Policy",
+    "contact_us": "Contact Us",
+    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+  },
+  "footer": {
+    "quick_links": {
+      "title": "Enlaces rápidos",
+      "home": "Inicio",
+      "rooms": "Habitaciones",
+      "contact": "Contacto"
+    },
+    "privacy_policy": "Política de privacidad",
+    "terms_of_service": "Términos de servicio",
+    "help_center": "Centro de ayuda",
+    "our_story": "Nuestra historia",
+    "copyright": "© 2024 Azure Horizon. Todos los derechos reservados."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "ar": "Arabic",
+    "ru": "Russian"
+  },
+  "forgot_password_page": {
+    "title": "Reset Password",
+    "subtitle": "Enter your email and we'll send you a link to reset your password.",
+    "email_label": "Email Address",
+    "email_placeholder": "john@example.com",
+    "send_reset_link": "Send Reset Link",
+    "back_to_sign_in": "Back to Sign In",
+    "no_account": "Don't have an account?",
+    "create_one": "Create one"
+  }
+}

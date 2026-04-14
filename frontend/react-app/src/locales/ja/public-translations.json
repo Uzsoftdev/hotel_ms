@@ -1,0 +1,764 @@
+{
+  "navigation": {
+    "azure_horizon": "Azure Horizon",
+    "home": "ホーム",
+    "rooms": "客室",
+    "about": "会社概要",
+    "contact": "お問い合わせ",
+    "register": "登録",
+    "login": "ログイン",
+    "sign_up": "新規登録",
+    "find_hotel": "ホテルを探す",
+    "manage_bookings": "予約管理",
+    "partner_with_us": "パートナーになる",
+    "select_language": "言語を選択"
+  },
+  "home": {
+    "hero": {
+      "title": "ラグジュアリーなひとときをお約束します",
+      "subtitle": "世界で最も権威ある旅先の中心地で、ワールドクラスのおもてなしを体験してください。"
+    },
+    "destinations": {
+      "title": "人気の旅先",
+      "subtitle": "世界中のトップホテルとユニークな体験を発見してください。",
+      "view_all": "すべての旅先を見る",
+      "items": [
+        {
+          "name": "パリ",
+          "tagline": "光の都市",
+          "hotel_count": "420+ ホテル"
+        },
+        {
+          "name": "バリ",
+          "tagline": "楽園",
+          "hotel_count": "850+ ホテル"
+        },
+        {
+          "name": "ニューヨーク",
+          "tagline": "ビッグアップル",
+          "hotel_count": "630+ ホテル"
+        }
+      ]
+    },
+    "search": {
+      "location": "Location",
+      "location_placeholder": "Where are you going?",
+      "check_in_out": "Check-in / Check-out",
+      "select_dates": "Select Dates",
+      "sample_date_range": "Apr 20 - Apr 25",
+      "guests": "Guests",
+      "add_guests": "Add Guests",
+      "search": "Search",
+      "no_match": "No destinations match your search."
+    },
+    "footer": {
+      "about_text": "Our mission is to empower travelers with seamless booking experiences and provide hotel owners with the world's most robust management tools. We believe everyone deserves a touch of luxury on their journey.",
+      "careers": "Careers",
+      "contact": {
+        "title": "Contact Us",
+        "email_label": "Email Us",
+        "call_label": "Call Anytime",
+        "call_value": "+1 (800) LUX-STAY",
+        "hq_value": "123 Luxury Way, San Francisco, CA"
+      }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "私たちのストーリー",
+      "subtitle": "旅への情熱から生まれ、世界中で特別な体験を提供するために構築されました。"
+    },
+    "stats": {
+      "hotels": "500+ ホテル",
+      "countries": "120+ カ国",
+      "guests": "200万人+ ゲスト",
+      "rating": "4.9★ 評価"
+    },
+    "mission": {
+      "title": "私たちの理念",
+      "subtitle": "ミッションと価値観",
+      "items": [
+        {
+          "title": "ゲストファースト",
+          "description": "私たちが下すすべての決断は、ゲストの体験を第一に考えています。"
+        },
+        {
+          "title": "妥協のない品質",
+          "description": "厳格なラグジュアリー基準を満たす物件とのみ提携しています。"
+        },
+        {
+          "title": "グローバルリーチ",
+          "description": "120カ国以上に500以上の物件、あなたが行きたい場所のすぐ近くにあります。"
+        }
+      ]
+    },
+    "history": {
+      "title": "会社沿革",
+      "timeline": [
+        {
+          "year": "2018",
+          "event": "Azure Horizonがサンフランシスコで設立され、ラグジュアリー旅行を再定義するというビジョンを掲げる。"
+        },
+        {
+          "year": "2020",
+          "event": "ヨーロッパ、アジア、アメリカ大陸で50のパートナーホテルに拡大。"
+        },
+        {
+          "year": "2022",
+          "event": "デジタル予約プラットフォームを立ち上げ、50万人以上のゲストにサービスを提供。"
+        },
+        {
+          "year": "2024",
+          "event": "120カ国以上で500以上の物件、200万人以上の満足したゲストを達成。"
+        }
+      ]
+    },
+    "team": {
+      "title": "チーム",
+      "members": [
+        {
+          "name": "ソフィア・ローラン",
+          "role": "最高経営責任者"
+        },
+        {
+          "name": "マーカス・チェン",
+          "role": "ホスピタリティ責任者"
+        },
+        {
+          "name": "アマラ・オセイ",
+          "role": "パートナーシップ統括"
+        }
+      ]
+    },
+    "faqs": {
+      "title": "よくある質問",
+      "items": [
+        {
+          "question": "プライベートジェットの送迎を手配できますか？",
+          "answer": "もちろんです。グローバルコンシェルジュチームがプライベート航空パートナーと連携し、お客様の到着がスムーズかつ慎重に行われるようにします。"
+        },
+        {
+          "question": "Azure Horizonメンバーシップとは何ですか？",
+          "answer": "Horizon Circleは招待制のプログラムで、非公開物件のヴィラ、プライベートアイランド、優先予約への独占的なアクセスを提供します。"
+        },
+        {
+          "question": "ペット同伴可能なオプションはありますか？",
+          "answer": "多くの物件で、グルメメニューや特製ベッドを含む専門的なペットコンシェルジュサービスを提供しています。ご予約時にお問い合わせください。"
+        }
+      ]
+    }
+  },
+  "rooms_page": {
+    "hero": {
+      "title": "客室とスイート",
+      "subtitle": "居心地の良い隠れ家からプレジデンシャルスイートまで — どの客室も洗練されたエレガンスの聖域です。"
+    },
+    "filters": {
+      "all": "すべて",
+      "standard": "スタンダード",
+      "deluxe": "デラックス",
+      "suite": "スイート",
+      "presidential": "プレジデンシャル"
+    },
+    "available_rooms": [
+      {
+        "id": 1,
+        "name": "Azure スタンダードキング",
+        "category": "スタンダード",
+        "price_per_night": 299,
+        "description": "シグネチャーの豪華キングベッドと地元産のアーティザナルな装飾が施された、エレガントに調度された客室。",
+        "amenities": [
+          "無料Wi-Fi",
+          "空調管理",
+          "ミニバー"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Horizon デラックススイート",
+        "category": "デラックス",
+        "price_per_night": 450,
+        "description": "緑豊かな地中海庭園を望むプライベートバルコニー付きの広々としたリビングエリア。",
+        "amenities": [
+          "プライベートテラス",
+          "スパバス",
+          "ネスプレッソ"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "グランドオーシャンスイート",
+        "category": "スイート",
+        "price_per_night": 750,
+        "description": "パノラマの海景色、独立したラウンジ、専属バトラーのサービスを備えた広々としたスイート。",
+        "amenities": [
+          "プールアクセス",
+          "スパクレジット",
+          "ルームサービス"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "オーシャンフロントプレジデンシャル",
+        "category": "プレジデンシャル",
+        "price_per_night": 1200,
+        "description": "当社の最高傑作。232平方メートルの純粋な贅沢と270度のパノラマ海景色。",
+        "amenities": [
+          "バトラー",
+          "プライベートプール",
+          "専属シェフ"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "ガーデンビューツイン",
+        "category": "スタンダード",
+        "price_per_night": 249,
+        "description": "静かな庭園の景色とプレミアムな寝具を備えた、光あふれるツインルーム。",
+        "amenities": [
+          "無料Wi-Fi",
+          "駐車場",
+          "空調管理"
+        ]
+      },
+      {
+        "id": 6,
+        "name": "スカイラインデラックスダブル",
+        "category": "デラックス",
+        "price_per_night": 520,
+        "description": "息をのむような都会のスカイラインを望む床から天井までの窓がある、現代的なダブルルーム。",
+        "amenities": [
+          "無料Wi-Fi",
+          "レインシャワー",
+          "ミニバー"
+        ]
+      }
+    ],
+    "common": {
+      "from": "From",
+      "per_night": "/night",
+      "view_details": "View Details",
+      "no_rooms": "No rooms found for this category.",
+      "cta_title": "Can't find what you're looking for?",
+      "cta_subtitle": "Our concierge team is available 24/7 to help you find the perfect accommodation.",
+      "contact_concierge": "Contact Concierge",
+      "view_all_categories": "View All Categories"
+    }
+  },
+  "room_details": {
+    "room_name": "セレスティアルテラススイート",
+    "room_type": "プレジデンシャルスイート",
+    "book_now": "今すぐ予約",
+    "rating": 5,
+    "highlights": {
+      "size": "120 平方メートル",
+      "bedding": "キングベッド 1台",
+      "capacity": "最大3名",
+      "outdoor": "プライベートテラス"
+    },
+    "amenities": [
+      "24時間専属バトラーサービス",
+      "空港送迎無料",
+      "ネスプレッソベルチュオコーヒーステーション",
+      "客室スマートコントロールタブレット",
+      "エルメスバス＆ボディ製品",
+      "Boseサラウンドサウンドシステム",
+      "レインシャワー＆スパバス",
+      "高速Wi-Fi 6E"
+    ],
+    "reviews": [
+      {
+        "author": "アレクサンドラ・スターリング",
+        "date": "2023年10月",
+        "comment": "忘れられない滞在でした。夕日のテラスからの景色は永遠に大切にします。バトラーサービスは非常に控えめでありながら気配りが行き届いていました。"
+      },
+      {
+        "author": "ジェームズ・フォン・トラップ",
+        "date": "2023年9月",
+        "comment": "客室デザインの細部へのこだわりは驚異的です。すべての家具が意図的に配置されているように感じられます。パリの中心部で真にワールドクラスの体験ができました。"
+      }
+    ],
+    "rating_text": "4.9 / 5.0",
+    "verified_reviews": "128 Verified Reviews",
+    "location_detail": "7th Arrondissement, Paris",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "room_highlights": "Room Highlights",
+    "luxury_amenities": "Luxury Amenities",
+    "guest_reviews": "Guest Reviews",
+    "view_all_reviews": "View All Reviews",
+    "booking_widget": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "check_in": "Check In",
+      "check_out": "Check Out",
+      "guests": "Guests",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "price_line": "$2,450 × 5 nights",
+      "service_fee": "Service Fee",
+      "luxury_tax": "Luxury Tax (12%)",
+      "total": "Total",
+      "book_now": "Book Now",
+      "add_to_wishlist": "Add to Wishlist",
+      "secure_booking": "Secure encrypted booking"
+    }
+  },
+  "booking_page": {
+    "title": "予約を完了する",
+    "subtitle": "Azure Horizonであなたの聖域を確保する",
+    "step_indicator": {
+      "step1": "ゲスト情報",
+      "step2": "滞在情報",
+      "step3": "お支払い"
+    },
+    "percent_complete": "% 完了",
+    "step1": {
+      "title": "ゲスト情報",
+      "first_name": "名",
+      "last_name": "姓",
+      "email": "メールアドレス",
+      "phone": "電話番号"
+    },
+    "step2": {
+      "title": "滞在情報",
+      "check_in": "チェックイン日",
+      "check_out": "チェックアウト日",
+      "guests": "ゲスト人数",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "special_requests": "Special Requests",
+      "special_requests_placeholder": "Preferred floor, dietary restrictions, arrival time..."
+    },
+    "step3": {
+      "title": "お支払い",
+      "payment_method": "Payment Method",
+      "card_number": "Card Number",
+      "expiry_date": "Expiry Date",
+      "cvv": "CVV"
+    },
+    "room_summary": {
+      "title": "客室概要",
+      "room_name": "Azure Horizon ロイヤルスイート",
+      "type": "オーシャンビュー",
+      "check_in": "10月12日",
+      "check_out": "2024年10月18日",
+      "guests": "大人2名、子供1名"
+    },
+    "price_breakdown": {
+      "rate_per_night": 850,
+      "nights": 6,
+      "subtotal": 5100,
+      "resort_fee": 240,
+      "discount": -150,
+      "total": 5190
+    },
+    "common": {
+      "continue": "Continue",
+      "back": "Back",
+      "confirm_booking": "Confirm Booking",
+      "dates": "Dates",
+      "guests": "Guests",
+      "nights": "nights",
+      "resort_fee": "Resort Fee",
+      "loyalty_discount": "Loyalty Discount",
+      "total_amount": "Total Amount",
+      "usd_incl_taxes": "USD incl. taxes",
+      "secure_checkout": "Secure encrypted checkout"
+    }
+  },
+  "booking_confirmation": {
+    "title": "予約確定！",
+    "message": "あなたの贅沢な逃避行が確定しました。確認メールがあなたの受信箱に送信され、すべての旅行書類とチェックイン手順が含まれています。",
+    "reference": "#AZH-2024-08471",
+    "details": {
+      "check_in": "2024年10月12日",
+      "check_out": "2024年10月17日",
+      "guests": "大人2名",
+      "room_type": "オーシャンビュー",
+      "status": "確定",
+      "total_paid": "$5,190.00"
+    },
+    "next_steps": {
+      "title": "次のステップ",
+      "steps": [
+        "確認メール送信済み - 詳細な旅程とデジタルチェックインキーが登録済みのメールアドレスに送信されました。",
+        "午後3時からチェックイン - 事前リクエストによりアーリーチェックインが可能な場合があります。スタッフがお客様をお迎えする準備を整えています。",
+        "24時間365日コンシェルジュサポート - プレミアムコンシェルジュチームが特別なご要望に24時間対応しています。"
+      ]
+    },
+    "common": {
+      "reference": "Reference",
+      "location": "Paris, France",
+      "room_type": "Room Type",
+      "status": "Status",
+      "total_paid": "Total Paid",
+      "view_my_bookings": "View My Bookings",
+      "back_to_home": "Back to Home"
+    }
+  },
+  "search_results": {
+    "sort_options": {
+      "recommended": "おすすめ順",
+      "price_low_high": "価格：安い順",
+      "price_high_low": "価格：高い順",
+      "rating": "評価順"
+    },
+    "amenities_filter": {
+      "wifi": "無料Wi-Fi",
+      "pool": "プール",
+      "spa": "スパ",
+      "parking": "駐車場",
+      "restaurant": "レストラン"
+    },
+    "results": [
+      {
+        "name": "セレスティアルテラススイート",
+        "location": "パリ",
+        "rating": 5,
+        "badge": "レアな発見",
+        "price": 850
+      },
+      {
+        "name": "Azure Horizon サンクチュアリ",
+        "location": "バリ",
+        "rating": 4.9,
+        "badge": "プレミア",
+        "price": 1200
+      },
+      {
+        "name": "スカイラインペントハウス",
+        "location": "ニューヨーク",
+        "rating": 4.8,
+        "badge": "モダニスト",
+        "price": 1450
+      },
+      {
+        "name": "グランパレレジデンス",
+        "location": "パリ",
+        "rating": 4.9,
+        "badge": "歴史的建造物",
+        "price": 980
+      },
+      {
+        "name": "ジャングルクリフヴィラ",
+        "location": "バリ",
+        "rating": 4.7,
+        "badge": "ブティック",
+        "price": 760
+      },
+      {
+        "name": "マンハッタンロフトスイート",
+        "location": "ニューヨーク",
+        "rating": 4.8,
+        "badge": "アーバンラグジュアリー",
+        "price": 1100
+      }
+    ],
+    "filter_bar": {
+      "location": "Location",
+      "location_value": "Paris, France",
+      "dates": "Dates",
+      "dates_value": "Oct 12 - Oct 18",
+      "guests": "Guests",
+      "guests_value": "2 Adults, 1 Room",
+      "modify_search": "Modify Search"
+    },
+    "sidebar": {
+      "price_range": "Price Range",
+      "star_rating": "Star Rating",
+      "room_type": "Room Type",
+      "star_5": "5 Stars Luxury",
+      "star_4": "4 Stars Premium",
+      "star_3": "3 Stars Standard",
+      "room_type_1": "Presidential Suite",
+      "room_type_2": "Executive King",
+      "room_type_3": "Deluxe Double",
+      "amenities": "Amenities"
+    },
+    "header": {
+      "title": "Luxury Stays in Paris",
+      "results_found": "{{count}} premium results found",
+      "sort_by": "Sort"
+    },
+    "card": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "details": "Details",
+      "book_now": "Book Now",
+      "toggle_favorite": "Toggle favorite"
+    },
+    "pagination": {
+      "label": "Pagination"
+    },
+    "results_details": [
+      {
+        "id": 1,
+        "location_detail": "7th Arrondissement, Paris",
+        "tags": [
+          "Eiffel View",
+          "Private Balcony",
+          "Butler Service"
+        ]
+      },
+      {
+        "id": 2,
+        "location_detail": "Ubud, Bali",
+        "tags": [
+          "Infinity Pool",
+          "Eco-Luxury",
+          "Full Spa"
+        ]
+      },
+      {
+        "id": 3,
+        "location_detail": "Upper West Side, NY",
+        "tags": [
+          "City Skyline",
+          "Chef's Kitchen",
+          "Concierge"
+        ]
+      },
+      {
+        "id": 4,
+        "location_detail": "1st Arrondissement, Paris",
+        "tags": [
+          "Garden View",
+          "Michelin Dining",
+          "Spa"
+        ]
+      },
+      {
+        "id": 5,
+        "location_detail": "Seminyak, Bali",
+        "tags": [
+          "Cliff View",
+          "Private Pool",
+          "Yoga Studio"
+        ]
+      },
+      {
+        "id": 6,
+        "location_detail": "Midtown, New York",
+        "tags": [
+          "City View",
+          "Rooftop Access",
+          "Gym"
+        ]
+      }
+    ]
+  },
+  "contact_page": {
+    "title": "お問い合わせ",
+    "subtitle": "完璧な逃避行をお作りするために、いつでもご連絡ください。",
+    "contact_intelligence": "連絡先情報 - グローバルプレゼンス",
+    "headquarters": {
+      "label": "本社",
+      "address": "1200 Azure Plaza, Coastal Ridge, Monte Carlo, 98000"
+    },
+    "global_concierge": {
+      "label": "グローバルコンシェルジュ",
+      "phone": "+1 (800) 555-AZURE",
+      "availability": "24時間365日対応"
+    },
+    "direct_inquiry": {
+      "label": "直接お問い合わせ",
+      "email": "concierge@azurehorizon.com",
+      "response_time": "2時間以内に返信"
+    },
+    "form": {
+      "full_name": "氏名",
+      "email": "メールアドレス",
+      "subject": "件名",
+      "subject_options": {
+        "general": "一般的なお問い合わせ",
+        "booking": "予約サポート",
+        "partnership": "企業パートナーシップ",
+        "membership": "プライベートメンバーシップ",
+        "feedback": "フィードバック"
+      },
+      "message": "メッセージ",
+      "full_name_placeholder": "John Doe",
+      "email_placeholder": "john@example.com",
+      "message_placeholder": "How can we elevate your journey?",
+      "send_message": "Send Message"
+    },
+    "map": "インタラクティブマップ（近日公開）",
+    "faq": "コンシェルジュの知恵 - よくある質問",
+    "global_presence": "Our Global Presence",
+    "concierge_wisdom": "Concierge Wisdom",
+    "frequently_asked": "Frequently Asked",
+    "map_location": "Azure Horizon • Monte Carlo"
+  },
+  "faq_page": {
+    "title": "ヘルプとFAQ",
+    "subtitle": "Azure Horizonについて知っておくべきすべて",
+    "categories": {
+      "all": "すべて",
+      "bookings": "予約",
+      "payments": "お支払い",
+      "rooms": "客室",
+      "policies": "ポリシー"
+    },
+    "questions": [
+      {
+        "category": "bookings",
+        "question": "予約を変更するにはどうすればよいですか？",
+        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+      },
+      {
+        "category": "bookings",
+        "question": "キャンセルポリシーは？",
+        "answer": "Cancellation policies vary by rate. Flexible rates allow cancellation up to 48 hours before arrival. Non-refundable rates cannot be cancelled or modified after booking."
+      },
+      {
+        "category": "bookings",
+        "question": "他の誰かのために予約できますか？",
+        "answer": "Yes. During checkout, you can enter a different guest name. The primary cardholder must still complete the payment, and a valid ID will be required at check-in."
+      },
+      {
+        "category": "payments",
+        "question": "どのような支払い方法が受け入れられますか？",
+        "answer": "We accept all major credit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and secure bank transfers for prepaid reservations."
+      },
+      {
+        "category": "payments",
+        "question": "支払いはいつ請求されますか？",
+        "answer": "For flexible rates, payment is taken at check-in. For non-refundable rates, the full amount is charged at the time of booking."
+      },
+      {
+        "category": "payments",
+        "question": "私の支払いは安全ですか？",
+        "answer": "All transactions are encrypted with 256-bit SSL and processed through PCI-DSS compliant payment gateways. Your card details are never stored on our servers."
+      },
+      {
+        "category": "rooms",
+        "question": "どのような設備が含まれていますか？",
+        "answer": "All rooms include complimentary high-speed WiFi, daily housekeeping, access to the fitness center, and 24/7 concierge service. Suite guests receive additional benefits including butler service."
+      },
+      {
+        "category": "policies",
+        "question": "ペットは同伴できますか？",
+        "answer": "Many of our properties are pet-friendly. Please check the specific property details or contact our concierge for our \"Paws & Palm\" pet packages."
+      },
+      {
+        "category": "policies",
+        "question": "チェックイン時間は？",
+        "answer": "Standard check-in begins at 3:00 PM local time. Early check-in from 12:00 PM may be available upon request and subject to availability. Late check-out until 2:00 PM can also be arranged."
+      },
+      {
+        "category": "policies",
+        "question": "喫煙は許可されていますか？",
+        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+      }
+    ],
+    "still_have_questions": {
+      "title": "まだ質問がありますか？",
+      "message": "コンシェルジュチームが24時間365日、完璧な逃避行をお手伝いします。",
+      "actions": {
+        "contact_concierge": "コンシェルジュに連絡",
+        "call_us": "お電話する"
+      }
+    }
+  },
+  "login_page": {
+    "title": "おかえりなさい",
+    "subtitle": "サインインするには詳細情報を入力してください",
+    "email_or_username": "メールアドレスまたはユーザー名",
+    "password": "パスワード",
+    "forgot_password": "パスワードをお忘れですか？",
+    "login_button": "ログイン",
+    "continue_with": "または次で続ける",
+    "providers": {
+      "google": "Google",
+      "apple": "Apple",
+      "meta": "Meta"
+    },
+    "email_placeholder": "Enter your email or username",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign Up"
+  },
+  "register_page": {
+    "title": "アカウントを作成",
+    "subtitle": "Azure Horizonに参加して、特別なラグジュアリー特典とシームレスな予約をお楽しみください。",
+    "upload_photo": "写真をアップロード",
+    "photo_hint": "推奨 400x400",
+    "quote": "特別な旅先への旅は、一歩から始まります。",
+    "form": {
+      "first_name": "名",
+      "last_name": "姓",
+      "date_of_birth": "生年月日",
+      "origin_country": "出身国",
+      "country_options": {
+        "us": "アメリカ",
+        "uk": "イギリス",
+        "france": "フランス",
+        "japan": "日本",
+        "uae": "アラブ首長国連邦"
+      },
+      "phone": "電話番号",
+      "email": "メールアドレス",
+      "password": "パスワード",
+      "confirm_password": "パスワード（確認）",
+      "first_name_placeholder": "John",
+      "last_name_placeholder": "Doe",
+      "phone_placeholder": "+1 (555) 000-0000",
+      "email_placeholder": "john.doe@luxury.com"
+    },
+    "terms_agreement": "利用規約とプライバシーポリシーに同意します",
+    "destinations": "Destinations",
+    "experiences": "Experiences",
+    "offers": "Offers",
+    "sign_in": "Sign In",
+    "newsletter_title": "Stay inspired",
+    "newsletter_desc": "Receive curated travel guides and exclusive offers directly in your inbox.",
+    "complete_registration": "Complete Registration",
+    "already_have_account": "Already have an account?",
+    "cookie_policy": "Cookie Policy",
+    "contact_us": "Contact Us",
+    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+  },
+  "footer": {
+    "quick_links": {
+      "title": "クイックリンク",
+      "home": "ホーム",
+      "rooms": "客室",
+      "contact": "お問い合わせ"
+    },
+    "privacy_policy": "プライバシーポリシー",
+    "terms_of_service": "利用規約",
+    "help_center": "ヘルプセンター",
+    "our_story": "私たちのストーリー",
+    "copyright": "© 2024 Azure Horizon. All rights reserved."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "ar": "Arabic",
+    "ru": "Russian"
+  },
+  "forgot_password_page": {
+    "title": "Reset Password",
+    "subtitle": "Enter your email and we'll send you a link to reset your password.",
+    "email_label": "Email Address",
+    "email_placeholder": "john@example.com",
+    "send_reset_link": "Send Reset Link",
+    "back_to_sign_in": "Back to Sign In",
+    "no_account": "Don't have an account?",
+    "create_one": "Create one"
+  }
+}

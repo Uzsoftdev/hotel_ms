@@ -1,0 +1,764 @@
+{
+  "navigation": {
+    "azure_horizon": "Azure Horizon",
+    "home": "홈",
+    "rooms": "객실",
+    "about": "소개",
+    "contact": "연락처",
+    "register": "회원가입",
+    "login": "로그인",
+    "sign_up": "가입하기",
+    "find_hotel": "호텔 찾기",
+    "manage_bookings": "예약 관리",
+    "partner_with_us": "파트너 되기",
+    "select_language": "언어 선택"
+  },
+  "home": {
+    "hero": {
+      "title": "럭셔리가 당신의 도착을 기다립니다",
+      "subtitle": "세계에서 가장 권위 있는 여행지의 중심에서 세계적 수준의 호텔 서비스를 경험하세요."
+    },
+    "destinations": {
+      "title": "인기 여행지",
+      "subtitle": "전 세계 최고의 호텔과 독특한 경험을 발견하세요.",
+      "view_all": "모든 여행지 보기",
+      "items": [
+        {
+          "name": "파리",
+          "tagline": "빛의 도시",
+          "hotel_count": "420+개 호텔"
+        },
+        {
+          "name": "발리",
+          "tagline": "열대 낙원",
+          "hotel_count": "850+개 호텔"
+        },
+        {
+          "name": "뉴욕",
+          "tagline": "빅 애플",
+          "hotel_count": "630+개 호텔"
+        }
+      ]
+    },
+    "search": {
+      "location": "Location",
+      "location_placeholder": "Where are you going?",
+      "check_in_out": "Check-in / Check-out",
+      "select_dates": "Select Dates",
+      "sample_date_range": "Apr 20 - Apr 25",
+      "guests": "Guests",
+      "add_guests": "Add Guests",
+      "search": "Search",
+      "no_match": "No destinations match your search."
+    },
+    "footer": {
+      "about_text": "Our mission is to empower travelers with seamless booking experiences and provide hotel owners with the world's most robust management tools. We believe everyone deserves a touch of luxury on their journey.",
+      "careers": "Careers",
+      "contact": {
+        "title": "Contact Us",
+        "email_label": "Email Us",
+        "call_label": "Call Anytime",
+        "call_value": "+1 (800) LUX-STAY",
+        "hq_value": "123 Luxury Way, San Francisco, CA"
+      }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "회사 소개",
+      "subtitle": "여행에 대한 열정에서 탄생했으며, 전 세계에 특별한 경험을 제공하기 위해 설립되었습니다."
+    },
+    "stats": {
+      "hotels": "500+개 호텔",
+      "countries": "120+개 국가",
+      "guests": "200만+명 고객",
+      "rating": "4.9★ 평점"
+    },
+    "mission": {
+      "title": "우리의 가치",
+      "subtitle": "미션과 가치",
+      "items": [
+        {
+          "title": "고객 우선",
+          "description": "우리가 내리는 모든 결정은 고객의 경험을 최우선으로 생각합니다."
+        },
+        {
+          "title": "타협 없는 품질",
+          "description": "엄격한 럭셔리 기준을 충족하는 숙소와만 파트너십을 맺습니다."
+        },
+        {
+          "title": "글로벌 네트워크",
+          "description": "120개국 500개 이상의 숙소, 당신이 가고 싶은 곳 바로 근처에 있습니다."
+        }
+      ]
+    },
+    "history": {
+      "title": "회사 연혁",
+      "timeline": [
+        {
+          "year": "2018",
+          "event": "Azure Horizon이 샌프란시스코에 설립되어 럭셔리 여행의 새로운 패러다임을 제시합니다."
+        },
+        {
+          "year": "2020",
+          "event": "유럽, 아시아, 아메리카 전역에 50개 파트너 호텔로 확장했습니다."
+        },
+        {
+          "year": "2022",
+          "event": "디지털 예약 플랫폼을 런칭하여 50만 명 이상의 고객에게 서비스를 제공했습니다."
+        },
+        {
+          "year": "2024",
+          "event": "120개국 500개 이상의 숙소와 200만 명 이상의 행복한 고객을 달성했습니다."
+        }
+      ]
+    },
+    "team": {
+      "title": "팀",
+      "members": [
+        {
+          "name": "소피아 로랑",
+          "role": "최고경영자"
+        },
+        {
+          "name": "마커스 첸",
+          "role": "호스피탈리티 총괄"
+        },
+        {
+          "name": "아마라 오세이",
+          "role": "파트너십 이사"
+        }
+      ]
+    },
+    "faqs": {
+      "title": "자주 묻는 질문",
+      "items": [
+        {
+          "question": "전용기 환승을 주선할 수 있나요?",
+          "answer": "물론입니다. 글로벌 컨시어지 팀이 전용 항공 파트너와 협력하여 귀하의 도착이 원활하고 신중하게 이루어지도록 보장합니다."
+        },
+        {
+          "question": "Azure Horizon 멤버십이 무엇인가요?",
+          "answer": "Horizon Circle은 초대 전용 프로그램으로, 비공개 빌라, 프라이빗 아일랜드 및 우선 예약에 대한 독점적인 접근을 제공합니다."
+        },
+        {
+          "question": "반려동물 동반이 가능한 옵션이 있나요?",
+          "answer": "많은 숙소에서 프리미엄 펫 메뉴와 맞춤형 침구를 포함한 전문 반려동물 컨시어지 서비스를 제공합니다. 예약 시 문의하시기 바랍니다."
+        }
+      ]
+    }
+  },
+  "rooms_page": {
+    "hero": {
+      "title": "객실 및 스위트",
+      "subtitle": "아늑한 휴식처부터 프레지덴셜 스위트까지 — 모든 객실은 세련된 우아함의 성역입니다."
+    },
+    "filters": {
+      "all": "전체",
+      "standard": "스탠다드",
+      "deluxe": "디럭스",
+      "suite": "스위트",
+      "presidential": "프레지덴셜"
+    },
+    "available_rooms": [
+      {
+        "id": 1,
+        "name": "Azure 스탠다드 킹",
+        "category": "스탠다드",
+        "price_per_night": 299,
+        "description": "시그니처 프리미엄 킹 베드와 지역 공예 장식으로 우아하게 꾸며진 객실입니다.",
+        "amenities": [
+          "무료 Wi-Fi",
+          "온도 조절",
+          "미니바"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "호라이즌 디럭스 스위트",
+        "category": "디럭스",
+        "price_per_night": 450,
+        "description": "무성한 지중해 정원이 내려다보이는 프라이빗 발코니가 있는 넓은 거실 공간입니다.",
+        "amenities": [
+          "프라이빗 테라스",
+          "스파 욕조",
+          "네스프레소"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "그랜드 오션 스위트",
+        "category": "스위트",
+        "price_per_night": 750,
+        "description": "탁 트인 바다 전망, 별도의 라운지, 독점 버틀러 서비스를 갖춘 넓은 스위트룸입니다.",
+        "amenities": [
+          "수영장 이용권",
+          "스파 크레딧",
+          "룸 서비스"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "오션프론트 프레지덴셜",
+        "category": "프레지덴셜",
+        "price_per_night": 1200,
+        "description": "2500평방피트의 순수한 럭셔리, 270도 파노라마 바다 전망을 자랑하는 최고의 객실입니다.",
+        "amenities": [
+          "버틀러",
+          "프라이빗 풀",
+          "개인 셰프"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "가든 뷰 트윈",
+        "category": "스탠다드",
+        "price_per_night": 249,
+        "description": "편안한 정원 전망과 프리미엄 침구를 갖춘 채광이 좋은 트윈룸으로 완벽한 휴식을 제공합니다.",
+        "amenities": [
+          "무료 Wi-Fi",
+          "주차장",
+          "온도 조절"
+        ]
+      },
+      {
+        "id": 6,
+        "name": "스카이라인 디럭스 더블",
+        "category": "디럭스",
+        "price_per_night": 520,
+        "description": "숨 막히는 도시 스카이라인을 감상할 수 있는 천장까지 닿는 창문이 있는 현대적인 더블룸입니다.",
+        "amenities": [
+          "무료 Wi-Fi",
+          "레인 샤워",
+          "미니바"
+        ]
+      }
+    ],
+    "common": {
+      "from": "From",
+      "per_night": "/night",
+      "view_details": "View Details",
+      "no_rooms": "No rooms found for this category.",
+      "cta_title": "Can't find what you're looking for?",
+      "cta_subtitle": "Our concierge team is available 24/7 to help you find the perfect accommodation.",
+      "contact_concierge": "Contact Concierge",
+      "view_all_categories": "View All Categories"
+    }
+  },
+  "room_details": {
+    "room_name": "셀레스티얼 테라스 스위트",
+    "room_type": "프레지덴셜 스위트",
+    "book_now": "지금 예약",
+    "rating": 5,
+    "highlights": {
+      "size": "120㎡",
+      "bedding": "킹 베드 1개",
+      "capacity": "최대 3인",
+      "outdoor": "프라이빗 테라스"
+    },
+    "amenities": [
+      "24/7 개인 버틀러 서비스",
+      "무료 공항 이동 서비스",
+      "네스프레소 버츄오 커피 스테이션",
+      "객실 스마트 제어 태블릿",
+      "에르메스 바디 & 배스 제품",
+      "Bose 서라운드 사운드 시스템",
+      "레인 샤워 & 스파 욕조",
+      "초고속 Wi-Fi 6E"
+    ],
+    "reviews": [
+      {
+        "author": "알렉산드라 스털링",
+        "date": "2023년 10월",
+        "comment": "잊을 수 없는 숙박이었습니다. 일몰 때 테라스에서 보는 전망은 평생 간직할 것입니다. 버틀러 서비스는 매우 신중하면서도 세심했습니다."
+      },
+      {
+        "author": "제임스 폰 트랩",
+        "date": "2023년 9월",
+        "comment": "객실 디자인의 디테일에 대한 집중도가 놀랍습니다. 모든 가구 하나하나가 의도적으로 배치된 느낌입니다. 파리 중심부에서 진정한 세계적 수준의 경험을 제공합니다."
+      }
+    ],
+    "rating_text": "4.9 / 5.0",
+    "verified_reviews": "128 Verified Reviews",
+    "location_detail": "7th Arrondissement, Paris",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "room_highlights": "Room Highlights",
+    "luxury_amenities": "Luxury Amenities",
+    "guest_reviews": "Guest Reviews",
+    "view_all_reviews": "View All Reviews",
+    "booking_widget": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "check_in": "Check In",
+      "check_out": "Check Out",
+      "guests": "Guests",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "price_line": "$2,450 × 5 nights",
+      "service_fee": "Service Fee",
+      "luxury_tax": "Luxury Tax (12%)",
+      "total": "Total",
+      "book_now": "Book Now",
+      "add_to_wishlist": "Add to Wishlist",
+      "secure_booking": "Secure encrypted booking"
+    }
+  },
+  "booking_page": {
+    "title": "예약 완료하기",
+    "subtitle": "Azure Horizon에서 당신의 성역을 예약하세요",
+    "step_indicator": {
+      "step1": "고객 정보",
+      "step2": "숙박 정보",
+      "step3": "결제"
+    },
+    "percent_complete": "% 완료",
+    "step1": {
+      "title": "고객 정보",
+      "first_name": "이름",
+      "last_name": "성",
+      "email": "이메일 주소",
+      "phone": "전화번호"
+    },
+    "step2": {
+      "title": "숙박 정보",
+      "check_in": "체크인 날짜",
+      "check_out": "체크아웃 날짜",
+      "guests": "투숙객 수",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "special_requests": "Special Requests",
+      "special_requests_placeholder": "Preferred floor, dietary restrictions, arrival time..."
+    },
+    "step3": {
+      "title": "결제",
+      "payment_method": "Payment Method",
+      "card_number": "Card Number",
+      "expiry_date": "Expiry Date",
+      "cvv": "CVV"
+    },
+    "room_summary": {
+      "title": "객실 요약",
+      "room_name": "Azure Horizon 로열 스위트",
+      "type": "오션 뷰",
+      "check_in": "10월 12일",
+      "check_out": "2024년 10월 18일",
+      "guests": "성인 2명, 아동 1명"
+    },
+    "price_breakdown": {
+      "rate_per_night": 850,
+      "nights": 6,
+      "subtotal": 5100,
+      "resort_fee": 240,
+      "discount": -150,
+      "total": 5190
+    },
+    "common": {
+      "continue": "Continue",
+      "back": "Back",
+      "confirm_booking": "Confirm Booking",
+      "dates": "Dates",
+      "guests": "Guests",
+      "nights": "nights",
+      "resort_fee": "Resort Fee",
+      "loyalty_discount": "Loyalty Discount",
+      "total_amount": "Total Amount",
+      "usd_incl_taxes": "USD incl. taxes",
+      "secure_checkout": "Secure encrypted checkout"
+    }
+  },
+  "booking_confirmation": {
+    "title": "예약이 확인되었습니다!",
+    "message": "당신의 럭셔리한 휴식이 확정되었습니다. 모든 여행 서류와 체크인 안내가 포함된 확인 이메일이 발송되었습니다.",
+    "reference": "#AZH-2024-08471",
+    "details": {
+      "check_in": "2024년 10월 12일",
+      "check_out": "2024년 10월 17일",
+      "guests": "성인 2명",
+      "room_type": "오션 뷰",
+      "status": "확정됨",
+      "total_paid": "$5,190.00"
+    },
+    "next_steps": {
+      "title": "다음 단계",
+      "steps": [
+        "확인 이메일 발송 완료 - 상세 일정과 디지털 체크인 키가 등록된 이메일로 전송되었습니다.",
+        "오후 3시부터 체크인 가능 - 요청 시 얼리 체크인이 가능할 수 있습니다. 직원이 당신을 맞이할 준비가 되어 있습니다.",
+        "24/7 컨시어지 지원 - 프리미엄 컨시어지 팀이 특별한 요청 사항에 대해 24시간 대기하고 있습니다."
+      ]
+    },
+    "common": {
+      "reference": "Reference",
+      "location": "Paris, France",
+      "room_type": "Room Type",
+      "status": "Status",
+      "total_paid": "Total Paid",
+      "view_my_bookings": "View My Bookings",
+      "back_to_home": "Back to Home"
+    }
+  },
+  "search_results": {
+    "sort_options": {
+      "recommended": "추천순",
+      "price_low_high": "가격: 낮은순",
+      "price_high_low": "가격: 높은순",
+      "rating": "평점순"
+    },
+    "amenities_filter": {
+      "wifi": "무료 Wi-Fi",
+      "pool": "수영장",
+      "spa": "스파",
+      "parking": "주차장",
+      "restaurant": "레스토랑"
+    },
+    "results": [
+      {
+        "name": "셀레스티얼 테라스 스위트",
+        "location": "파리",
+        "rating": 5,
+        "badge": "희귀한 발견",
+        "price": 850
+      },
+      {
+        "name": "Azure Horizon 생추어리",
+        "location": "발리",
+        "rating": 4.9,
+        "badge": "프리미어",
+        "price": 1200
+      },
+      {
+        "name": "스카이라인 펜트하우스",
+        "location": "뉴욕",
+        "rating": 4.8,
+        "badge": "모더니스트",
+        "price": 1450
+      },
+      {
+        "name": "그랑 팔레 레지던스",
+        "location": "파리",
+        "rating": 4.9,
+        "badge": "역사적 명소",
+        "price": 980
+      },
+      {
+        "name": "정글 클리프 빌라",
+        "location": "발리",
+        "rating": 4.7,
+        "badge": "부티크",
+        "price": 760
+      },
+      {
+        "name": "맨해튼 로프트 스위트",
+        "location": "뉴욕",
+        "rating": 4.8,
+        "badge": "도심 속 럭셔리",
+        "price": 1100
+      }
+    ],
+    "filter_bar": {
+      "location": "Location",
+      "location_value": "Paris, France",
+      "dates": "Dates",
+      "dates_value": "Oct 12 - Oct 18",
+      "guests": "Guests",
+      "guests_value": "2 Adults, 1 Room",
+      "modify_search": "Modify Search"
+    },
+    "sidebar": {
+      "price_range": "Price Range",
+      "star_rating": "Star Rating",
+      "room_type": "Room Type",
+      "star_5": "5 Stars Luxury",
+      "star_4": "4 Stars Premium",
+      "star_3": "3 Stars Standard",
+      "room_type_1": "Presidential Suite",
+      "room_type_2": "Executive King",
+      "room_type_3": "Deluxe Double",
+      "amenities": "Amenities"
+    },
+    "header": {
+      "title": "Luxury Stays in Paris",
+      "results_found": "{{count}} premium results found",
+      "sort_by": "Sort"
+    },
+    "card": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "details": "Details",
+      "book_now": "Book Now",
+      "toggle_favorite": "Toggle favorite"
+    },
+    "pagination": {
+      "label": "Pagination"
+    },
+    "results_details": [
+      {
+        "id": 1,
+        "location_detail": "7th Arrondissement, Paris",
+        "tags": [
+          "Eiffel View",
+          "Private Balcony",
+          "Butler Service"
+        ]
+      },
+      {
+        "id": 2,
+        "location_detail": "Ubud, Bali",
+        "tags": [
+          "Infinity Pool",
+          "Eco-Luxury",
+          "Full Spa"
+        ]
+      },
+      {
+        "id": 3,
+        "location_detail": "Upper West Side, NY",
+        "tags": [
+          "City Skyline",
+          "Chef's Kitchen",
+          "Concierge"
+        ]
+      },
+      {
+        "id": 4,
+        "location_detail": "1st Arrondissement, Paris",
+        "tags": [
+          "Garden View",
+          "Michelin Dining",
+          "Spa"
+        ]
+      },
+      {
+        "id": 5,
+        "location_detail": "Seminyak, Bali",
+        "tags": [
+          "Cliff View",
+          "Private Pool",
+          "Yoga Studio"
+        ]
+      },
+      {
+        "id": 6,
+        "location_detail": "Midtown, New York",
+        "tags": [
+          "City View",
+          "Rooftop Access",
+          "Gym"
+        ]
+      }
+    ]
+  },
+  "contact_page": {
+    "title": "문의하기",
+    "subtitle": "완벽한 휴식을 위해 도움을 드리겠습니다. 언제든지 문의하세요.",
+    "contact_intelligence": "연락처 정보 - 글로벌 네트워크",
+    "headquarters": {
+      "label": "본사",
+      "address": "1200 Azure Plaza, Coastal Ridge, Monte Carlo, 98000"
+    },
+    "global_concierge": {
+      "label": "글로벌 컨시어지",
+      "phone": "+1 (800) 555-AZURE",
+      "availability": "24/7 이용 가능"
+    },
+    "direct_inquiry": {
+      "label": "직접 문의",
+      "email": "concierge@azurehorizon.com",
+      "response_time": "2시간 내 응답"
+    },
+    "form": {
+      "full_name": "성명",
+      "email": "이메일 주소",
+      "subject": "제목",
+      "subject_options": {
+        "general": "일반 문의",
+        "booking": "예약 지원",
+        "partnership": "기업 제휴",
+        "membership": "프라이빗 멤버십",
+        "feedback": "피드백"
+      },
+      "message": "메시지",
+      "full_name_placeholder": "John Doe",
+      "email_placeholder": "john@example.com",
+      "message_placeholder": "How can we elevate your journey?",
+      "send_message": "Send Message"
+    },
+    "map": "대화형 지도 준비 중",
+    "faq": "컨시어지 팁 - 자주 묻는 질문",
+    "global_presence": "Our Global Presence",
+    "concierge_wisdom": "Concierge Wisdom",
+    "frequently_asked": "Frequently Asked",
+    "map_location": "Azure Horizon • Monte Carlo"
+  },
+  "faq_page": {
+    "title": "도움말 및 FAQ",
+    "subtitle": "Azure Horizon에 대해 알아야 할 모든 정보",
+    "categories": {
+      "all": "전체",
+      "bookings": "예약",
+      "payments": "결제",
+      "rooms": "객실",
+      "policies": "정책"
+    },
+    "questions": [
+      {
+        "category": "bookings",
+        "question": "예약을 어떻게 수정하나요?",
+        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+      },
+      {
+        "category": "bookings",
+        "question": "취소 정책은 어떻게 되나요?",
+        "answer": "Cancellation policies vary by rate. Flexible rates allow cancellation up to 48 hours before arrival. Non-refundable rates cannot be cancelled or modified after booking."
+      },
+      {
+        "category": "bookings",
+        "question": "다른 사람을 위해 예약할 수 있나요?",
+        "answer": "Yes. During checkout, you can enter a different guest name. The primary cardholder must still complete the payment, and a valid ID will be required at check-in."
+      },
+      {
+        "category": "payments",
+        "question": "어떤 결제 수단이 허용되나요?",
+        "answer": "We accept all major credit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and secure bank transfers for prepaid reservations."
+      },
+      {
+        "category": "payments",
+        "question": "결제는 언제 청구되나요?",
+        "answer": "For flexible rates, payment is taken at check-in. For non-refundable rates, the full amount is charged at the time of booking."
+      },
+      {
+        "category": "payments",
+        "question": "내 결제가 안전한가요?",
+        "answer": "All transactions are encrypted with 256-bit SSL and processed through PCI-DSS compliant payment gateways. Your card details are never stored on our servers."
+      },
+      {
+        "category": "rooms",
+        "question": "어떤 편의 시설이 포함되나요?",
+        "answer": "All rooms include complimentary high-speed WiFi, daily housekeeping, access to the fitness center, and 24/7 concierge service. Suite guests receive additional benefits including butler service."
+      },
+      {
+        "category": "policies",
+        "question": "반려동물 동반이 가능한가요?",
+        "answer": "Many of our properties are pet-friendly. Please check the specific property details or contact our concierge for our \"Paws & Palm\" pet packages."
+      },
+      {
+        "category": "policies",
+        "question": "체크인 시간은 어떻게 되나요?",
+        "answer": "Standard check-in begins at 3:00 PM local time. Early check-in from 12:00 PM may be available upon request and subject to availability. Late check-out until 2:00 PM can also be arranged."
+      },
+      {
+        "category": "policies",
+        "question": "흡연이 허용되나요?",
+        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+      }
+    ],
+    "still_have_questions": {
+      "title": "아직 질문이 있으신가요?",
+      "message": "컨시어지 팀이 24/7 대기하며 완벽한 휴식을 도와드립니다.",
+      "actions": {
+        "contact_concierge": "컨시어지 문의",
+        "call_us": "전화하기"
+      }
+    }
+  },
+  "login_page": {
+    "title": "다시 오신 것을 환영합니다",
+    "subtitle": "로그인하려면 정보를 입력하세요",
+    "email_or_username": "이메일 또는 사용자명",
+    "password": "비밀번호",
+    "forgot_password": "비밀번호를 잊으셨나요?",
+    "login_button": "로그인",
+    "continue_with": "또는 다음으로 계속하기",
+    "providers": {
+      "google": "Google",
+      "apple": "Apple",
+      "meta": "Meta"
+    },
+    "email_placeholder": "Enter your email or username",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign Up"
+  },
+  "register_page": {
+    "title": "계정 만들기",
+    "subtitle": "Azure Horizon에 가입하여 독점적인 럭셔리 혜택과 원활한 예약을 경험하세요.",
+    "upload_photo": "사진 업로드",
+    "photo_hint": "400x400 권장",
+    "quote": "특별한 여행지는 한 걸음부터 시작됩니다.",
+    "form": {
+      "first_name": "이름",
+      "last_name": "성",
+      "date_of_birth": "생년월일",
+      "origin_country": "국가",
+      "country_options": {
+        "us": "미국",
+        "uk": "영국",
+        "france": "프랑스",
+        "japan": "일본",
+        "uae": "아랍에미리트"
+      },
+      "phone": "전화번호",
+      "email": "이메일 주소",
+      "password": "비밀번호",
+      "confirm_password": "비밀번호 확인",
+      "first_name_placeholder": "John",
+      "last_name_placeholder": "Doe",
+      "phone_placeholder": "+1 (555) 000-0000",
+      "email_placeholder": "john.doe@luxury.com"
+    },
+    "terms_agreement": "이용약관 및 개인정보 처리방침에 동의합니다",
+    "destinations": "Destinations",
+    "experiences": "Experiences",
+    "offers": "Offers",
+    "sign_in": "Sign In",
+    "newsletter_title": "Stay inspired",
+    "newsletter_desc": "Receive curated travel guides and exclusive offers directly in your inbox.",
+    "complete_registration": "Complete Registration",
+    "already_have_account": "Already have an account?",
+    "cookie_policy": "Cookie Policy",
+    "contact_us": "Contact Us",
+    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+  },
+  "footer": {
+    "quick_links": {
+      "title": "바로가기",
+      "home": "홈",
+      "rooms": "객실",
+      "contact": "연락처"
+    },
+    "privacy_policy": "개인정보 처리방침",
+    "terms_of_service": "이용약관",
+    "help_center": "고객센터",
+    "our_story": "회사 소개",
+    "copyright": "© 2024 Azure Horizon. 모든 권리 보유."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "ar": "Arabic",
+    "ru": "Russian"
+  },
+  "forgot_password_page": {
+    "title": "Reset Password",
+    "subtitle": "Enter your email and we'll send you a link to reset your password.",
+    "email_label": "Email Address",
+    "email_placeholder": "john@example.com",
+    "send_reset_link": "Send Reset Link",
+    "back_to_sign_in": "Back to Sign In",
+    "no_account": "Don't have an account?",
+    "create_one": "Create one"
+  }
+}

@@ -1,0 +1,764 @@
+{
+  "navigation": {
+    "azure_horizon": "Azure Horizon",
+    "home": "Главная",
+    "rooms": "Номера",
+    "about": "О нас",
+    "contact": "Контакты",
+    "register": "Регистрация",
+    "login": "Войти",
+    "sign_up": "Зарегистрироваться",
+    "find_hotel": "Найти отель",
+    "manage_bookings": "Управление бронированиями",
+    "partner_with_us": "Сотрудничать с нами",
+    "select_language": "Выбрать язык"
+  },
+  "home": {
+    "hero": {
+      "title": "Роскошь ждет вашего прибытия",
+      "subtitle": "Испытайте гостеприимство мирового класса в сердце самых престижных направлений мира."
+    },
+    "destinations": {
+      "title": "Популярные направления",
+      "subtitle": "Откройте для себя лучшие отели и уникальные впечатления по всему миру.",
+      "view_all": "Смотреть все направления",
+      "items": [
+        {
+          "name": "Париж",
+          "tagline": "Город света",
+          "hotel_count": "420+ отелей"
+        },
+        {
+          "name": "Бали",
+          "tagline": "Тропический рай",
+          "hotel_count": "850+ отелей"
+        },
+        {
+          "name": "Нью-Йорк",
+          "tagline": "Большое яблоко",
+          "hotel_count": "630+ отелей"
+        }
+      ]
+    },
+    "search": {
+      "location": "Location",
+      "location_placeholder": "Where are you going?",
+      "check_in_out": "Check-in / Check-out",
+      "select_dates": "Select Dates",
+      "sample_date_range": "Apr 20 - Apr 25",
+      "guests": "Guests",
+      "add_guests": "Add Guests",
+      "search": "Search",
+      "no_match": "No destinations match your search."
+    },
+    "footer": {
+      "about_text": "Our mission is to empower travelers with seamless booking experiences and provide hotel owners with the world's most robust management tools. We believe everyone deserves a touch of luxury on their journey.",
+      "careers": "Careers",
+      "contact": {
+        "title": "Contact Us",
+        "email_label": "Email Us",
+        "call_label": "Call Anytime",
+        "call_value": "+1 (800) LUX-STAY",
+        "hq_value": "123 Luxury Way, San Francisco, CA"
+      }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "Наша история",
+      "subtitle": "Рожденные из страсти к путешествиям, созданные для предоставления выдающихся впечатлений по всему миру."
+    },
+    "stats": {
+      "hotels": "500+ отелей",
+      "countries": "120+ стран",
+      "guests": "2 млн+ гостей",
+      "rating": "4.9★ рейтинг"
+    },
+    "mission": {
+      "title": "Наши принципы",
+      "subtitle": "Миссия и ценности",
+      "items": [
+        {
+          "title": "Гость прежде всего",
+          "description": "Каждое наше решение начинается с впечатлений гостя."
+        },
+        {
+          "title": "Непревзойденное качество",
+          "description": "Мы сотрудничаем только с объектами, соответствующими нашим строгим стандартам роскоши."
+        },
+        {
+          "title": "Глобальный охват",
+          "description": "500+ объектов в 120+ странах, всегда рядом с тем местом, где вы хотите быть."
+        }
+      ]
+    },
+    "history": {
+      "title": "История компании",
+      "timeline": [
+        {
+          "year": "2018",
+          "event": "Azure Horizon основан в Сан-Франциско с целью переосмыслить роскошные путешествия."
+        },
+        {
+          "year": "2020",
+          "event": "Расширение до 50 отелей-партнеров по всей Европе, Азии и Америке."
+        },
+        {
+          "year": "2022",
+          "event": "Запуск нашей цифровой платформы бронирования, обслуживающей более 500 000 гостей."
+        },
+        {
+          "year": "2024",
+          "event": "Достигли 500+ объектов в 120+ странах с 2 млн+ довольных гостей."
+        }
+      ]
+    },
+    "team": {
+      "title": "Команда",
+      "members": [
+        {
+          "name": "София Лоран",
+          "role": "Генеральный директор"
+        },
+        {
+          "name": "Маркус Чен",
+          "role": "Руководитель отдела гостеприимства"
+        },
+        {
+          "name": "Амара Осей",
+          "role": "Директор по партнерству"
+        }
+      ]
+    },
+    "faqs": {
+      "title": "Часто задаваемые вопросы",
+      "items": [
+        {
+          "question": "Могу ли я организовать трансфер на частном самолете?",
+          "answer": "Абсолютно. Наша команда глобального консьерж-сервиса координирует действия с партнерами по частной авиации, чтобы ваше прибытие было легким и конфиденциальным."
+        },
+        {
+          "question": "Что такое членство Azure Horizon?",
+          "answer": "Horizon Circle - это программа только по приглашениям, предоставляющая эксклюзивный доступ к виллам, частным островам и приоритетным бронированиям."
+        },
+        {
+          "question": "Доступны ли варианты для размещения с домашними животными?",
+          "answer": "Многие объекты предлагают специализированные услуги консьержа для собак, включая гурмен-меню и индивидуальные постельные принадлежности. Пожалуйста, уточняйте при бронировании."
+        }
+      ]
+    }
+  },
+  "rooms_page": {
+    "hero": {
+      "title": "Наши номера и люксы",
+      "subtitle": "От уютных убежищ до президентских люксов — каждый номер является святилищем изысканной элегантности."
+    },
+    "filters": {
+      "all": "Все",
+      "standard": "Стандарт",
+      "deluxe": "Делюкс",
+      "suite": "Люкс",
+      "presidential": "Президентский"
+    },
+    "available_rooms": [
+      {
+        "id": 1,
+        "name": "Azure Standard King",
+        "category": "Стандарт",
+        "price_per_night": 299,
+        "description": "Элегантно оформленный номер с фирменной роскошной кроватью размера king-size и искусным декором местного производства.",
+        "amenities": [
+          "Бесплатный Wi-Fi",
+          "Климат-контроль",
+          "Мини-бар"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Horizon Deluxe Suite",
+        "category": "Делюкс",
+        "price_per_night": 450,
+        "description": "Просторная гостиная с частным балконом, выходящим на наши пышные средиземноморские сады.",
+        "amenities": [
+          "Частная терраса",
+          "Джакузи",
+          "Nespresso"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Grand Ocean Suite",
+        "category": "Люкс",
+        "price_per_night": 750,
+        "description": "Большой люкс с панорамным видом на море, отдельной гостиной и эксклюзивным обслуживанием дворецкого.",
+        "amenities": [
+          "Доступ к бассейну",
+          "Спа-кредиты",
+          "Обслуживание в номере"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Oceanfront Presidential",
+        "category": "Президентский",
+        "price_per_night": 1200,
+        "description": "Наша королевская жемчужина. 232 кв. м чистого роскоши с панорамным видом на океан на 270 градусов.",
+        "amenities": [
+          "Дворецкий",
+          "Частный бассейн",
+          "Личный повар"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Garden View Twin",
+        "category": "Стандарт",
+        "price_per_night": 249,
+        "description": "Залитый светом номер с двумя отдельными кроватями и спокойным видом на сад, с премиальным постельным бельем для идеального отдыха.",
+        "amenities": [
+          "Бесплатный Wi-Fi",
+          "Парковка",
+          "Климат-контроль"
+        ]
+      },
+      {
+        "id": 6,
+        "name": "Skyline Deluxe Double",
+        "category": "Делюкс",
+        "price_per_night": 520,
+        "description": "Современный двухместный номер с панорамными окнами от пола до потолка, обрамляющими потрясающий горизонт города.",
+        "amenities": [
+          "Бесплатный Wi-Fi",
+          "Тропический душ",
+          "Мини-бар"
+        ]
+      }
+    ],
+    "common": {
+      "from": "From",
+      "per_night": "/night",
+      "view_details": "View Details",
+      "no_rooms": "No rooms found for this category.",
+      "cta_title": "Can't find what you're looking for?",
+      "cta_subtitle": "Our concierge team is available 24/7 to help you find the perfect accommodation.",
+      "contact_concierge": "Contact Concierge",
+      "view_all_categories": "View All Categories"
+    }
+  },
+  "room_details": {
+    "room_name": "The Celestial Terrace Suite",
+    "room_type": "Президентский люкс",
+    "book_now": "Забронировать сейчас",
+    "rating": 5,
+    "highlights": {
+      "size": "120 м²",
+      "bedding": "1 кровать king-size",
+      "capacity": "3 гостя",
+      "outdoor": "Частная терраса"
+    },
+    "amenities": [
+      "Личное обслуживание дворецким 24/7",
+      "Бесплатный трансфер из аэропорта",
+      "Кофейная станция Nespresso Vertuo",
+      "Умный планшет для управления номером",
+      "Продукты для ванны и тела Hermès",
+      "Объемная звуковая система Bose",
+      "Тропический душ и джакузи",
+      "Высокоскоростной Wi-Fi 6E"
+    ],
+    "reviews": [
+      {
+        "author": "Александра Стерлинг",
+        "date": "Октябрь 2023",
+        "comment": "Незабываемое пребывание. Вид с террасы на закате - это то, чем я буду дорожить вечно. Обслуживание дворецким было исключительно деликатным, но внимательным."
+      },
+      {
+        "author": "Джеймс фон Трапп",
+        "date": "Сентябрь 2023",
+        "comment": "Внимание к деталям в дизайне номера феноменально. Каждый предмет мебели кажется продуманным. Действительно впечатления мирового уровня в самом сердце Парижа."
+      }
+    ],
+    "rating_text": "4.9 / 5.0",
+    "verified_reviews": "128 Verified Reviews",
+    "location_detail": "7th Arrondissement, Paris",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "room_highlights": "Room Highlights",
+    "luxury_amenities": "Luxury Amenities",
+    "guest_reviews": "Guest Reviews",
+    "view_all_reviews": "View All Reviews",
+    "booking_widget": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "check_in": "Check In",
+      "check_out": "Check Out",
+      "guests": "Guests",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "price_line": "$2,450 × 5 nights",
+      "service_fee": "Service Fee",
+      "luxury_tax": "Luxury Tax (12%)",
+      "total": "Total",
+      "book_now": "Book Now",
+      "add_to_wishlist": "Add to Wishlist",
+      "secure_booking": "Secure encrypted booking"
+    }
+  },
+  "booking_page": {
+    "title": "Завершите бронирование",
+    "subtitle": "Обеспечьте свое убежище в Azure Horizon",
+    "step_indicator": {
+      "step1": "Гость",
+      "step2": "Проживание",
+      "step3": "Оплата"
+    },
+    "percent_complete": "% завершено",
+    "step1": {
+      "title": "Данные гостя",
+      "first_name": "Имя",
+      "last_name": "Фамилия",
+      "email": "Адрес электронной почты",
+      "phone": "Номер телефона"
+    },
+    "step2": {
+      "title": "Детали проживания",
+      "check_in": "Дата заезда",
+      "check_out": "Дата выезда",
+      "guests": "Количество гостей",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "special_requests": "Special Requests",
+      "special_requests_placeholder": "Preferred floor, dietary restrictions, arrival time..."
+    },
+    "step3": {
+      "title": "Оплата",
+      "payment_method": "Payment Method",
+      "card_number": "Card Number",
+      "expiry_date": "Expiry Date",
+      "cvv": "CVV"
+    },
+    "room_summary": {
+      "title": "Сводка по номеру",
+      "room_name": "Azure Horizon Royal Suite",
+      "type": "Вид на океан",
+      "check_in": "12 октября",
+      "check_out": "18 октября 2024",
+      "guests": "2 взрослых, 1 ребенок"
+    },
+    "price_breakdown": {
+      "rate_per_night": 850,
+      "nights": 6,
+      "subtotal": 5100,
+      "resort_fee": 240,
+      "discount": -150,
+      "total": 5190
+    },
+    "common": {
+      "continue": "Continue",
+      "back": "Back",
+      "confirm_booking": "Confirm Booking",
+      "dates": "Dates",
+      "guests": "Guests",
+      "nights": "nights",
+      "resort_fee": "Resort Fee",
+      "loyalty_discount": "Loyalty Discount",
+      "total_amount": "Total Amount",
+      "usd_incl_taxes": "USD incl. taxes",
+      "secure_checkout": "Secure encrypted checkout"
+    }
+  },
+  "booking_confirmation": {
+    "title": "Бронирование подтверждено!",
+    "message": "Ваше роскошное убежище обеспечено. Письмо с подтверждением отправлено на ваш почтовый ящик со всеми дорожными документами и инструкциями по заезду.",
+    "reference": "#AZH-2024-08471",
+    "details": {
+      "check_in": "12 октября 2024",
+      "check_out": "17 октября 2024",
+      "guests": "2 взрослых",
+      "room_type": "Вид на океан",
+      "status": "Подтверждено",
+      "total_paid": "$5,190.00"
+    },
+    "next_steps": {
+      "title": "Следующие шаги",
+      "steps": [
+        "Письмо с подтверждением отправлено - подробный маршрут и цифровой ключ для заезда отправлены на вашу зарегистрированную электронную почту.",
+        "Заезд с 15:00 - ранний заезд возможен по запросу. Наша команда будет готова приветствовать вас.",
+        "Круглосуточная поддержка консьержей - наша премиальная команда консьержей доступна круглосуточно для любых особых запросов."
+      ]
+    },
+    "common": {
+      "reference": "Reference",
+      "location": "Paris, France",
+      "room_type": "Room Type",
+      "status": "Status",
+      "total_paid": "Total Paid",
+      "view_my_bookings": "View My Bookings",
+      "back_to_home": "Back to Home"
+    }
+  },
+  "search_results": {
+    "sort_options": {
+      "recommended": "Рекомендуемые",
+      "price_low_high": "Цена: от низкой к высокой",
+      "price_high_low": "Цена: от высокой к низкой",
+      "rating": "Рейтинг"
+    },
+    "amenities_filter": {
+      "wifi": "Бесплатный Wi-Fi",
+      "pool": "Бассейн",
+      "spa": "Спа",
+      "parking": "Парковка",
+      "restaurant": "Ресторан"
+    },
+    "results": [
+      {
+        "name": "The Celestial Terrace Suite",
+        "location": "Париж",
+        "rating": 5,
+        "badge": "Редкая находка",
+        "price": 850
+      },
+      {
+        "name": "Azure Horizon Sanctuary",
+        "location": "Бали",
+        "rating": 4.9,
+        "badge": "Премьер",
+        "price": 1200
+      },
+      {
+        "name": "The Skyline Penthouse",
+        "location": "Нью-Йорк",
+        "rating": 4.8,
+        "badge": "Модернистский",
+        "price": 1450
+      },
+      {
+        "name": "Grand Palais Residence",
+        "location": "Париж",
+        "rating": 4.9,
+        "badge": "Исторический",
+        "price": 980
+      },
+      {
+        "name": "Jungle Cliff Villa",
+        "location": "Бали",
+        "rating": 4.7,
+        "badge": "Бутик",
+        "price": 760
+      },
+      {
+        "name": "Manhattan Loft Suite",
+        "location": "Нью-Йорк",
+        "rating": 4.8,
+        "badge": "Городская роскошь",
+        "price": 1100
+      }
+    ],
+    "filter_bar": {
+      "location": "Location",
+      "location_value": "Paris, France",
+      "dates": "Dates",
+      "dates_value": "Oct 12 - Oct 18",
+      "guests": "Guests",
+      "guests_value": "2 Adults, 1 Room",
+      "modify_search": "Modify Search"
+    },
+    "sidebar": {
+      "price_range": "Price Range",
+      "star_rating": "Star Rating",
+      "room_type": "Room Type",
+      "star_5": "5 Stars Luxury",
+      "star_4": "4 Stars Premium",
+      "star_3": "3 Stars Standard",
+      "room_type_1": "Presidential Suite",
+      "room_type_2": "Executive King",
+      "room_type_3": "Deluxe Double",
+      "amenities": "Amenities"
+    },
+    "header": {
+      "title": "Luxury Stays in Paris",
+      "results_found": "{{count}} premium results found",
+      "sort_by": "Sort"
+    },
+    "card": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "details": "Details",
+      "book_now": "Book Now",
+      "toggle_favorite": "Toggle favorite"
+    },
+    "pagination": {
+      "label": "Pagination"
+    },
+    "results_details": [
+      {
+        "id": 1,
+        "location_detail": "7th Arrondissement, Paris",
+        "tags": [
+          "Eiffel View",
+          "Private Balcony",
+          "Butler Service"
+        ]
+      },
+      {
+        "id": 2,
+        "location_detail": "Ubud, Bali",
+        "tags": [
+          "Infinity Pool",
+          "Eco-Luxury",
+          "Full Spa"
+        ]
+      },
+      {
+        "id": 3,
+        "location_detail": "Upper West Side, NY",
+        "tags": [
+          "City Skyline",
+          "Chef's Kitchen",
+          "Concierge"
+        ]
+      },
+      {
+        "id": 4,
+        "location_detail": "1st Arrondissement, Paris",
+        "tags": [
+          "Garden View",
+          "Michelin Dining",
+          "Spa"
+        ]
+      },
+      {
+        "id": 5,
+        "location_detail": "Seminyak, Bali",
+        "tags": [
+          "Cliff View",
+          "Private Pool",
+          "Yoga Studio"
+        ]
+      },
+      {
+        "id": 6,
+        "location_detail": "Midtown, New York",
+        "tags": [
+          "City View",
+          "Rooftop Access",
+          "Gym"
+        ]
+      }
+    ]
+  },
+  "contact_page": {
+    "title": "Свяжитесь с нами",
+    "subtitle": "Мы здесь, чтобы создать ваш идеальный отдых. Свяжитесь с нами в любое время.",
+    "contact_intelligence": "Контактная информация - Наше глобальное присутствие",
+    "headquarters": {
+      "label": "Штаб-квартира",
+      "address": "1200 Azure Plaza, Coastal Ridge, Монте-Карло, 98000"
+    },
+    "global_concierge": {
+      "label": "Глобальный консьерж",
+      "phone": "+1 (800) 555-AZURE",
+      "availability": "Доступно 24/7"
+    },
+    "direct_inquiry": {
+      "label": "Прямой запрос",
+      "email": "concierge@azurehorizon.com",
+      "response_time": "Ответ в течение 2 часов"
+    },
+    "form": {
+      "full_name": "Полное имя",
+      "email": "Адрес электронной почты",
+      "subject": "Тема",
+      "subject_options": {
+        "general": "Общий запрос",
+        "booking": "Поддержка бронирования",
+        "partnership": "Корпоративное партнерство",
+        "membership": "Частное членство",
+        "feedback": "Отзыв"
+      },
+      "message": "Ваше сообщение",
+      "full_name_placeholder": "John Doe",
+      "email_placeholder": "john@example.com",
+      "message_placeholder": "How can we elevate your journey?",
+      "send_message": "Send Message"
+    },
+    "map": "Интерактивная карта скоро появится",
+    "faq": "Мудрость консьержа - Часто задаваемые вопросы",
+    "global_presence": "Our Global Presence",
+    "concierge_wisdom": "Concierge Wisdom",
+    "frequently_asked": "Frequently Asked",
+    "map_location": "Azure Horizon • Monte Carlo"
+  },
+  "faq_page": {
+    "title": "Помощь и часто задаваемые вопросы",
+    "subtitle": "Все, что вам нужно знать об Azure Horizon",
+    "categories": {
+      "all": "Все",
+      "bookings": "Бронирования",
+      "payments": "Платежи",
+      "rooms": "Номера",
+      "policies": "Правила"
+    },
+    "questions": [
+      {
+        "category": "bookings",
+        "question": "Как изменить бронирование?",
+        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+      },
+      {
+        "category": "bookings",
+        "question": "Какова политика отмены?",
+        "answer": "Cancellation policies vary by rate. Flexible rates allow cancellation up to 48 hours before arrival. Non-refundable rates cannot be cancelled or modified after booking."
+      },
+      {
+        "category": "bookings",
+        "question": "Могу ли я забронировать для другого человека?",
+        "answer": "Yes. During checkout, you can enter a different guest name. The primary cardholder must still complete the payment, and a valid ID will be required at check-in."
+      },
+      {
+        "category": "payments",
+        "question": "Какие способы оплаты принимаются?",
+        "answer": "We accept all major credit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and secure bank transfers for prepaid reservations."
+      },
+      {
+        "category": "payments",
+        "question": "Когда списывается оплата?",
+        "answer": "For flexible rates, payment is taken at check-in. For non-refundable rates, the full amount is charged at the time of booking."
+      },
+      {
+        "category": "payments",
+        "question": "Безопасна ли моя оплата?",
+        "answer": "All transactions are encrypted with 256-bit SSL and processed through PCI-DSS compliant payment gateways. Your card details are never stored on our servers."
+      },
+      {
+        "category": "rooms",
+        "question": "Какие удобства включены?",
+        "answer": "All rooms include complimentary high-speed WiFi, daily housekeeping, access to the fitness center, and 24/7 concierge service. Suite guests receive additional benefits including butler service."
+      },
+      {
+        "category": "policies",
+        "question": "Разрешены ли домашние животные?",
+        "answer": "Many of our properties are pet-friendly. Please check the specific property details or contact our concierge for our \"Paws & Palm\" pet packages."
+      },
+      {
+        "category": "policies",
+        "question": "Во сколько заезд?",
+        "answer": "Standard check-in begins at 3:00 PM local time. Early check-in from 12:00 PM may be available upon request and subject to availability. Late check-out until 2:00 PM can also be arranged."
+      },
+      {
+        "category": "policies",
+        "question": "Разрешено ли курение?",
+        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+      }
+    ],
+    "still_have_questions": {
+      "title": "Остались вопросы?",
+      "message": "Наша команда консьержей доступна 24/7, чтобы помочь вам организовать идеальный отдых.",
+      "actions": {
+        "contact_concierge": "Связаться с консьержем",
+        "call_us": "Позвоните нам"
+      }
+    }
+  },
+  "login_page": {
+    "title": "С возвращением",
+    "subtitle": "Пожалуйста, введите свои данные для входа",
+    "email_or_username": "Электронная почта или имя пользователя",
+    "password": "Пароль",
+    "forgot_password": "Забыли пароль?",
+    "login_button": "Войти",
+    "continue_with": "Или продолжить через",
+    "providers": {
+      "google": "Google",
+      "apple": "Apple",
+      "meta": "Meta"
+    },
+    "email_placeholder": "Enter your email or username",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign Up"
+  },
+  "register_page": {
+    "title": "Создайте свой аккаунт",
+    "subtitle": "Присоединяйтесь к Azure Horizon для эксклюзивных преимуществ роскоши и беспроблемного бронирования.",
+    "upload_photo": "Загрузить фото",
+    "photo_hint": "Рекомендуется 400×400",
+    "quote": "Ваше путешествие к необыкновенным направлениям начинается с одного шага.",
+    "form": {
+      "first_name": "Имя",
+      "last_name": "Фамилия",
+      "date_of_birth": "Дата рождения",
+      "origin_country": "Страна происхождения",
+      "country_options": {
+        "us": "Соединенные Штаты",
+        "uk": "Великобритания",
+        "france": "Франция",
+        "japan": "Япония",
+        "uae": "Объединенные Арабские Эмираты"
+      },
+      "phone": "Номер телефона",
+      "email": "Адрес электронной почты",
+      "password": "Пароль",
+      "confirm_password": "Подтвердите пароль",
+      "first_name_placeholder": "John",
+      "last_name_placeholder": "Doe",
+      "phone_placeholder": "+1 (555) 000-0000",
+      "email_placeholder": "john.doe@luxury.com"
+    },
+    "terms_agreement": "Я согласен с Условиями обслуживания и Политикой конфиденциальности",
+    "destinations": "Destinations",
+    "experiences": "Experiences",
+    "offers": "Offers",
+    "sign_in": "Sign In",
+    "newsletter_title": "Stay inspired",
+    "newsletter_desc": "Receive curated travel guides and exclusive offers directly in your inbox.",
+    "complete_registration": "Complete Registration",
+    "already_have_account": "Already have an account?",
+    "cookie_policy": "Cookie Policy",
+    "contact_us": "Contact Us",
+    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+  },
+  "footer": {
+    "quick_links": {
+      "title": "Быстрые ссылки",
+      "home": "Главная",
+      "rooms": "Номера",
+      "contact": "Контакты"
+    },
+    "privacy_policy": "Политика конфиденциальности",
+    "terms_of_service": "Условия обслуживания",
+    "help_center": "Центр помощи",
+    "our_story": "Наша история",
+    "copyright": "© 2024 Azure Horizon. Все права защищены."
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "ar": "Arabic",
+    "ru": "Russian"
+  },
+  "forgot_password_page": {
+    "title": "Reset Password",
+    "subtitle": "Enter your email and we'll send you a link to reset your password.",
+    "email_label": "Email Address",
+    "email_placeholder": "john@example.com",
+    "send_reset_link": "Send Reset Link",
+    "back_to_sign_in": "Back to Sign In",
+    "no_account": "Don't have an account?",
+    "create_one": "Create one"
+  }
+}

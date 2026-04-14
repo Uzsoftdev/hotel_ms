@@ -1,0 +1,764 @@
+{
+  "navigation": {
+    "azure_horizon": "Azure Horizon",
+    "home": "首页",
+    "rooms": "客房",
+    "about": "关于我们",
+    "contact": "联系方式",
+    "register": "注册",
+    "login": "登录",
+    "sign_up": "立即注册",
+    "find_hotel": "查找酒店",
+    "manage_bookings": "管理预订",
+    "partner_with_us": "合作加盟",
+    "select_language": "选择语言"
+  },
+  "home": {
+    "hero": {
+      "title": "奢华体验，静候您的到来",
+      "subtitle": "在全球最负盛名的目的地中心，体验世界级的热情款待。"
+    },
+    "destinations": {
+      "title": "热门目的地",
+      "subtitle": "发现全球顶级酒店和独特体验。",
+      "view_all": "查看所有目的地",
+      "items": [
+        {
+          "name": "巴黎",
+          "tagline": "光之城",
+          "hotel_count": "420+ 家酒店"
+        },
+        {
+          "name": "巴厘岛",
+          "tagline": "热带天堂",
+          "hotel_count": "850+ 家酒店"
+        },
+        {
+          "name": "纽约",
+          "tagline": "大苹果",
+          "hotel_count": "630+ 家酒店"
+        }
+      ]
+    },
+    "search": {
+      "location": "Location",
+      "location_placeholder": "Where are you going?",
+      "check_in_out": "Check-in / Check-out",
+      "select_dates": "Select Dates",
+      "sample_date_range": "Apr 20 - Apr 25",
+      "guests": "Guests",
+      "add_guests": "Add Guests",
+      "search": "Search",
+      "no_match": "No destinations match your search."
+    },
+    "footer": {
+      "about_text": "Our mission is to empower travelers with seamless booking experiences and provide hotel owners with the world's most robust management tools. We believe everyone deserves a touch of luxury on their journey.",
+      "careers": "Careers",
+      "contact": {
+        "title": "Contact Us",
+        "email_label": "Email Us",
+        "call_label": "Call Anytime",
+        "call_value": "+1 (800) LUX-STAY",
+        "hq_value": "123 Luxury Way, San Francisco, CA"
+      }
+    }
+  },
+  "about": {
+    "hero": {
+      "title": "我们的故事",
+      "subtitle": "源于对旅行的热情，致力于在全球提供非凡的体验。"
+    },
+    "stats": {
+      "hotels": "500+ 家酒店",
+      "countries": "120+ 个国家",
+      "guests": "200万+ 位客人",
+      "rating": "4.9★ 评分"
+    },
+    "mission": {
+      "title": "我们的理念",
+      "subtitle": "使命与价值观",
+      "items": [
+        {
+          "title": "客人至上",
+          "description": "我们所做的每一个决定都以客人的体验为出发点。"
+        },
+        {
+          "title": "品质无妥协",
+          "description": "我们只与符合我们严格奢华标准的物业合作。"
+        },
+        {
+          "title": "全球覆盖",
+          "description": "在120多个国家拥有500多家物业，始终靠近您想去的地方。"
+        }
+      ]
+    },
+    "history": {
+      "title": "公司历史",
+      "timeline": [
+        {
+          "year": "2018",
+          "event": "Azure Horizon 在旧金山成立，致力于重新定义奢华旅行。"
+        },
+        {
+          "year": "2020",
+          "event": "业务扩展到欧洲、亚洲和美洲的50家合作酒店。"
+        },
+        {
+          "year": "2022",
+          "event": "推出数字预订平台，服务超过50万名客人。"
+        },
+        {
+          "year": "2024",
+          "event": "在120多个国家拥有500多家物业，服务超过200万名满意客人。"
+        }
+      ]
+    },
+    "team": {
+      "title": "团队",
+      "members": [
+        {
+          "name": "索菲亚·洛朗",
+          "role": "首席执行官"
+        },
+        {
+          "name": "马库斯·陈",
+          "role": "酒店服务总监"
+        },
+        {
+          "name": "阿玛拉·奥塞",
+          "role": "合作伙伴关系总监"
+        }
+      ]
+    },
+    "faqs": {
+      "title": "常见问题",
+      "items": [
+        {
+          "question": "可以安排私人飞机接送吗？",
+          "answer": "当然可以。我们的全球礼宾团队与私人航空合作伙伴协调，确保您的抵达轻松而私密。"
+        },
+        {
+          "question": "Azure Horizon 会员是什么？",
+          "answer": "Horizon Circle 是仅限受邀者的计划，提供对非公开市场别墅、私人岛屿和优先预订的独家访问权。"
+        },
+        {
+          "question": "有允许携带宠物的选项吗？",
+          "answer": "许多物业提供专业的宠物礼宾服务，包括美食菜单和定制床品。请在预订时咨询。"
+        }
+      ]
+    }
+  },
+  "rooms_page": {
+    "hero": {
+      "title": "我们的客房与套房",
+      "subtitle": "从舒适的休憩之所到总统套房 — 每间客房都是精致优雅的圣殿。"
+    },
+    "filters": {
+      "all": "全部",
+      "standard": "标准",
+      "deluxe": "豪华",
+      "suite": "套房",
+      "presidential": "总统"
+    },
+    "available_rooms": [
+      {
+        "id": 1,
+        "name": "Azure 标准特大床房",
+        "category": "标准",
+        "price_per_night": 299,
+        "description": "优雅布置的客房，配有标志性的豪华特大床和本地手工制作的装饰。",
+        "amenities": [
+          "免费Wi-Fi",
+          "温控系统",
+          "迷你吧"
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Horizon 豪华套房",
+        "category": "豪华",
+        "price_per_night": 450,
+        "description": "宽敞的起居区，带私人阳台，俯瞰郁郁葱葱的地中海花园。",
+        "amenities": [
+          "私人露台",
+          "水疗浴缸",
+          "Nespresso咖啡机"
+        ]
+      },
+      {
+        "id": 3,
+        "name": "海洋大套房",
+        "category": "套房",
+        "price_per_night": 750,
+        "description": "宽敞的套房，可欣赏全景海景，设有独立的客厅和专属管家服务。",
+        "amenities": [
+          "泳池使用权限",
+          "水疗积分",
+          "客房服务"
+        ]
+      },
+      {
+        "id": 4,
+        "name": "海滨总统套房",
+        "category": "总统",
+        "price_per_night": 1200,
+        "description": "我们的皇冠之珠。2500平方英尺的纯粹奢华，享有270度全景海景。",
+        "amenities": [
+          "管家服务",
+          "私人泳池",
+          "私人厨师"
+        ]
+      },
+      {
+        "id": 5,
+        "name": "花园景观双床房",
+        "category": "标准",
+        "price_per_night": 249,
+        "description": "光线充足的双床房，享有宁静的花园景观和优质床品，为您提供完美的休息。",
+        "amenities": [
+          "免费Wi-Fi",
+          "停车场",
+          "温控系统"
+        ]
+      },
+      {
+        "id": 6,
+        "name": "天际线豪华双人房",
+        "category": "豪华",
+        "price_per_night": 520,
+        "description": "现代双人房，落地窗框出令人惊叹的城市天际线。",
+        "amenities": [
+          "免费Wi-Fi",
+          "雨淋花洒",
+          "迷你吧"
+        ]
+      }
+    ],
+    "common": {
+      "from": "From",
+      "per_night": "/night",
+      "view_details": "View Details",
+      "no_rooms": "No rooms found for this category.",
+      "cta_title": "Can't find what you're looking for?",
+      "cta_subtitle": "Our concierge team is available 24/7 to help you find the perfect accommodation.",
+      "contact_concierge": "Contact Concierge",
+      "view_all_categories": "View All Categories"
+    }
+  },
+  "room_details": {
+    "room_name": "天空露台套房",
+    "room_type": "总统套房",
+    "book_now": "立即预订",
+    "rating": 5,
+    "highlights": {
+      "size": "120 平方米",
+      "bedding": "1 张特大床",
+      "capacity": "3 位客人",
+      "outdoor": "私人露台"
+    },
+    "amenities": [
+      "24/7 私人管家服务",
+      "免费机场接送",
+      "Nespresso Vertuo 咖啡站",
+      "客房智能控制平板",
+      "爱马仕洗浴用品",
+      "Bose 环绕音响系统",
+      "雨淋花洒与水疗浴缸",
+      "超高速 Wi-Fi 6E"
+    ],
+    "reviews": [
+      {
+        "author": "亚历山德拉·斯特林",
+        "date": "2023年10月",
+        "comment": "一次难忘的住宿。日落时分从露台看到的景色是我将永远珍惜的。管家服务非常谨慎却又体贴入微。"
+      },
+      {
+        "author": "詹姆斯·冯·特拉普",
+        "date": "2023年9月",
+        "comment": "客房设计的细节关注令人惊叹。每一件家具都感觉是精心挑选的。真正在巴黎市中心体验到了世界级的服务。"
+      }
+    ],
+    "rating_text": "4.9 / 5.0",
+    "verified_reviews": "128 Verified Reviews",
+    "location_detail": "7th Arrondissement, Paris",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "room_highlights": "Room Highlights",
+    "luxury_amenities": "Luxury Amenities",
+    "guest_reviews": "Guest Reviews",
+    "view_all_reviews": "View All Reviews",
+    "booking_widget": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "check_in": "Check In",
+      "check_out": "Check Out",
+      "guests": "Guests",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "price_line": "$2,450 × 5 nights",
+      "service_fee": "Service Fee",
+      "luxury_tax": "Luxury Tax (12%)",
+      "total": "Total",
+      "book_now": "Book Now",
+      "add_to_wishlist": "Add to Wishlist",
+      "secure_booking": "Secure encrypted booking"
+    }
+  },
+  "booking_page": {
+    "title": "完成预订",
+    "subtitle": "在 Azure Horizon 预订您的专属圣地",
+    "step_indicator": {
+      "step1": "客人信息",
+      "step2": "住宿信息",
+      "step3": "付款"
+    },
+    "percent_complete": "% 完成",
+    "step1": {
+      "title": "客人信息",
+      "first_name": "名字",
+      "last_name": "姓氏",
+      "email": "电子邮箱",
+      "phone": "电话号码"
+    },
+    "step2": {
+      "title": "住宿信息",
+      "check_in": "入住日期",
+      "check_out": "退房日期",
+      "guests": "客人数量",
+      "guest_options": {
+        "1": "1 Adult",
+        "2": "2 Adults",
+        "3": "2 Adults, 1 Child",
+        "4": "2 Adults, 2 Children"
+      },
+      "special_requests": "Special Requests",
+      "special_requests_placeholder": "Preferred floor, dietary restrictions, arrival time..."
+    },
+    "step3": {
+      "title": "付款",
+      "payment_method": "Payment Method",
+      "card_number": "Card Number",
+      "expiry_date": "Expiry Date",
+      "cvv": "CVV"
+    },
+    "room_summary": {
+      "title": "客房摘要",
+      "room_name": "Azure Horizon 皇家套房",
+      "type": "海景",
+      "check_in": "10月12日",
+      "check_out": "2024年10月18日",
+      "guests": "2位成人，1位儿童"
+    },
+    "price_breakdown": {
+      "rate_per_night": 850,
+      "nights": 6,
+      "subtotal": 5100,
+      "resort_fee": 240,
+      "discount": -150,
+      "total": 5190
+    },
+    "common": {
+      "continue": "Continue",
+      "back": "Back",
+      "confirm_booking": "Confirm Booking",
+      "dates": "Dates",
+      "guests": "Guests",
+      "nights": "nights",
+      "resort_fee": "Resort Fee",
+      "loyalty_discount": "Loyalty Discount",
+      "total_amount": "Total Amount",
+      "usd_incl_taxes": "USD incl. taxes",
+      "secure_checkout": "Secure encrypted checkout"
+    }
+  },
+  "booking_confirmation": {
+    "title": "预订已确认！",
+    "message": "您的奢华之旅已确认。确认邮件已发送到您的收件箱，其中包含所有旅行文件和入住说明。",
+    "reference": "#AZH-2024-08471",
+    "details": {
+      "check_in": "2024年10月12日",
+      "check_out": "2024年10月17日",
+      "guests": "2位成人",
+      "room_type": "海景",
+      "status": "已确认",
+      "total_paid": "5,190.00美元"
+    },
+    "next_steps": {
+      "title": "后续步骤",
+      "steps": [
+        "确认邮件已发送 - 详细的行程和数字入住钥匙已发送到您的注册邮箱。",
+        "下午3点后办理入住 - 可应要求提供提前入住服务。我们的团队将随时欢迎您的到来。",
+        "24/7 礼宾支持 - 我们的高级礼宾团队全天候为您提供任何特殊要求。"
+      ]
+    },
+    "common": {
+      "reference": "Reference",
+      "location": "Paris, France",
+      "room_type": "Room Type",
+      "status": "Status",
+      "total_paid": "Total Paid",
+      "view_my_bookings": "View My Bookings",
+      "back_to_home": "Back to Home"
+    }
+  },
+  "search_results": {
+    "sort_options": {
+      "recommended": "推荐",
+      "price_low_high": "价格：从低到高",
+      "price_high_low": "价格：从高到低",
+      "rating": "评分"
+    },
+    "amenities_filter": {
+      "wifi": "免费Wi-Fi",
+      "pool": "泳池",
+      "spa": "水疗中心",
+      "parking": "停车场",
+      "restaurant": "餐厅"
+    },
+    "results": [
+      {
+        "name": "天空露台套房",
+        "location": "巴黎",
+        "rating": 5,
+        "badge": "稀有发现",
+        "price": 850
+      },
+      {
+        "name": "Azure Horizon 圣所",
+        "location": "巴厘岛",
+        "rating": 4.9,
+        "badge": "顶级",
+        "price": 1200
+      },
+      {
+        "name": "天际线顶层公寓",
+        "location": "纽约",
+        "rating": 4.8,
+        "badge": "现代主义",
+        "price": 1450
+      },
+      {
+        "name": "大皇宫公寓",
+        "location": "巴黎",
+        "rating": 4.9,
+        "badge": "历史建筑",
+        "price": 980
+      },
+      {
+        "name": "丛林悬崖别墅",
+        "location": "巴厘岛",
+        "rating": 4.7,
+        "badge": "精品",
+        "price": 760
+      },
+      {
+        "name": "曼哈顿阁楼套房",
+        "location": "纽约",
+        "rating": 4.8,
+        "badge": "都市奢华",
+        "price": 1100
+      }
+    ],
+    "filter_bar": {
+      "location": "Location",
+      "location_value": "Paris, France",
+      "dates": "Dates",
+      "dates_value": "Oct 12 - Oct 18",
+      "guests": "Guests",
+      "guests_value": "2 Adults, 1 Room",
+      "modify_search": "Modify Search"
+    },
+    "sidebar": {
+      "price_range": "Price Range",
+      "star_rating": "Star Rating",
+      "room_type": "Room Type",
+      "star_5": "5 Stars Luxury",
+      "star_4": "4 Stars Premium",
+      "star_3": "3 Stars Standard",
+      "room_type_1": "Presidential Suite",
+      "room_type_2": "Executive King",
+      "room_type_3": "Deluxe Double",
+      "amenities": "Amenities"
+    },
+    "header": {
+      "title": "Luxury Stays in Paris",
+      "results_found": "{{count}} premium results found",
+      "sort_by": "Sort"
+    },
+    "card": {
+      "starting_from": "Starting from",
+      "per_night": "/ night",
+      "details": "Details",
+      "book_now": "Book Now",
+      "toggle_favorite": "Toggle favorite"
+    },
+    "pagination": {
+      "label": "Pagination"
+    },
+    "results_details": [
+      {
+        "id": 1,
+        "location_detail": "7th Arrondissement, Paris",
+        "tags": [
+          "Eiffel View",
+          "Private Balcony",
+          "Butler Service"
+        ]
+      },
+      {
+        "id": 2,
+        "location_detail": "Ubud, Bali",
+        "tags": [
+          "Infinity Pool",
+          "Eco-Luxury",
+          "Full Spa"
+        ]
+      },
+      {
+        "id": 3,
+        "location_detail": "Upper West Side, NY",
+        "tags": [
+          "City Skyline",
+          "Chef's Kitchen",
+          "Concierge"
+        ]
+      },
+      {
+        "id": 4,
+        "location_detail": "1st Arrondissement, Paris",
+        "tags": [
+          "Garden View",
+          "Michelin Dining",
+          "Spa"
+        ]
+      },
+      {
+        "id": 5,
+        "location_detail": "Seminyak, Bali",
+        "tags": [
+          "Cliff View",
+          "Private Pool",
+          "Yoga Studio"
+        ]
+      },
+      {
+        "id": 6,
+        "location_detail": "Midtown, New York",
+        "tags": [
+          "City View",
+          "Rooftop Access",
+          "Gym"
+        ]
+      }
+    ]
+  },
+  "contact_page": {
+    "title": "联系我们",
+    "subtitle": "我们随时为您打造完美的度假体验。随时与我们联系。",
+    "contact_intelligence": "联系信息 - 我们的全球分布",
+    "headquarters": {
+      "label": "总部",
+      "address": "1200 Azure Plaza, Coastal Ridge, Monte Carlo, 98000"
+    },
+    "global_concierge": {
+      "label": "全球礼宾",
+      "phone": "+1 (800) 555-AZURE",
+      "availability": "24/7 可用"
+    },
+    "direct_inquiry": {
+      "label": "直接咨询",
+      "email": "concierge@azurehorizon.com",
+      "response_time": "2小时内回复"
+    },
+    "form": {
+      "full_name": "全名",
+      "email": "电子邮箱",
+      "subject": "主题",
+      "subject_options": {
+        "general": "一般咨询",
+        "booking": "预订支持",
+        "partnership": "企业合作",
+        "membership": "私人会员",
+        "feedback": "反馈"
+      },
+      "message": "您的留言",
+      "full_name_placeholder": "John Doe",
+      "email_placeholder": "john@example.com",
+      "message_placeholder": "How can we elevate your journey?",
+      "send_message": "Send Message"
+    },
+    "map": "互动地图即将推出",
+    "faq": "礼宾智慧 - 常见问题",
+    "global_presence": "Our Global Presence",
+    "concierge_wisdom": "Concierge Wisdom",
+    "frequently_asked": "Frequently Asked",
+    "map_location": "Azure Horizon • Monte Carlo"
+  },
+  "faq_page": {
+    "title": "帮助与常见问题",
+    "subtitle": "关于 Azure Horizon 您需要知道的一切",
+    "categories": {
+      "all": "全部",
+      "bookings": "预订",
+      "payments": "付款",
+      "rooms": "客房",
+      "policies": "政策"
+    },
+    "questions": [
+      {
+        "category": "bookings",
+        "question": "如何修改我的预订？",
+        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+      },
+      {
+        "category": "bookings",
+        "question": "取消政策是什么？",
+        "answer": "Cancellation policies vary by rate. Flexible rates allow cancellation up to 48 hours before arrival. Non-refundable rates cannot be cancelled or modified after booking."
+      },
+      {
+        "category": "bookings",
+        "question": "我可以为他人预订吗？",
+        "answer": "Yes. During checkout, you can enter a different guest name. The primary cardholder must still complete the payment, and a valid ID will be required at check-in."
+      },
+      {
+        "category": "payments",
+        "question": "接受哪些付款方式？",
+        "answer": "We accept all major credit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and secure bank transfers for prepaid reservations."
+      },
+      {
+        "category": "payments",
+        "question": "什么时候扣款？",
+        "answer": "For flexible rates, payment is taken at check-in. For non-refundable rates, the full amount is charged at the time of booking."
+      },
+      {
+        "category": "payments",
+        "question": "我的付款安全吗？",
+        "answer": "All transactions are encrypted with 256-bit SSL and processed through PCI-DSS compliant payment gateways. Your card details are never stored on our servers."
+      },
+      {
+        "category": "rooms",
+        "question": "包含哪些设施？",
+        "answer": "All rooms include complimentary high-speed WiFi, daily housekeeping, access to the fitness center, and 24/7 concierge service. Suite guests receive additional benefits including butler service."
+      },
+      {
+        "category": "policies",
+        "question": "允许携带宠物吗？",
+        "answer": "Many of our properties are pet-friendly. Please check the specific property details or contact our concierge for our \"Paws & Palm\" pet packages."
+      },
+      {
+        "category": "policies",
+        "question": "入住时间是什么时候？",
+        "answer": "Standard check-in begins at 3:00 PM local time. Early check-in from 12:00 PM may be available upon request and subject to availability. Late check-out until 2:00 PM can also be arranged."
+      },
+      {
+        "category": "policies",
+        "question": "允许吸烟吗？",
+        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+      }
+    ],
+    "still_have_questions": {
+      "title": "还有疑问吗？",
+      "message": "我们的礼宾团队全天候为您服务，帮助您规划完美的度假体验。",
+      "actions": {
+        "contact_concierge": "联系礼宾部",
+        "call_us": "致电我们"
+      }
+    }
+  },
+  "login_page": {
+    "title": "欢迎回来",
+    "subtitle": "请输入您的详细信息登录",
+    "email_or_username": "电子邮箱或用户名",
+    "password": "密码",
+    "forgot_password": "忘记密码？",
+    "login_button": "登录",
+    "continue_with": "或继续使用",
+    "providers": {
+      "google": "Google",
+      "apple": "Apple",
+      "meta": "Meta"
+    },
+    "email_placeholder": "Enter your email or username",
+    "no_account": "Don't have an account?",
+    "sign_up": "Sign Up"
+  },
+  "register_page": {
+    "title": "创建您的账户",
+    "subtitle": "加入 Azure Horizon，享受独家奢华优惠和流畅的预订体验。",
+    "upload_photo": "上传照片",
+    "photo_hint": "建议 400x400",
+    "quote": "通往非凡目的地的旅程，从一步开始。",
+    "form": {
+      "first_name": "名字",
+      "last_name": "姓氏",
+      "date_of_birth": "出生日期",
+      "origin_country": "原籍国",
+      "country_options": {
+        "us": "美国",
+        "uk": "英国",
+        "france": "法国",
+        "japan": "日本",
+        "uae": "阿联酋"
+      },
+      "phone": "电话号码",
+      "email": "电子邮箱",
+      "password": "密码",
+      "confirm_password": "确认密码",
+      "first_name_placeholder": "John",
+      "last_name_placeholder": "Doe",
+      "phone_placeholder": "+1 (555) 000-0000",
+      "email_placeholder": "john.doe@luxury.com"
+    },
+    "terms_agreement": "我同意服务条款和隐私政策",
+    "destinations": "Destinations",
+    "experiences": "Experiences",
+    "offers": "Offers",
+    "sign_in": "Sign In",
+    "newsletter_title": "Stay inspired",
+    "newsletter_desc": "Receive curated travel guides and exclusive offers directly in your inbox.",
+    "complete_registration": "Complete Registration",
+    "already_have_account": "Already have an account?",
+    "cookie_policy": "Cookie Policy",
+    "contact_us": "Contact Us",
+    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+  },
+  "footer": {
+    "quick_links": {
+      "title": "快速链接",
+      "home": "首页",
+      "rooms": "客房",
+      "contact": "联系方式"
+    },
+    "privacy_policy": "隐私政策",
+    "terms_of_service": "服务条款",
+    "help_center": "帮助中心",
+    "our_story": "我们的故事",
+    "copyright": "© 2024 Azure Horizon。保留所有权利。"
+  },
+  "languages": {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "it": "Italian",
+    "pt": "Portuguese",
+    "ar": "Arabic",
+    "ru": "Russian"
+  },
+  "forgot_password_page": {
+    "title": "Reset Password",
+    "subtitle": "Enter your email and we'll send you a link to reset your password.",
+    "email_label": "Email Address",
+    "email_placeholder": "john@example.com",
+    "send_reset_link": "Send Reset Link",
+    "back_to_sign_in": "Back to Sign In",
+    "no_account": "Don't have an account?",
+    "create_one": "Create one"
+  }
+}
