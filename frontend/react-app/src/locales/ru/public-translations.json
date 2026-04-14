@@ -361,17 +361,17 @@
       "total": 5190
     },
     "common": {
-      "continue": "Continue",
-      "back": "Back",
-      "confirm_booking": "Confirm Booking",
-      "dates": "Dates",
-      "guests": "Guests",
-      "nights": "nights",
-      "resort_fee": "Resort Fee",
-      "loyalty_discount": "Loyalty Discount",
-      "total_amount": "Total Amount",
-      "usd_incl_taxes": "USD incl. taxes",
-      "secure_checkout": "Secure encrypted checkout"
+      "continue": "Продолжить",
+      "back": "Назад",
+      "confirm_booking": "Подтвердить бронирование",
+      "dates": "Даты",
+      "guests": "Гости",
+      "nights": "ночей",
+      "resort_fee": "Курортный сбор",
+      "loyalty_discount": "Скидка постоянного гостя",
+      "total_amount": "Общая сумма",
+      "usd_incl_taxes": "долларов США с налогами",
+      "secure_checkout": "Безопасная зашифрованная оплата"
     }
   },
   "booking_confirmation": {

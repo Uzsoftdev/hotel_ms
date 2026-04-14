@@ -361,17 +361,17 @@
       "total": 5190
     },
     "common": {
-      "continue": "Continue",
-      "back": "Back",
-      "confirm_booking": "Confirm Booking",
-      "dates": "Dates",
-      "guests": "Guests",
-      "nights": "nights",
-      "resort_fee": "Resort Fee",
-      "loyalty_discount": "Loyalty Discount",
-      "total_amount": "Total Amount",
-      "usd_incl_taxes": "USD incl. taxes",
-      "secure_checkout": "Secure encrypted checkout"
+      "continue": "Continuar",
+      "back": "Voltar",
+      "confirm_booking": "Confirmar reserva",
+      "dates": "Datas",
+      "guests": "Hóspedes",
+      "nights": "noites",
+      "resort_fee": "Taxa de resort",
+      "loyalty_discount": "Desconto de fidelidade",
+      "total_amount": "Valor total",
+      "usd_incl_taxes": "USD impostos incluídos",
+      "secure_checkout": "Checkout seguro criptografado"
     }
   },
   "booking_confirmation": {

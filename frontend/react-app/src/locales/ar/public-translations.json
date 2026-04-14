@@ -361,18 +361,18 @@
       "total": 5190
     },
     "common": {
-      "continue": "Continue",
-      "back": "Back",
-      "confirm_booking": "Confirm Booking",
-      "dates": "Dates",
-      "guests": "Guests",
-      "nights": "nights",
-      "resort_fee": "Resort Fee",
-      "loyalty_discount": "Loyalty Discount",
-      "total_amount": "Total Amount",
-      "usd_incl_taxes": "USD incl. taxes",
-      "secure_checkout": "Secure encrypted checkout"
-    }
+    "continue": "استمرار",
+    "back": "رجوع",
+    "confirm_booking": "تأكيد الحجز",
+    "dates": "التواريخ",
+    "guests": "الضيوف",
+    "nights": "ليلة",
+    "resort_fee": "رسوم المنتجع",
+    "loyalty_discount": "خصم الولاء",
+    "total_amount": "المبلغ الإجمالي",
+    "usd_incl_taxes": "دولار شامل الضرائب",
+    "secure_checkout": "الدفع الآمن المشفر"
+}
   },
   "booking_confirmation": {
     "title": "تم تأكيد الحجز!",

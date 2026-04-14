@@ -361,17 +361,17 @@
       "total": 5190
     },
     "common": {
-      "continue": "Continue",
-      "back": "Back",
-      "confirm_booking": "Confirm Booking",
-      "dates": "Dates",
-      "guests": "Guests",
-      "nights": "nights",
-      "resort_fee": "Resort Fee",
-      "loyalty_discount": "Loyalty Discount",
-      "total_amount": "Total Amount",
-      "usd_incl_taxes": "USD incl. taxes",
-      "secure_checkout": "Secure encrypted checkout"
+      "continue": "계속하기",
+      "back": "뒤로",
+      "confirm_booking": "예약 확인",
+      "dates": "날짜",
+      "guests": "투숙객",
+      "nights": "박",
+      "resort_fee": "리조트 요금",
+      "loyalty_discount": "로열티 할인",
+      "total_amount": "총 금액",
+      "usd_incl_taxes": "USD (세금 포함)",
+      "secure_checkout": "보안 암호화 결제"
     }
   },
   "booking_confirmation": {

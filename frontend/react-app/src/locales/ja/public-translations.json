@@ -361,17 +361,17 @@
       "total": 5190
     },
     "common": {
-      "continue": "Continue",
-      "back": "Back",
-      "confirm_booking": "Confirm Booking",
-      "dates": "Dates",
-      "guests": "Guests",
-      "nights": "nights",
-      "resort_fee": "Resort Fee",
-      "loyalty_discount": "Loyalty Discount",
-      "total_amount": "Total Amount",
-      "usd_incl_taxes": "USD incl. taxes",
-      "secure_checkout": "Secure encrypted checkout"
+      "continue": "続ける",
+      "back": "戻る",
+      "confirm_booking": "予約を確定する",
+      "dates": "日程",
+      "guests": "ゲスト",
+      "nights": "泊",
+      "resort_fee": "リゾート料金",
+      "loyalty_discount": "ロイヤリティ割引",
+      "total_amount": "合計金額",
+      "usd_incl_taxes": "USD（税込）",
+      "secure_checkout": "安全な暗号化チェックアウト"
     }
   },
   "booking_confirmation": {

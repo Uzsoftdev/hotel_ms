@@ -361,17 +361,17 @@
       "total": 5190
     },
     "common": {
-      "continue": "Continue",
-      "back": "Back",
-      "confirm_booking": "Confirm Booking",
-      "dates": "Dates",
-      "guests": "Guests",
-      "nights": "nights",
-      "resort_fee": "Resort Fee",
-      "loyalty_discount": "Loyalty Discount",
-      "total_amount": "Total Amount",
-      "usd_incl_taxes": "USD incl. taxes",
-      "secure_checkout": "Secure encrypted checkout"
+      "continue": "继续",
+      "back": "返回",
+      "confirm_booking": "确认预订",
+      "dates": "日期",
+      "guests": "客人",
+      "nights": "晚",
+      "resort_fee": "度假村费",
+      "loyalty_discount": "会员折扣",
+      "total_amount": "总金额",
+      "usd_incl_taxes": "美元（含税）",
+      "secure_checkout": "安全加密结账"
     }
   },
   "booking_confirmation": {
