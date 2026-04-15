@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 from typing import List
 
 from fastapi import APIRouter, Depends
@@ -7,15 +8,44 @@ from sqlalchemy.orm import Session
 from app.dependencies import get_db
 from app.schemas.room import RoomResponse
 from app.services.availability import get_available_rooms
+from app.services.pricing import calculate_booking_price
 
 router = APIRouter(prefix="/search", tags=["Public Search"])
 
 
-@router.get("/", response_model=List[RoomResponse])
+class RoomSearchResponse(RoomResponse):
+    total_price: Decimal
+
+
+@router.get("/", response_model=List[RoomSearchResponse])
 def search_available_rooms(
     hotel_id: int,
     check_in: date,
     check_out: date,
     db: Session = Depends(get_db),
-) -> List[RoomResponse]:
-    return get_available_rooms(db, hotel_id, check_in, check_out)
+) -> List[RoomSearchResponse]:
+    rooms = get_available_rooms(db, hotel_id, check_in, check_out)
+    results: List[RoomSearchResponse] = []
+
+    for room in rooms:
+        total_price = calculate_booking_price(
+            db=db,
+            room=room,
+            check_in=check_in,
+            check_out=check_out,
+        )
+        room_payload = {
+            "id": room.id,
+            "hotel_id": room.hotel_id,
+            "room_type_id": room.room_type_id,
+            "room_number": room.room_number,
+            "capacity": room.capacity,
+            "base_price": room.base_price,
+            "description": room.description,
+            "is_active": room.is_active,
+            "room_type": room.room_type,
+            "total_price": total_price,
+        }
+        results.append(RoomSearchResponse(**room_payload))
+
+    return results

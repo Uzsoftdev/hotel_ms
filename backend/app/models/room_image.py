@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 
-from core.database import Base
+from app.core.database import Base
 
 
 class RoomImage(Base):

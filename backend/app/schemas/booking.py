@@ -1,8 +1,9 @@
-from datetime import date, datetime
+from datetime import date
+from typing import Optional, Self
 from decimal import Decimal
-from typing import Optional
+from datetime import datetime
 
-from pydantic import BaseModel, root_validator
+from pydantic import BaseModel, model_validator
 
 
 class BookingCreate(BaseModel):
@@ -10,13 +11,11 @@ class BookingCreate(BaseModel):
     check_out: date
     room_id: int
 
-    @root_validator
-    def validate_date_range(cls, values: dict) -> dict:
-        check_in = values.get("check_in")
-        check_out = values.get("check_out")
-        if check_in and check_out and check_out <= check_in:
+    @model_validator(mode="after")
+    def validate_date_range(self) -> Self:
+        if self.check_out <= self.check_in:
             raise ValueError("check_out must be later than check_in")
-        return values
+        return self
 
 
 class BookingUpdate(BaseModel):
@@ -24,13 +23,11 @@ class BookingUpdate(BaseModel):
     check_out: Optional[date] = None
     room_id: Optional[int] = None
 
-    @root_validator
-    def validate_date_range(cls, values: dict) -> dict:
-        check_in = values.get("check_in")
-        check_out = values.get("check_out")
-        if check_in and check_out and check_out <= check_in:
+    @model_validator(mode="after")
+    def validate_date_range(self) -> Self:
+        if self.check_in and self.check_out and self.check_out <= self.check_in:
             raise ValueError("check_out must be later than check_in")
-        return values
+        return self
 
 
 class BookingResponse(BaseModel):

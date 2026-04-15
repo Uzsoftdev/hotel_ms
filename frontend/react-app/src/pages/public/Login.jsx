@@ -1,5 +1,8 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { login } from "../../services/auth";
+import { useAuth } from "../../contexts/AuthContext";
 import metaIcon from "../../assets/icons/meta.svg";
 import appleIcon from "../../assets/icons/apple.svg";
 import googleIcon from "../../assets/icons/google.svg";
@@ -7,6 +10,33 @@ import loginBack from "../../assets/images/login_back.png";
 
 export default function Login() {
   const { t } = useTranslation("pub_translation");
+  const { loginUser } = useAuth();
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      console.log('[Login] Submitting credentials for:', username);
+      const res = await login({ username, password });
+      console.log('[Login] Response received:', res.data);
+      console.log('[Login] Token received:', res.data.access_token ? '✅ yes' : '❌ no');
+      loginUser(res.data.access_token);
+      console.log('[Login] Token stored in localStorage:', localStorage.getItem('access_token') ? '✅ yes' : '❌ no');
+      navigate("/");
+    } catch (err) {
+      console.error('[Login] Error:', err.response?.status, err.response?.data);
+      setError(err.response?.data?.detail || t("login_page.error_generic", "Login failed. Please try again."));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col">
@@ -39,7 +69,13 @@ export default function Login() {
               <p className="font-medium text-on-surface-variant">{t("login_page.subtitle")}</p>
             </div>
 
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            {error && (
+              <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm font-semibold text-red-600">
+                {error}
+              </div>
+            )}
+
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold uppercase tracking-[0.05em] text-on-surface-variant">
                   {t("login_page.email_or_username")}
@@ -48,6 +84,9 @@ export default function Login() {
                   className="w-full rounded-lg border border-outline-variant/40 bg-surface-container-low px-4 py-3.5 text-sm font-semibold transition-all placeholder:text-slate-400 focus:border-primary focus:ring-0"
                   placeholder={t("login_page.email_placeholder")}
                   type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
                 />
               </div>
 
@@ -64,14 +103,18 @@ export default function Login() {
                   className="w-full rounded-lg border border-outline-variant/40 bg-surface-container-low px-4 py-3.5 text-sm font-semibold transition-all placeholder:text-slate-400 focus:border-primary focus:ring-0"
                   placeholder="••••••••"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
               </div>
 
               <button
-                className="w-full rounded-lg bg-primary py-4 text-base font-bold text-white shadow-lg shadow-primary/20 transition-all hover:translate-y-[-1px]"
+                className="w-full rounded-lg bg-primary py-4 text-base font-bold text-white shadow-lg shadow-primary/20 transition-all hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed"
                 type="submit"
+                disabled={loading}
               >
-                {t("login_page.login_button")}
+                {loading ? t("login_page.logging_in", "Signing in...") : t("login_page.login_button")}
               </button>
             </form>
 

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, DateTime, Index, Integer, Numeric, String, Text, func
 from sqlalchemy.orm import relationship
 
-from core.database import Base
+from app.core.database import Base
 
 
 class Hotel(Base):

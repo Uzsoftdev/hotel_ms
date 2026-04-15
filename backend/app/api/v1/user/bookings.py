@@ -1,5 +1,4 @@
 from datetime import date
-from decimal import Decimal
 from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -15,6 +14,7 @@ from app.repositories.booking_repository import (
 )
 from app.schemas.booking import BookingCreate, BookingResponse
 from app.services.availability import get_available_rooms
+from app.services.pricing import calculate_booking_price
 
 router = APIRouter(prefix="/bookings", tags=["User Bookings"])
 
@@ -38,8 +38,12 @@ def create_booking_endpoint(
     if not room:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Room not found")
 
-    nights = (data.check_out - data.check_in).days
-    total_price = (room.base_price or Decimal("0")) * nights
+    total_price = calculate_booking_price(
+        db=db,
+        room=room,
+        check_in=data.check_in,
+        check_out=data.check_out,
+    )
 
     booking = create_booking(
         db,

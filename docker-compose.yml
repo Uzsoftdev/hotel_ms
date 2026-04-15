@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: hotel_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hotel_system
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hotel_network
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: hotel_backend
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/hotel_system
+      SECRET_KEY: your_secret_key
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    networks:
+      - hotel_network
+
+  redis:
+    image: redis:7
+    container_name: hotel_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - hotel_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: hotel_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - hotel_network
+
+volumes:
+  postgres_data:
+
+networks:
+  hotel_network:
+    driver: bridge
