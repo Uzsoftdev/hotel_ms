@@ -1,170 +1,119 @@
-import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import parisImage from "../../assets/images/paris_1.png";
-const nextStepIcons = ["mail", "luggage", "support_agent"];
+import { useEffect, useState } from "react";
+import { Link, useSearchParams, useLocation } from "react-router-dom";
+import Navbar from "../../components/common/Navbar";
+import Footer from "../../components/common/Footer";
 
 export default function BookingConfirmation() {
-  const { t } = useTranslation("pub_translation");
-  const details = [
-    { label: t("booking_page.step2.check_in"), value: t("booking_confirmation.details.check_in") },
-    { label: t("booking_page.step2.check_out"), value: t("booking_confirmation.details.check_out") },
-    { label: t("booking_page.common.guests"), value: t("booking_confirmation.details.guests") },
-    { label: t("booking_confirmation.common.room_type"), value: t("booking_confirmation.details.room_type") },
+  const [searchParams] = useSearchParams();
+  const { state } = useLocation();
+
+  const bookingId = searchParams.get("booking_id") || state?.bookingId || "—";
+  const room      = state?.room || null;
+  const checkIn   = state?.checkIn  || searchParams.get("check_in")  || "—";
+  const checkOut  = state?.checkOut || searchParams.get("check_out") || "—";
+  const guests    = state?.guests   || searchParams.get("guests")    || "—";
+  const total     = state?.total    || searchParams.get("total")     || "—";
+
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setTimeout(() => setVisible(true), 60); }, []);
+
+  const nextSteps = [
+    { icon: "mail",          title: "Check Your Email",    desc: "A confirmation with full details has been sent to your inbox." },
+    { icon: "luggage",       title: "Prepare for Arrival", desc: "Check-in opens at 3 PM. Bring a valid ID and your booking reference." },
+    { icon: "support_agent", title: "Need Help?",          desc: "Our concierge team is available 24/7 for any requests or questions." },
   ];
-  const nextSteps = t("booking_confirmation.next_steps.steps", { returnObjects: true });
-  const splitStepText = (text) => {
-    const separator = " - ";
-    const index = text.indexOf(separator);
-    if (index === -1) {
-      return { title: text, description: "" };
-    }
-    return {
-      title: text.slice(0, index),
-      description: text.slice(index + separator.length),
-    };
-  };
+
+  const refCode = bookingId !== "—" ? `AZH-${String(bookingId).padStart(4,"0")}` : "—";
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex flex-col">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="text-xl font-extrabold tracking-tighter text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/">{t("navigation.home")}</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/rooms">{t("navigation.rooms")}</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/about">{t("navigation.about")}</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/contact">{t("navigation.contact")}</Link>
+    <div style={{ background: "var(--bg)", minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+
+      <main style={{ flex: 1, padding: "64px 24px", maxWidth: 760, margin: "0 auto", width: "100%" }}>
+        {/* ── Success icon + headline ── */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginBottom: 48, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(16px)", transition: "all .7s" }}>
+          <div style={{ width: 80, height: 80, borderRadius: "50%", background: "var(--success-bg)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 44, color: "var(--success)" }}>check_circle</span>
           </div>
-          <div className="flex items-center gap-3">
-            <Link className="bg-transparent border border-primary text-primary hover:bg-primary/5 px-5 py-2 rounded-lg text-sm font-bold transition-all" to="/register">{t("navigation.register")}</Link>
-            <Link className="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20" to="/login">{t("navigation.login")}</Link>
-          </div>
-        </div>
-      </nav>
-
-      <main className="flex-grow py-16 px-6 max-w-4xl mx-auto w-full">
-
-        {/* Success Header */}
-        <div className="flex flex-col items-center text-center mb-12">
-          <span
-            className="material-symbols-outlined text-primary mb-5 animate-bounce"
-            style={{ fontSize: "5rem", fontVariationSettings: "'FILL' 1" }}
-          >
-            check_circle
+          <span style={{ display: "inline-flex", alignItems: "center", padding: "6px 16px", borderRadius: "var(--radius-pill)", background: "var(--primary-light)", color: "var(--primary)", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 16 }}>
+            Booking {refCode}
           </span>
-
-          <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-primary/10 text-primary font-bold text-xs uppercase tracking-widest mb-4">
-            {t("booking_confirmation.common.reference")} {t("booking_confirmation.reference")}
-          </span>
-
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface mb-3">
-            {t("booking_confirmation.title")}
-          </h1>
-          <p className="text-on-surface-variant font-medium max-w-lg leading-relaxed">
-            {t("booking_confirmation.message")}
+          <h1 style={{ fontSize: 42, fontWeight: 900, letterSpacing: "-0.025em", color: "var(--text)", marginBottom: 12 }}>You're all set!</h1>
+          <p style={{ fontSize: 15, fontWeight: 500, color: "var(--text-secondary)", maxWidth: 400, lineHeight: 1.6 }}>
+            Your reservation is confirmed. We look forward to welcoming you.
           </p>
         </div>
 
-        {/* Summary Card */}
-        <div className="bg-surface-container-lowest rounded-xl shadow-2xl border border-outline-variant/30 overflow-hidden mb-10">
-          <div className="grid md:grid-cols-5">
-            {/* Image */}
-            <div className="md:col-span-2 relative h-56 md:h-auto">
-              <img
-                alt="Azure Horizon Royal Suite"
-                className="w-full h-full object-cover"
-                src={parisImage}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <div className="absolute bottom-4 left-4">
-                <span className="text-[10px] font-bold uppercase tracking-widest bg-primary px-2 py-1 rounded text-white">
-                  {t("booking_confirmation.common.location")}
-                </span>
+        {/* ── Booking ref card ── */}
+        <div className="ah-card" style={{ overflow: "hidden", marginBottom: 32, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(16px)", transition: "all .7s .1s" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+            {/* Image side */}
+            <div style={{ position: "relative", minHeight: 220, background: "linear-gradient(135deg,#1e3a8a,#2563eb)", overflow: "hidden" }}>
+              {room?.image ? (
+                <img src={room.image} alt={room.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }} />
+              ) : null}
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom,rgba(15,23,42,.1),rgba(15,23,42,.5))" }} />
+              {/* QR placeholder */}
+              <div style={{ position: "absolute", bottom: 20, right: 20, width: 80, height: 80, background: "rgba(255,255,255,.15)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 44, color: "rgba(255,255,255,.6)" }}>qr_code</span>
+              </div>
+              <div style={{ position: "absolute", bottom: 20, left: 20, color: "#fff" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", opacity: 0.7, marginBottom: 4 }}>Skip front desk</div>
+                <div style={{ fontSize: 12, fontWeight: 600, opacity: 0.9 }}>Scan QR on arrival</div>
               </div>
             </div>
 
-            {/* Details */}
-            <div className="md:col-span-3 p-8">
-              <h2 className="text-2xl font-extrabold tracking-tight text-on-surface mb-6">
-                {t("booking_page.room_summary.room_name")}
-              </h2>
+            {/* Details side */}
+            <div style={{ padding: 28 }}>
+              <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 15, fontWeight: 700, color: "var(--primary)", marginBottom: 6 }}>{refCode}</div>
+              <span className="ah-badge ah-badge-confirmed" style={{ marginBottom: 20, display: "inline-flex" }}>Confirmed</span>
 
-              <div className="grid grid-cols-2 gap-y-5 gap-x-8 mb-6">
-                {details.map((d) => (
-                  <div key={d.label}>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">{d.label}</p>
-                    <p className="text-sm font-bold text-on-surface">{d.value}</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px 12px", marginBottom: 20 }}>
+                {[
+                  { label: "Check-in",  value: checkIn },
+                  { label: "Check-out", value: checkOut },
+                  { label: "Guests",    value: guests !== "—" ? `${guests} guest${Number(guests) !== 1 ? "s" : ""}` : "—" },
+                  { label: "Room",      value: room?.name || room?.category || "—" },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", marginBottom: 4 }}>{label}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{value}</div>
                   </div>
                 ))}
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">{t("booking_confirmation.common.status")}</p>
-                  <div className="flex items-center gap-2 text-primary font-bold text-sm">
-                    <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                    {t("booking_confirmation.details.status")}
+                  <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-secondary)", marginBottom: 4 }}>Total paid</div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: "var(--primary)" }}>
+                    {total !== "—" ? `$${Number(total).toLocaleString()}` : "—"}
                   </div>
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">{t("booking_confirmation.common.total_paid")}</p>
-                  <p className="text-lg font-extrabold text-primary">{t("booking_confirmation.details.total_paid")}</p>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-outline-variant/30">
-                <Link
-                  to="/login"
-                  className="flex-1 bg-primary text-white py-3 px-6 rounded-lg font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all text-center"
-                >
-                  {t("booking_confirmation.common.view_my_bookings")}
-                </Link>
-                <Link
-                  to="/"
-                  className="flex-1 border border-primary text-primary py-3 px-6 rounded-lg font-bold text-sm hover:bg-primary/5 active:scale-95 transition-all text-center"
-                >
-                  {t("booking_confirmation.common.back_to_home")}
-                </Link>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 16, borderTop: "1px solid var(--border)" }}>
+                <Link to="/my-bookings" className="ah-btn ah-btn-primary ah-btn-block">View My Bookings</Link>
+                <Link to="/"           className="ah-btn ah-btn-secondary ah-btn-block">Back to Home</Link>
               </div>
             </div>
           </div>
         </div>
 
-        {/* What's Next */}
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant text-center mb-6">
-            {t("booking_confirmation.next_steps.title")}
-          </p>
-          <div className="grid md:grid-cols-3 gap-6">
-            {nextSteps.map((s, i) => {
-              const stepText = splitStepText(s);
-              return (
-              <div key={i} className="bg-surface-container-lowest rounded-xl border border-outline-variant/30 shadow-lg p-6 flex flex-col items-center text-center hover:shadow-xl transition-all">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <span className="material-symbols-outlined text-primary">{nextStepIcons[i]}</span>
+        {/* ── What's next ── */}
+        <div style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(16px)", transition: "all .7s .2s" }}>
+          <div className="ah-eyebrow" style={{ textAlign: "center", marginBottom: 20 }}>What's next</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+            {nextSteps.map(({ icon, title, desc }) => (
+              <div key={title} className="ah-card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--primary-light)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+                  <span className="material-symbols-outlined" style={{ color: "var(--primary)" }}>{icon}</span>
                 </div>
-                <h4 className="font-bold text-sm text-on-surface mb-2">{stepText.title}</h4>
-                <p className="text-xs text-on-surface-variant leading-relaxed">{stepText.description}</p>
+                <h4 style={{ fontWeight: 700, fontSize: 14, color: "var(--text)", marginBottom: 6 }}>{title}</h4>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.55, fontWeight: 500 }}>{desc}</p>
               </div>
-              );
-            })}
+            ))}
           </div>
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-slate-50 dark:bg-slate-950 w-full py-12 border-t border-slate-200 dark:border-slate-800">
-        <div className="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto gap-8">
-          <div className="text-lg font-bold text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</div>
-          <div className="flex flex-wrap justify-center gap-8">
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/">{t("footer.quick_links.home")}</Link>
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/rooms">{t("footer.quick_links.rooms")}</Link>
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/contact">{t("footer.quick_links.contact")}</Link>
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.privacy_policy")}</a>
-          </div>
-          <p className="text-xs font-medium uppercase tracking-widest text-slate-400 text-center md:text-right">
-            {t("footer.copyright")}
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -14,25 +14,17 @@ def create_booking(db: Session, data: dict) -> Booking:
     return booking
 
 
-def get_booking_by_id(db: Session, booking_id: int, hotel_id: int) -> Optional[Booking]:
-    return (
-        db.query(Booking)
-        .filter(
-            Booking.id == booking_id,
-            Booking.hotel_id == hotel_id,
-        )
-        .first()
-    )
+def get_booking_by_id(db: Session, booking_id: int, hotel_id: Optional[int] = None) -> Optional[Booking]:
+    q = db.query(Booking).filter(Booking.id == booking_id)
+    if hotel_id is not None:
+        q = q.filter(Booking.hotel_id == hotel_id)
+    return q.first()
 
 
 def get_user_bookings(db: Session, user_id: int) -> List[Booking]:
     return (
         db.query(Booking)
-        .join(User, User.id == Booking.user_id)
-        .filter(
-            Booking.user_id == user_id,
-            Booking.hotel_id == User.hotel_id,
-        )
+        .filter(Booking.user_id == user_id)
         .all()
     )
 

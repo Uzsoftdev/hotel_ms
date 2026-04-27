@@ -17,6 +17,8 @@ class User(Base):
         nullable=False,
         default="guest",
     )
+    phone = Column(String, nullable=True)
+    photo_url = Column(String, nullable=True)
     hotel_id = Column(Integer, ForeignKey("hotels.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 

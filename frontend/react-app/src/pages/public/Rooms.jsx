@@ -1,177 +1,245 @@
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { ROOMS } from "../../data/rooms";
+import Navbar from "../../components/common/Navbar";
+import Footer from "../../components/common/Footer";
 import background from "../../assets/images/room_back.png";
-import room1 from "../../assets/images/room1.png";
-import room2 from "../../assets/images/room2.png";
-import hotel3 from "../../assets/images/hotel3.png";
 
-const roomImages = [room1, room2, hotel3, room1, room2, hotel3];
-const amenityIcons = [
-  ["wifi", "ac_unit", "flatware"],
-  ["balcony", "bathtub", "local_cafe"],
-  ["pool", "spa", "room_service"],
-  ["concierge", "pool", "dinner_dining"],
-  ["wifi", "local_parking", "ac_unit"],
-  ["wifi", "bathtub", "flatware"],
-];
+const CATEGORIES = ["All", "Standard", "Economy", "Deluxe", "Suite", "Presidential"];
+
+const CATEGORY_META = {
+  All: { icon: "grid_view", desc: "Every room in our collection" },
+  Standard: { icon: "hotel", desc: "Comfortable stays with all the essentials" },
+  Economy: { icon: "savings", desc: "Smart value without compromise" },
+  Deluxe: { icon: "star_half", desc: "Elevated comfort and premium views" },
+  Suite: { icon: "king_bed", desc: "Expansive spaces for unforgettable stays" },
+  Presidential: { icon: "workspace_premium", desc: "The pinnacle of luxury hospitality" },
+};
+
+function StarRating({ rating }) {
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <span key={i} className={`material-symbols-outlined text-xs ${i <= Math.round(rating) ? "text-amber-400" : "text-slate-200"}`}
+          style={{ fontVariationSettings: i <= Math.round(rating) ? "'FILL' 1" : "'FILL' 0" }}>star</span>
+      ))}
+      <span className="text-xs font-bold text-slate-700 ml-1">{rating.toFixed(1)}</span>
+    </div>
+  );
+}
 
 export default function Rooms() {
   const { t } = useTranslation("pub_translation");
-  const tabs = [
-    t("rooms_page.filters.all"),
-    t("rooms_page.filters.standard"),
-    t("rooms_page.filters.deluxe"),
-    t("rooms_page.filters.suite"),
-    t("rooms_page.filters.presidential"),
-  ];
-  const [activeTab, setActiveTab] = useState(t("rooms_page.filters.all"));
+  const [activeTab, setActiveTab] = useState("All");
+  const [view, setView] = useState("grid"); // grid | list
+  const [wishlist, setWishlist] = useState([]);
 
-  const rooms = useMemo(() => {
-    const translated = t("rooms_page.available_rooms", { returnObjects: true });
-    if (!Array.isArray(translated)) return [];
-    return translated.map((room, index) => ({
-      ...room,
-      image: roomImages[index],
-      amenitiesWithIcons: (room.amenities || []).map((label, amenityIndex) => ({
-        label,
-        icon: amenityIcons[index]?.[amenityIndex] || "check_circle",
-      })),
-    }));
-  }, [t]);
+  const filtered = useMemo(() =>
+    activeTab === "All" ? ROOMS : ROOMS.filter((r) => r.category === activeTab),
+    [activeTab]
+  );
 
-  const filtered =
-    activeTab === t("rooms_page.filters.all")
-      ? rooms
-      : rooms.filter((r) => r.category === activeTab);
+  function toggleWishlist(e, id) {
+    e.preventDefault();
+    setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  }
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen">
-      <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="text-xl font-extrabold tracking-tighter text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/">{t("navigation.home")}</Link>
-            <Link className="text-sm font-semibold text-primary transition-colors" to="/rooms">{t("navigation.rooms")}</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/about">{t("navigation.about")}</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/contact">{t("navigation.contact")}</Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link className="bg-transparent border border-primary text-primary hover:bg-primary/5 px-5 py-2 rounded-lg text-sm font-bold transition-all" to="/register">{t("navigation.register")}</Link>
-            <Link className="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20" to="/login">{t("navigation.login")}</Link>
-          </div>
-        </div>
-      </nav>
+    <div className="bg-white text-slate-900 min-h-screen">
+      <Navbar />
 
-      <section className="relative h-96 w-full flex items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10" />
-          <img alt="Luxury hotel suite with floor-to-ceiling ocean views" className="w-full h-full object-cover scale-105" src={background} />
+      {/* Hero */}
+      <section className="relative h-72 md:h-96 flex items-end overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={background} alt="Our rooms" className="w-full h-full object-cover" style={{ filter: "brightness(.45)" }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         </div>
-        <div className="relative z-20 px-8 md:px-20 max-w-7xl mx-auto w-full">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-4">{t("rooms_page.hero.title")}</h1>
-          <p className="text-lg font-medium text-white/90 max-w-2xl">{t("rooms_page.hero.subtitle")}</p>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full pb-10">
+          <nav className="flex items-center gap-2 text-xs font-semibold text-white/50 mb-4">
+            <Link to="/" className="hover:text-white transition-colors">Home</Link>
+            <span className="material-symbols-outlined text-xs">chevron_right</span>
+            <span className="text-white">Rooms</span>
+          </nav>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2">{t("rooms_page.hero.title") || "Our Rooms"}</h1>
+          <p className="text-white/70 font-medium">{t("rooms_page.hero.subtitle") || "Find the perfect space for your stay"}</p>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 py-10">
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-6 py-2.5 rounded-full text-sm font-bold tracking-tight transition-all ${activeTab === tab
-                ? "bg-primary text-white shadow-lg shadow-primary/20"
-                : "border border-slate-200 dark:border-slate-700 text-on-surface-variant hover:border-primary hover:text-primary"
-                }`}
-              type="button"
-            >
-              {tab}
+      {/* Filter + View toggle bar */}
+      <div className="sticky top-[72px] z-30 bg-white/95 backdrop-blur-xl border-b border-slate-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            {CATEGORIES.map((cat) => (
+              <button key={cat} type="button" onClick={() => setActiveTab(cat)}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                  activeTab === cat
+                    ? "bg-primary text-white shadow-md shadow-primary/25"
+                    : "border border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary"
+                }`}>
+                <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: activeTab === cat ? "'FILL' 1" : "'FILL' 0" }}>
+                  {CATEGORY_META[cat].icon}
+                </span>
+                {cat}
+                {cat !== "All" && (
+                  <span className={`text-[9px] px-1 py-0.5 rounded-full ${activeTab === cat ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"}`}>
+                    {ROOMS.filter((r) => r.category === cat).length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center gap-1 shrink-0 border border-slate-200 rounded-lg p-1">
+            <button onClick={() => setView("grid")} className={`p-1.5 rounded-md transition-all ${view === "grid" ? "bg-primary text-white" : "text-slate-400 hover:text-slate-700"}`}>
+              <span className="material-symbols-outlined text-sm">grid_view</span>
             </button>
-          ))}
+            <button onClick={() => setView("list")} className={`p-1.5 rounded-md transition-all ${view === "list" ? "bg-primary text-white" : "text-slate-400 hover:text-slate-700"}`}>
+              <span className="material-symbols-outlined text-sm">view_list</span>
+            </button>
+          </div>
         </div>
-      </section>
+      </div>
 
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filtered.map((room) => (
-            <div key={room.name} className="group bg-surface-bright rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-              <div className="aspect-[4/3] overflow-hidden relative">
-                <img alt={room.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src={room.image} />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-lg">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">{room.category}</span>
-                </div>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-extrabold text-on-surface mb-2">{room.name}</h3>
-                <p className="text-sm text-on-surface-variant mb-4 line-clamp-2">{room.description}</p>
-                <div className="flex items-center gap-4 mb-6 text-on-surface-variant">
-                  {room.amenitiesWithIcons.map((a) => (
-                    <div key={a.label} className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm">{a.icon}</span>
-                      <span className="text-[10px] font-bold uppercase tracking-tighter">{a.label}</span>
+      {/* Category headline */}
+      <div className="max-w-7xl mx-auto px-6 pt-8 pb-2 flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-extrabold text-slate-900">{activeTab === "All" ? "All Rooms" : `${activeTab} Rooms`}</h2>
+          <p className="text-sm text-slate-400">{filtered.length} result{filtered.length !== 1 ? "s" : ""} · {CATEGORY_META[activeTab].desc}</p>
+        </div>
+      </div>
+
+      {/* Room grid / list */}
+      <section className="max-w-7xl mx-auto px-6 py-6 pb-20">
+        {view === "grid" ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((room, i) => (
+              <Link key={room.id} to={`/room-details/${room.id}`} state={{ room }}
+                className="group block bg-white rounded-2xl overflow-hidden border border-slate-100 hover:border-primary/20 hover:shadow-2xl hover:shadow-slate-900/8 transition-all duration-300 card-hover animate-fade-up"
+                style={{ animationDelay: `${Math.min(i, 5) * 60}ms` }}>
+                <div className="aspect-[4/3] overflow-hidden relative img-zoom">
+                  <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute top-3 left-3 flex gap-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest bg-white/95 text-primary px-2.5 py-1 rounded-full shadow-sm">{room.category}</span>
+                  </div>
+                  <button type="button" onClick={(e) => toggleWishlist(e, room.id)}
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-sm hover:scale-110 transition-transform">
+                    <span className={`material-symbols-outlined text-sm ${wishlist.includes(room.id) ? "text-rose-500" : "text-slate-300"}`}
+                      style={{ fontVariationSettings: wishlist.includes(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                  </button>
+                  {room.tags.slice(0, 1).map((tag) => (
+                    <div key={tag} className="absolute bottom-3 left-3">
+                      <span className="text-[10px] font-bold bg-emerald-500 text-white px-2 py-1 rounded-full">{tag}</span>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center justify-between border-t border-outline-variant/50 pt-4">
-                  <div>
-                    <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest block">{t("rooms_page.common.from")}</span>
-                    <span className="text-2xl font-extrabold text-primary">
-                      ${room.price_per_night}
-                      <span className="text-sm font-medium text-on-surface-variant">{t("rooms_page.common.per_night")}</span>
-                    </span>
+
+                <div className="p-5">
+                  <StarRating rating={room.rating} />
+                  <h3 className="font-extrabold text-slate-900 mt-2 mb-1 group-hover:text-primary transition-colors leading-tight">{room.name}</h3>
+                  <p className="text-xs text-slate-400 line-clamp-2 mb-3 leading-relaxed">{room.description}</p>
+
+                  <div className="flex flex-wrap gap-3 mb-4">
+                    {room.amenities.map((a, idx) => (
+                      <div key={a} className="flex items-center gap-1 text-slate-500">
+                        <span className="material-symbols-outlined text-xs">{room.amenityIcons[idx]}</span>
+                        <span className="text-[10px] font-semibold">{a}</span>
+                      </div>
+                    ))}
+                    <div className="flex items-center gap-1 text-slate-500">
+                      <span className="material-symbols-outlined text-xs">group</span>
+                      <span className="text-[10px] font-semibold">Up to {room.capacity}</span>
+                    </div>
                   </div>
-                  <Link
-                    to="/room-details"
-                    className="bg-primary text-white px-5 py-2 rounded-lg font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all"
-                  >
-                    {t("rooms_page.common.view_details")}
-                  </Link>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-semibold block">From</span>
+                      <span className="text-xl font-extrabold text-primary">${room.price_per_night}
+                        <span className="text-xs font-medium text-slate-400"> /night</span>
+                      </span>
+                    </div>
+                    <span className="bg-primary/8 text-primary text-xs font-bold px-3 py-1.5 rounded-xl group-hover:bg-primary group-hover:text-white transition-all">View</span>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filtered.map((room, i) => (
+              <Link key={room.id} to={`/room-details/${room.id}`} state={{ room }}
+                className="group flex bg-white rounded-2xl border border-slate-100 hover:border-primary/20 hover:shadow-xl overflow-hidden transition-all duration-300 animate-fade-up"
+                style={{ animationDelay: `${Math.min(i, 5) * 60}ms` }}>
+                <div className="w-48 md:w-64 h-48 shrink-0 relative overflow-hidden img-zoom">
+                  <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
+                  <div className="absolute top-2 left-2">
+                    <span className="text-[10px] font-bold bg-white/95 text-primary px-2 py-0.5 rounded-full">{room.category}</span>
+                  </div>
+                  <button type="button" onClick={(e) => toggleWishlist(e, room.id)}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/95 flex items-center justify-center hover:scale-110 transition-transform">
+                    <span className={`material-symbols-outlined text-xs ${wishlist.includes(room.id) ? "text-rose-500" : "text-slate-300"}`}
+                      style={{ fontVariationSettings: wishlist.includes(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                  </button>
+                </div>
+                <div className="flex-1 p-5 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-start justify-between gap-4 mb-2">
+                      <div>
+                        <StarRating rating={room.rating} />
+                        <h3 className="font-extrabold text-slate-900 mt-1 group-hover:text-primary transition-colors">{room.name}</h3>
+                        <p className="text-xs text-slate-400 mt-1 line-clamp-2">{room.description}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="text-xs text-slate-400 block">From</span>
+                        <span className="text-2xl font-extrabold text-primary">${room.price_per_night}</span>
+                        <span className="text-xs text-slate-400 block">/night</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {room.tags.map((tag) => (
+                        <span key={tag} className="text-[10px] font-bold bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded-full">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+                    <div className="flex items-center gap-4 text-slate-400">
+                      {room.amenities.map((a, idx) => (
+                        <div key={a} className="flex items-center gap-1">
+                          <span className="material-symbols-outlined text-xs">{room.amenityIcons[idx]}</span>
+                          <span className="text-[10px] font-semibold">{a}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <span className="bg-primary text-white text-xs font-bold px-4 py-2 rounded-xl group-hover:bg-primary/90 transition-all">View Details</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
 
         {filtered.length === 0 && (
-          <p className="text-center text-on-surface-variant font-medium py-16">{t("rooms_page.common.no_rooms")}</p>
+          <div className="py-24 text-center">
+            <span className="material-symbols-outlined text-5xl text-slate-200 block mb-4">search_off</span>
+            <p className="font-semibold text-slate-500">No rooms found in this category.</p>
+          </div>
         )}
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 pb-20">
-        <div className="bg-slate-900 dark:bg-slate-800 rounded-2xl p-12 text-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#137fec20_0%,transparent_70%)] pointer-events-none" />
-          <div className="relative z-10">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white mb-4">{t("rooms_page.common.cta_title")}</h2>
-            <p className="text-slate-400 max-w-xl mx-auto mb-8 font-medium">{t("rooms_page.common.cta_subtitle")}</p>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-              <Link to="/contact" className="bg-primary text-white px-8 py-3 rounded-lg font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2">
-                <span className="material-symbols-outlined">call</span>
-                {t("rooms_page.common.contact_concierge")}
-              </Link>
-              <button className="border border-slate-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-white/5 transition-all" type="button" onClick={() => setActiveTab(t("rooms_page.filters.all"))}>
-                {t("rooms_page.common.view_all_categories")}
-              </button>
-            </div>
-          </div>
+      {/* CTA */}
+      <section className="bg-slate-50 border-t border-slate-100 py-16">
+        <div className="max-w-xl mx-auto text-center px-6">
+          <h2 className="text-3xl font-extrabold text-slate-900 mb-3">{t("rooms_page.common.cta_title") || "Need help choosing?"}</h2>
+          <p className="text-slate-500 mb-8">{t("rooms_page.common.cta_subtitle") || "Our concierge team is here to help you find the perfect room."}</p>
+          <Link to="/contact" className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3.5 rounded-xl font-bold hover:bg-primary/90 active:scale-95 transition-all shadow-lg shadow-primary/25">
+            <span className="material-symbols-outlined text-base">call</span>
+            {t("rooms_page.common.contact_concierge") || "Contact Concierge"}
+          </Link>
         </div>
       </section>
 
-      <footer className="bg-slate-50 dark:bg-slate-950 w-full py-12 border-t border-slate-200 dark:border-slate-800">
-        <div className="flex flex-col md:flex-row justify-between items-center px-12 max-w-7xl mx-auto gap-8">
-          <div className="text-lg font-bold text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</div>
-          <div className="flex flex-wrap justify-center gap-8">
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/">{t("footer.quick_links.home")}</Link>
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/about">{t("navigation.about")}</Link>
-            <Link className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" to="/contact">{t("footer.quick_links.contact")}</Link>
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.privacy_policy")}</a>
-            <a className="text-xs font-medium uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.terms_of_service")}</a>
-          </div>
-          <p className="text-xs font-medium uppercase tracking-widest text-slate-400 text-center md:text-right">
-            {t("footer.copyright")}
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

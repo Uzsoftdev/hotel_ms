@@ -32,6 +32,9 @@ class Booking(Base):
     room_id = Column(Integer, ForeignKey("rooms.id"), nullable=False)
     check_in = Column(Date, nullable=False)
     check_out = Column(Date, nullable=False)
+    adults = Column(Integer, nullable=False, default=1)
+    children = Column(Integer, nullable=False, default=0)
+    special_requests = Column(String, nullable=True)
     total_price = Column(Numeric(10, 2), nullable=False)
     status = Column(String, nullable=False, default="pending")
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
@@ -39,6 +42,7 @@ class Booking(Base):
     hotel = relationship("Hotel")
     user = relationship("User")
     room = relationship("Room")
+    payments = relationship("Payment", back_populates="booking")
 
     def __repr__(self) -> str:
         return (

@@ -2,13 +2,12 @@ from typing import Any
 
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+from jose import JWTError
 
-from app.core import config
-from app.core.security import ALGORITHM
+from app.core.security import decode_token
 from app.models.user import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/public/auth/login")
 
 
 def get_db(request: Request) -> Any:
@@ -16,7 +15,7 @@ def get_db(request: Request) -> Any:
     if db is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Database session is not available",
+            detail="Database session unavailable",
         )
     return db
 
@@ -25,38 +24,32 @@ def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Any = Depends(get_db),
 ) -> User:
-    credentials_exception = HTTPException(
+    credentials_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-
-    secret_key = getattr(config, "SECRET_KEY", None)
-    if not secret_key:
-        raise credentials_exception
-
     try:
-        payload = jwt.decode(token, secret_key, algorithms=[ALGORITHM])
+        payload = decode_token(token)
+        if payload.get("type") != "access":
+            raise credentials_exc
         user_id = payload.get("user_id")
         if user_id is None:
-            raise credentials_exception
-    except JWTError as exc:
-        raise credentials_exception from exc
+            raise credentials_exc
+    except JWTError:
+        raise credentials_exc
 
     user = db.query(User).filter(User.id == int(user_id)).first()
     if user is None:
-        raise credentials_exception
-
+        raise credentials_exc
     return user
 
 
-def get_current_hotel(user: Any = Depends(get_current_user)) -> int:
+def get_current_hotel(user: User = Depends(get_current_user)) -> int:
     hotel_id = getattr(user, "hotel_id", None)
-
     if hotel_id is None:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="User is not assigned to a hotel",
         )
-
     return int(hotel_id)

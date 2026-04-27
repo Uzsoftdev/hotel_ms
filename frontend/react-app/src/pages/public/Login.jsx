@@ -1,187 +1,262 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { login } from "../../services/auth";
 import { useAuth } from "../../contexts/AuthContext";
-import metaIcon from "../../assets/icons/meta.svg";
-import appleIcon from "../../assets/icons/apple.svg";
-import googleIcon from "../../assets/icons/google.svg";
-import loginBack from "../../assets/images/login_back.png";
+import loginBack from "../../assets/images/background.png";
+
+function EyeButton({ show, onToggle }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      style={{
+        position: "absolute", right: 13, top: "50%", transform: "translateY(-50%)",
+        background: "none", border: "none", cursor: "pointer",
+        color: show ? "var(--primary)" : "var(--text-tertiary)",
+        transition: "color .2s, transform .2s",
+        display: "flex", alignItems: "center", padding: 2,
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-50%) scale(1.15)"}
+      onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(-50%) scale(1)"}
+      tabIndex={-1}
+    >
+      <span className="material-symbols-outlined" style={{ fontSize: 19, transition: "opacity .2s", opacity: show ? 1 : 0.6 }}>
+        {show ? "visibility" : "visibility_off"}
+      </span>
+    </button>
+  );
+}
 
 export default function Login() {
-  const { t } = useTranslation("pub_translation");
   const { loginUser } = useAuth();
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [showPw, setShowPw]     = useState(false);
+  const [remember, setRemember] = useState(false);
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [mounted, setMounted]   = useState(false);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => { setTimeout(() => setMounted(true), 40); }, []);
+
+  async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      console.log('[Login] Submitting credentials for:', username);
       const res = await login({ username, password });
-      console.log('[Login] Response received:', res.data);
-      console.log('[Login] Token received:', res.data.access_token ? '✅ yes' : '❌ no');
-      loginUser(res.data.access_token);
-      console.log('[Login] Token stored in localStorage:', localStorage.getItem('access_token') ? '✅ yes' : '❌ no');
-      navigate("/");
+      await loginUser(res.data.access_token);
+      const payload = JSON.parse(atob(res.data.access_token.split(".")[1]));
+      const role = payload?.role ?? "";
+      if (role === "super_admin" || role === "hotel_admin") navigate("/admin", { replace: true });
+      else if (role === "staff") navigate("/staff/bookings", { replace: true });
+      else navigate("/dashboard", { replace: true });
     } catch (err) {
-      console.error('[Login] Error:', err.response?.status, err.response?.data);
-      setError(err.response?.data?.detail || t("login_page.error_generic", "Login failed. Please try again."));
+      const data = err.response?.data;
+      const msg = data?.detail || data?.details?.[0]?.message?.replace(/^Value error,\s*/i, "") || data?.error;
+      setError(msg || "Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  const fadeUp = (delay = 0) => ({
+    opacity: mounted ? 1 : 0,
+    transform: mounted ? "translateY(0)" : "translateY(20px)",
+    transition: `opacity .55s ease ${delay}s, transform .55s cubic-bezier(.22,1,.36,1) ${delay}s`,
+  });
 
   return (
-    <div className="bg-surface text-on-surface min-h-screen flex flex-col">
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/50 shadow-sm">
-        <div className="flex justify-between items-center h-16 px-6 lg:px-12 w-full">
-          <div className="text-2xl font-extrabold tracking-tighter text-slate-900">{t("navigation.azure_horizon")}</div>
-          <div className="flex items-center gap-6">
-            <Link className="text-slate-600 font-semibold tracking-tight text-sm hover:text-blue-600 transition-colors" to="/">
-              {t("navigation.home")}
-            </Link>
-            <Link className="px-5 py-2 bg-primary text-white rounded-lg font-semibold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all" to="/register">
-              {t("navigation.sign_up")}
-            </Link>
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+
+      {/* ── Left: image panel ── */}
+      <aside className="hidden lg:flex" style={{ flex: "0 0 48%", position: "relative", overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: 56 }}>
+        <img src={loginBack} alt="Azure Horizon" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(15,23,42,.82) 0%, rgba(37,99,235,.35) 100%)", zIndex: 1 }} />
+
+        {/* Logo */}
+        <div style={{ ...fadeUp(0), position: "relative", zIndex: 2 }}>
+          <Link to="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
+              <span className="material-symbols-outlined text-white text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
+            </div>
+            <span style={{ fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>Azure Horizon</span>
+          </Link>
+        </div>
+
+        {/* Center copy */}
+        <div style={{ ...fadeUp(.12), position: "relative", zIndex: 2 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.18em", color: "rgba(255,255,255,.55)", marginBottom: 16 }}>
+            ★★★★★ &nbsp; Miami · South Beach
+          </p>
+          <h2 style={{ fontSize: 38, fontWeight: 900, letterSpacing: "-0.035em", lineHeight: 1.05, color: "#fff", marginBottom: 16 }}>
+            Your luxury<br />stay awaits.
+          </h2>
+          <p style={{ fontSize: 15, fontWeight: 500, color: "rgba(255,255,255,.7)", lineHeight: 1.6, maxWidth: 340 }}>
+            Sign in to manage your bookings, explore exclusive offers, and experience world-class hospitality.
+          </p>
+          {/* Stats */}
+          <div style={{ display: "flex", gap: 32, marginTop: 32 }}>
+            {[["4.9★", "Guest rating"], ["500+", "Rooms"], ["24/7", "Concierge"]].map(([val, lbl]) => (
+              <div key={lbl}>
+                <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>{val}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,.45)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{lbl}</div>
+              </div>
+            ))}
           </div>
         </div>
-      </header>
 
-      <main className="flex-grow relative overflow-hidden flex items-center justify-center pt-16">
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute -top-[10%] -left-[5%] h-[40%] w-[40%] rounded-full bg-primary/5 blur-[120px]" />
-          <div className="absolute top-[60%] -right-[5%] h-[30%] w-[30%] rounded-full bg-blue-300/20 blur-[100px]" />
+        {/* Bottom quote */}
+        <div style={{ ...fadeUp(.22), position: "relative", zIndex: 2, borderLeft: "2px solid rgba(255,255,255,.25)", paddingLeft: 16 }}>
+          <p style={{ fontSize: 13, fontStyle: "italic", color: "rgba(255,255,255,.65)", lineHeight: 1.6 }}>
+            "The finest luxury is the pleasure of being where you belong."
+          </p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,.35)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: 6 }}>Azure Horizon</p>
         </div>
+      </aside>
 
-        <div className="relative z-10 w-full max-w-[480px] px-6 py-12">
-          <div className="rounded-xl border border-outline-variant/30 bg-surface-bright p-8 shadow-2xl backdrop-blur-sm md:p-10">
-            <div className="mb-10 text-center">
-              <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-on-surface md:text-4xl">
-                {t("login_page.title")}
-              </h1>
-              <p className="font-medium text-on-surface-variant">{t("login_page.subtitle")}</p>
-            </div>
+      {/* ── Right: form ── */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", background: "#fff", padding: "48px 32px", overflowY: "auto" }}>
+        <div style={{ width: "100%", maxWidth: 420 }}>
 
-            {error && (
-              <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm font-semibold text-red-600">
-                {error}
+          {/* Mobile logo */}
+          <div className="lg:hidden" style={{ ...fadeUp(0), marginBottom: 32 }}>
+            <Link to="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary" style={{ fontSize: 18, fontVariationSettings: "'FILL' 1" }}>hotel</span>
               </div>
-            )}
+              <span style={{ fontSize: 17, fontWeight: 800, color: "#0f172a" }}>Azure <span style={{ color: "#2563EB" }}>Horizon</span></span>
+            </Link>
+          </div>
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold uppercase tracking-[0.05em] text-on-surface-variant">
-                  {t("login_page.email_or_username")}
-                </label>
+          {/* Heading */}
+          <div style={fadeUp(.06)}>
+            <h1 style={{ fontSize: 30, fontWeight: 900, letterSpacing: "-0.025em", color: "var(--text)", marginBottom: 6 }}>Sign in</h1>
+            <p className="ah-muted" style={{ fontSize: 14, marginBottom: 28 }}>
+              Don't have an account?{" "}
+              <Link to="/register" style={{ color: "var(--primary)", fontWeight: 700, textDecoration: "none" }}>Create one free</Link>
+            </p>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div style={{ ...fadeUp(0), display: "flex", alignItems: "center", gap: 8, padding: "11px 14px", background: "var(--error-bg)", borderRadius: 8, marginBottom: 20, color: "var(--error)", fontSize: 13, fontWeight: 600 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16, flexShrink: 0 }}>error</span>
+              {error}
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+            {/* Email */}
+            <div style={fadeUp(.1)} className="ah-field">
+              <label className="ah-label">Email address</label>
+              <div style={{ position: "relative" }}>
+                <span className="material-symbols-outlined" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", fontSize: 18, color: "var(--text-tertiary)", pointerEvents: "none" }}>mail</span>
                 <input
-                  className="w-full rounded-lg border border-outline-variant/40 bg-surface-container-low px-4 py-3.5 text-sm font-semibold transition-all placeholder:text-slate-400 focus:border-primary focus:ring-0"
-                  placeholder={t("login_page.email_placeholder")}
-                  type="text"
+                  className="ah-input"
+                  type="email"
+                  placeholder="you@example.com"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
+                  style={{ paddingLeft: 40 }}
                 />
               </div>
+            </div>
 
-              <div className="space-y-1.5">
-                <div className="flex items-end justify-between">
-                  <label className="block text-[10px] font-bold uppercase tracking-[0.05em] text-on-surface-variant">
-                    {t("login_page.password")}
-                  </label>
-                  <Link className="text-[11px] font-bold text-primary hover:underline" to="/forgot-password">
-                    {t("login_page.forgot_password")}
-                  </Link>
-                </div>
+            {/* Password */}
+            <div style={fadeUp(.14)} className="ah-field">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <label className="ah-label" style={{ margin: 0 }}>Password</label>
+                <Link to="/forgot-password" style={{ fontSize: 12, fontWeight: 700, color: "var(--primary)", textDecoration: "none" }}>Forgot password?</Link>
+              </div>
+              <div style={{ position: "relative" }}>
+                <span className="material-symbols-outlined" style={{ position: "absolute", left: 13, top: "50%", transform: "translateY(-50%)", fontSize: 18, color: "var(--text-tertiary)", pointerEvents: "none" }}>lock</span>
                 <input
-                  className="w-full rounded-lg border border-outline-variant/40 bg-surface-container-low px-4 py-3.5 text-sm font-semibold transition-all placeholder:text-slate-400 focus:border-primary focus:ring-0"
+                  className="ah-input"
+                  type={showPw ? "text" : "password"}
                   placeholder="••••••••"
-                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  style={{ paddingLeft: 40, paddingRight: 44 }}
                 />
+                <EyeButton show={showPw} onToggle={() => setShowPw((s) => !s)} />
               </div>
+            </div>
 
+            {/* Remember me */}
+            <div style={{ ...fadeUp(.17), display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}
+              onClick={() => setRemember((r) => !r)}>
+              <div style={{
+                width: 20, height: 20, borderRadius: 6,
+                border: remember ? "none" : "2px solid var(--border-strong)",
+                background: remember ? "var(--primary)" : "#fff",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0, transition: "all .15s",
+              }}>
+                {remember && <span className="material-symbols-outlined" style={{ fontSize: 13, color: "#fff" }}>check</span>}
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text)" }}>Keep me signed in</span>
+            </div>
+
+            {/* Submit */}
+            <div style={fadeUp(.2)}>
               <button
-                className="w-full rounded-lg bg-primary py-4 text-base font-bold text-white shadow-lg shadow-primary/20 transition-all hover:translate-y-[-1px] disabled:opacity-50 disabled:cursor-not-allowed"
                 type="submit"
                 disabled={loading}
+                className="ah-btn ah-btn-primary ah-btn-lg ah-btn-block"
+                style={{ marginTop: 4, position: "relative", overflow: "hidden" }}
               >
-                {loading ? t("login_page.logging_in", "Signing in...") : t("login_page.login_button")}
-              </button>
-            </form>
-
-            <div className="relative my-10">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-outline-variant/50" />
-              </div>
-              <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
-                <span className="bg-surface-bright px-4 text-on-surface-variant">{t("login_page.continue_with")}</span>
-              </div>
-            </div>
-
-            <div className="mb-10 mt-4 grid grid-cols-3 gap-4">
-              <button className="group flex items-center justify-center rounded-lg border border-outline-variant/50 bg-surface-container-lowest py-3 transition-colors active:scale-95 hover:bg-surface-container-low">
-                <img
-                  alt={t("login_page.providers.google")}
-                  className="h-5 w-5 opacity-80 transition-opacity group-hover:opacity-100"
-                  src={googleIcon}
-                />
-              </button>
-              <button className="group flex items-center justify-center rounded-lg border border-outline-variant/50 bg-surface-container-lowest py-3 transition-colors active:scale-95 hover:bg-surface-container-low">
-                <img
-                  alt={t("login_page.providers.apple")}
-                  className="h-5 w-5 opacity-80 transition-opacity group-hover:opacity-100"
-                  src={appleIcon}
-                />
-              </button>
-              <button className="group flex items-center justify-center rounded-lg border border-outline-variant/50 bg-surface-container-lowest py-3 transition-colors active:scale-95 hover:bg-surface-container-low">
-                <img
-                  alt={t("login_page.providers.meta")}
-                  className="h-5 w-5 opacity-80 transition-opacity group-hover:opacity-100"
-                  src={metaIcon}
-                />
+                {loading ? (
+                  <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, animation: "spin 1s linear infinite" }}>progress_activity</span>
+                    Signing in…
+                  </span>
+                ) : "Sign in"}
               </button>
             </div>
+          </form>
 
-            <div className="text-center mt-8">
-              <p className="text-sm font-medium text-on-surface-variant">
-                {t("login_page.no_account")}
-                <Link className="ml-1 font-bold text-primary hover:underline" to="/register">
-                  {t("login_page.sign_up")}
-                </Link>
-              </p>
-            </div>
+          {/* OR divider */}
+          <div style={{ ...fadeUp(.23), display: "flex", alignItems: "center", gap: 12, margin: "24px 0", color: "var(--text-tertiary)", fontSize: 12, fontWeight: 700 }}>
+            <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
+            OR
+            <div style={{ flex: 1, height: 1, background: "var(--border)" }} />
           </div>
 
-          <div className="mt-8 flex justify-center gap-6 text-[10px] font-bold uppercase tracking-wider text-on-surface-variant/60">
-            <a className="hover:text-on-surface transition-colors" href="#">
-              {t("footer.privacy_policy")}
-            </a>
-            <a className="hover:text-on-surface transition-colors" href="#">
-              {t("footer.terms_of_service")}
-            </a>
-            <a className="hover:text-on-surface transition-colors" href="#">
-              {t("footer.help_center")}
-            </a>
+          {/* Social buttons */}
+          <div style={{ ...fadeUp(.26), display: "flex", flexDirection: "column", gap: 8 }}>
+            {[
+              { label: "Google", glyph: "G", color: "#EA4335" },
+              { label: "Apple",  glyph: "",  color: "#1a1a1a" },
+              { label: "Meta",   glyph: "f", color: "#1877F2" },
+            ].map(({ label, glyph, color }) => (
+              <button
+                key={label}
+                type="button"
+                className="ah-btn ah-btn-secondary ah-btn-block"
+                style={{ justifyContent: "flex-start", paddingLeft: 14 }}
+                onClick={() => alert("Social login coming soon.")}
+              >
+                <span style={{ width: 22, height: 22, borderRadius: 5, background: color, color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, flexShrink: 0 }}>{glyph}</span>
+                <span style={{ flex: 1, textAlign: "center" }}>Continue with {label}</span>
+              </button>
+            ))}
           </div>
+
+          <p style={{ ...fadeUp(.29), textAlign: "center", fontSize: 13, marginTop: 24, color: "var(--text-secondary)", fontWeight: 600 }}>
+            New here?{" "}
+            <Link to="/register" style={{ color: "var(--primary)", fontWeight: 700, textDecoration: "none" }}>Create an account</Link>
+          </p>
         </div>
-      </main>
-
-      <div className="fixed inset-0 -z-10 h-screen w-screen overflow-hidden opacity-10">
-        <img
-          alt="blurred interior of a luxury minimalist hotel lobby with soft sunlight streaming through floor to ceiling windows and marble textures"
-          className="h-full w-full scale-110 object-cover grayscale"
-          src={loginBack}
-        />
       </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

@@ -1,5 +1,33 @@
+/* ── Light theme (default) ─────────────────────────────────────────────────── */
+:root {
+  --color-primary: #2563eb;
+  --color-surface: #f8fafc;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-low: #f1f5f9;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-surface: #0f172a;
+  --color-on-surface-variant: #64748b;
+  --color-outline-variant: #cbd5e1;
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────────────── */
+.dark {
+  --color-primary: #3b82f6;
+  --color-surface: #0f172a;
+  --color-surface-bright: #1e293b;
+  --color-surface-container-low: #1e293b;
+  --color-surface-container-lowest: #0f172a;
+  --color-on-surface: #f1f5f9;
+  --color-on-surface-variant: #94a3b8;
+  --color-outline-variant: #334155;
+}
+
 body {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 .material-symbols-outlined {
@@ -8,4 +36,62 @@ body {
 
 .hero-gradient {
   background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), #f6f7f8);
+}
+
+/* ── Custom token utility classes (use CSS variables, so they respond to dark mode) ── */
+.bg-surface                 { background-color: var(--color-surface); }
+.bg-surface-bright          { background-color: var(--color-surface-bright); }
+.bg-surface-container-low   { background-color: var(--color-surface-container-low); }
+.bg-surface-container-lowest{ background-color: var(--color-surface-container-lowest); }
+.text-on-surface            { color: var(--color-on-surface); }
+.text-on-surface-variant    { color: var(--color-on-surface-variant); }
+.border-outline-variant     { border-color: var(--color-outline-variant); }
+.bg-primary                 { background-color: var(--color-primary); }
+.text-primary               { color: var(--color-primary); }
+.border-primary             { border-color: var(--color-primary); }
+/* Opacity variants used in the codebase */
+.bg-primary\/10             { background-color: color-mix(in srgb, var(--color-primary) 10%, transparent); }
+.bg-primary\/20             { background-color: color-mix(in srgb, var(--color-primary) 20%, transparent); }
+.text-primary\/20           { color: color-mix(in srgb, var(--color-primary) 20%, transparent); }
+.shadow-primary\/20         { --tw-shadow-color: color-mix(in srgb, var(--color-primary) 20%, transparent); }
+.shadow-primary\/25         { --tw-shadow-color: color-mix(in srgb, var(--color-primary) 25%, transparent); }
+.shadow-primary\/30         { --tw-shadow-color: color-mix(in srgb, var(--color-primary) 30%, transparent); }
+.border-outline-variant\/30 { border-color: color-mix(in srgb, var(--color-outline-variant) 30%, transparent); }
+.border-outline-variant\/40 { border-color: color-mix(in srgb, var(--color-outline-variant) 40%, transparent); }
+.border-outline-variant\/50 { border-color: color-mix(in srgb, var(--color-outline-variant) 50%, transparent); }
+.bg-primary\/90             { background-color: color-mix(in srgb, var(--color-primary) 90%, transparent); }
+.text-on-surface-variant\/60{ color: color-mix(in srgb, var(--color-on-surface-variant) 60%, transparent); }
+.hover\:bg-surface-container-low:hover { background-color: var(--color-surface-container-low); }
+.hover\:text-on-surface:hover           { color: var(--color-on-surface); }
+.focus\:border-primary:focus            { border-color: var(--color-primary); }
+
+/* ── Auth page animations ───────────────────────────────────────────────────── */
+@keyframes slideInFromRight {
+  from { opacity: 0; transform: translateX(48px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInFromLeft {
+  from { opacity: 0; transform: translateX(-48px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-in {
+  animation: fadeIn 0.6s ease both;
 }

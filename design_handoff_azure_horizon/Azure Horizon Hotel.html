@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Azure Horizon Hotel — Guest UI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+  body, html { margin: 0; padding: 0; background: #f0eee9; font-family: 'Plus Jakarta Sans', sans-serif; }
+  #root { width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="pages-flow.jsx"></script>
+<script type="text/babel" src="pages-account.jsx"></script>
+
+<script type="text/babel">
+const { DesignCanvas, DCSection, DCArtboard, DCPostIt } = window;
+
+function App() {
+  return (
+    <DesignCanvas>
+      <DCSection id="home" title="Home" subtitle="Three directions for the marketing landing — full-bleed editorial, split hero, and Booking-style data-dense.">
+        <DCArtboard id="home-a" label="A · Editorial Oceanfront" width={1440} height={1900}><HomeA /></DCArtboard>
+        <DCArtboard id="home-b" label="B · Split Hero" width={1440} height={1900}><HomeB /></DCArtboard>
+        <DCArtboard id="home-c" label="C · Compact / Listing-first" width={1440} height={1600}><HomeC /></DCArtboard>
+      </DCSection>
+
+      <DCSection id="discover" title="Discover & book" subtitle="Search, room details, and the multi-step booking flow with running price summary.">
+        <DCArtboard id="search" label="Search results · filters + listing" width={1440} height={1100}><SearchPage /></DCArtboard>
+        <DCArtboard id="details" label="Room details · gallery + reserve panel" width={1440} height={1500}><RoomDetails /></DCArtboard>
+        <DCArtboard id="booking" label="Booking · step 2 of 4 (with inline error)" width={1440} height={1100}><BookingFlow /></DCArtboard>
+        <DCArtboard id="confirm" label="Confirmation · QR + share" width={1440} height={1100}><Confirmation /></DCArtboard>
+      </DCSection>
+
+      <DCSection id="auth" title="Auth" subtitle="Centered login and editorial split-panel register.">
+        <DCArtboard id="login" label="Login · social + email" width={900} height={900}><Login /></DCArtboard>
+        <DCArtboard id="register" label="Register · brand quote panel" width={1440} height={900}><Register /></DCArtboard>
+      </DCSection>
+
+      <DCSection id="account" title="Account" subtitle="Logged-in dashboard, bookings list (with cancel-flip interaction), profile, reviews, notifications, payment history.">
+        <DCArtboard id="dashboard" label="Dashboard · welcome + stats" width={1440} height={950}><Dashboard /></DCArtboard>
+        <DCArtboard id="bookings" label="My bookings · cancel-confirm flip" width={1440} height={750}><MyBookings /></DCArtboard>
+        <DCArtboard id="profile" label="Profile · avatar upload + prefs" width={1440} height={1100}><Profile /></DCArtboard>
+        <DCArtboard id="reviews" label="Reviews · star picker + responses" width={1440} height={1200}><ReviewsPage /></DCArtboard>
+        <DCArtboard id="notifications" label="Notifications · unread + tones" width={900} height={750}><NotificationsPage /></DCArtboard>
+        <DCArtboard id="payments" label="Payment history · downloadable" width={1440} height={650}><PaymentHistory /></DCArtboard>
+      </DCSection>
+
+      <DCPostIt x={40} y={40} width={260}>
+        <strong>Azure Horizon · Guest UI</strong><br /><br />
+        14 pages on a Booking-meets-Four-Seasons system. Plus Jakarta Sans, #2563EB primary, 12px card radius, Material Symbols. Drag any board to reorder; click ⤢ to focus.
+      </DCPostIt>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

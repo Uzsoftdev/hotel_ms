@@ -1,292 +1,510 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAuth } from "../../contexts/AuthContext";
+import Navbar from "../../components/common/Navbar";
+import Footer from "../../components/common/Footer";
+import { ROOMS } from "../../data/rooms";
+
+import background from "../../assets/images/background.png";
 import parisImage from "../../assets/images/paris_1.png";
 import baliImage from "../../assets/images/bali_1.png";
 import newyorkImage from "../../assets/images/new_york_1.png";
-import background from "../../assets/images/background.png";
-import { useTranslation } from "react-i18next";
+import room1 from "../../assets/images/room1.png";
+import room2 from "../../assets/images/room2.png";
+import hotel3 from "../../assets/images/hotel3.png";
 
-const languageItems = [
-  { code: "en", flag: "🇺🇸" },
-  { code: "es", flag: "🇪🇸" },
-  { code: "fr", flag: "🇫🇷" },
-  { code: "de", flag: "🇩🇪" },
-  { code: "zh", flag: "🇨🇳" },
-  { code: "ja", flag: "🇯🇵" },
-  { code: "ko", flag: "🇰🇷" },
-  { code: "it", flag: "🇮🇹" },
-  { code: "pt", flag: "🇵🇹" },
-  { code: "ar", flag: "🇸🇦" },
-  { code: "ru", flag: "🇷🇺" },
+const today = new Date().toISOString().split("T")[0];
+
+const DESTINATIONS = [
+  { name: "Paris", country: "France", flag: "🇫🇷", tagline: "City of lights & love", hotels: "124 stays", image: parisImage, color: "from-rose-900/80" },
+  { name: "Bali", country: "Indonesia", flag: "🇮🇩", tagline: "Tropical paradise", hotels: "89 stays", image: baliImage, color: "from-emerald-900/80" },
+  { name: "New York", country: "United States", flag: "🇺🇸", tagline: "The city that never sleeps", hotels: "312 stays", image: newyorkImage, color: "from-blue-900/80" },
 ];
 
-const destinationImages = [parisImage, baliImage, newyorkImage];
+const PERKS = [
+  { icon: "support_agent", title: "24/7 Concierge", desc: "Round-the-clock personal assistance for every need, day or night." },
+  { icon: "price_check", title: "Best Rate Promise", desc: "We match any lower price you find — no questions asked." },
+  { icon: "spa", title: "Curated Luxury", desc: "Every room hand-picked and verified for exceptional standards." },
+  { icon: "lock", title: "Secure Booking", desc: "Bank-grade encryption keeps your personal data safe." },
+];
+
+const REVIEWS = [
+  { name: "Alexandra S.", location: "London, UK", rating: 5, text: "Absolutely breathtaking. The concierge arranged a private dinner on the terrace — a night I'll never forget.", avatar: "AS", stay: "Grand Ocean Suite" },
+  { name: "James V.", location: "Toronto, CA", rating: 5, text: "The most comfortable bed I've ever slept in. Check-in was seamless, and the staff remembered our names throughout.", avatar: "JV", stay: "Horizon Deluxe Suite" },
+  { name: "Marie L.", location: "Paris, FR", rating: 5, text: "Je reviendrai certainement. The room was immaculate, the views stunning, and the breakfast simply magnificent.", avatar: "ML", stay: "Azure Standard King" },
+];
+
+const STATS = [
+  { value: "50K+", label: "Happy Guests" },
+  { value: "4.9★", label: "Avg Rating" },
+  { value: "12", label: "Years of Excellence" },
+  { value: "98%", label: "Would Return" },
+];
+
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, visible];
+}
 
 export default function Home() {
-  const { t, i18n } = useTranslation("pub_translation");
-  const [language, setLanguage] = useState(i18n.language || "en");
+  const { t } = useTranslation("pub_translation");
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
   const [location, setLocation] = useState("");
-  const [dateLabel, setDateLabel] = useState(t("home.search.select_dates"));
-  const translatedDestinations = useMemo(() => {
-    const items = t("home.destinations.items", { returnObjects: true });
-    if (!Array.isArray(items)) {
-      return [];
-    }
-    return items.map((item, index) => ({
-      ...item,
-      image: destinationImages[index],
-    }));
-  }, [t, i18n.language]);
-  const [filteredDestinations, setFilteredDestinations] = useState([]);
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [guests, setGuests] = useState(2);
+  const [showGuests, setShowGuests] = useState(false);
+  const guestRef = useRef(null);
 
   useEffect(() => {
-    i18n.changeLanguage(language);
-  }, [language, i18n]);
+    const h = (e) => { if (guestRef.current && !guestRef.current.contains(e.target)) setShowGuests(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
 
-  useEffect(() => {
-    const syncLanguage = (lng) => setLanguage(lng);
-    i18n.on("languageChanged", syncLanguage);
-    return () => i18n.off("languageChanged", syncLanguage);
-  }, [i18n]);
+  const [perksRef, perksVisible] = useInView();
+  const [roomsRef, roomsVisible] = useInView();
+  const [reviewsRef, reviewsVisible] = useInView();
+  const [destRef, destVisible] = useInView();
 
-  useEffect(() => {
-    setDateLabel(t("home.search.select_dates"));
-  }, [language, t]);
+  const featuredRooms = useMemo(() => ROOMS.slice(0, 4), []);
 
-  useEffect(() => {
-    if (location.trim() === "") {
-      setFilteredDestinations(translatedDestinations);
-    } else {
-      const filtered = translatedDestinations.filter((dest) =>
-        dest.name.toLowerCase().includes(location.toLowerCase())
-      );
-      setFilteredDestinations(filtered);
-    }
-  }, [location, translatedDestinations]);
+  function handleSearch(e) {
+    e.preventDefault();
+    const p = new URLSearchParams();
+    if (location) p.set("location", location);
+    if (checkIn) p.set("checkIn", checkIn);
+    if (checkOut) p.set("checkOut", checkOut);
+    p.set("guests", guests);
+    navigate(`/search?${p.toString()}`);
+  }
+
+  function quickFill(dest) {
+    setLocation(dest);
+  }
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
-      <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</h1>
-          <div className="hidden md:flex items-center gap-10">
-            <a className="text-sm font-semibold hover:text-primary transition-colors" href="#search-experience">{t("navigation.find_hotel")}</a>
-            <Link className="text-sm font-semibold hover:text-primary transition-colors" to="/login">{t("navigation.manage_bookings")}</Link>
-            <Link className="text-sm font-semibold hover:text-primary transition-colors" to="/contact">
-              {t("navigation.partner_with_us")}
-            </Link>
+    <div className="bg-white text-slate-900 min-h-screen">
+      <Navbar transparent />
+
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden" style={{ height: "min(100vh, 900px)", minHeight: 560, display: "flex", alignItems: "flex-end", paddingBottom: 80 }}>
+        {/* Background */}
+        <div className="absolute inset-0 z-0">
+          <img src={background} alt="Azure Horizon Hotel" className="w-full h-full object-cover scale-105" style={{ filter: "brightness(.55)" }} />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.85) 100%)" }} />
+        </div>
+
+
+        {/* Content */}
+        <div className="relative z-10 text-left px-6 max-w-5xl mx-auto w-full" style={{ paddingLeft: 48 }}>
+          {/* Eyebrow — exact handoff design */}
+          <div className="animate-fade-up" style={{ fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 700, color: "rgba(255,255,255,0.85)", marginBottom: 20 }}>
+            ★★★★★ &nbsp;&nbsp; Miami · South Beach
           </div>
-          <div className="flex items-center gap-3">
-            <div className="relative group">
-              <button
-                aria-label={t("navigation.select_language")}
-                className="flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-600 dark:text-slate-300"
-                type="button"
-              >
-                <span className="material-symbols-outlined text-xl">language</span>
-              </button>
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <div className="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-50 dark:border-slate-800 mb-1">{t("navigation.select_language")}</div>
-                {languageItems.map((item) => (
-                  <button
-                    className={`w-full text-left flex items-center gap-3 px-4 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${language === item.code ? "font-semibold text-primary" : "text-slate-700 dark:text-slate-200"}`}
-                    key={item.code}
-                    onClick={() => {
-                      setLanguage(item.code);
-                      localStorage.setItem("app_language", item.code);
-                    }}
-                    type="button"
-                  >
-                    <span className="text-lg">{item.flag}</span>
-                    {t(`languages.${item.code}`)}
-                  </button>
-                ))}
+
+          {/* Headline — exact handoff copy & style */}
+          <h1 className="animate-fade-up delay-100" style={{ fontSize: "clamp(48px,6vw,72px)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, color: "#fff", margin: "0 0 20px", maxWidth: 720 }}>
+            Where the<br />
+            Atlantic meets<br />
+            <em style={{ fontWeight: 400, fontStyle: "italic" }}>quiet luxury.</em>
+          </h1>
+
+          {/* Subtitle — exact handoff copy */}
+          <p className="animate-fade-up delay-200" style={{ fontSize: 17, color: "rgba(255,255,255,0.9)", maxWidth: 480, marginBottom: 40, fontWeight: 500, lineHeight: 1.55 }}>
+            Oceanfront suites, three-time Michelin dining, and a private stretch of South Beach.
+          </p>
+
+          {/* Stats */}
+          <div className="flex items-center gap-8 animate-fade-up delay-300">
+            {STATS.map(({ value, label }, i) => (
+              <div key={label} className="flex items-center gap-8">
+                <div>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>{value}</p>
+                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{label}</p>
+                </div>
+                {i < STATS.length - 1 && <div style={{ width: 1, height: 32, background: "rgba(255,255,255,0.2)" }} />}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-float">
+          <span className="text-[10px] text-white/40 uppercase tracking-widest">Scroll</span>
+          <span className="material-symbols-outlined text-white/40 text-sm">keyboard_arrow_down</span>
+        </div>
+      </section>
+
+      {/* ── SEARCH BAR (overlapping) ── */}
+      <section className="w-full px-8 -mt-10 relative z-20 animate-fade-up delay-400" style={{ maxWidth: 1400, margin: "-40px auto 0" }}>
+        <div className="bg-white rounded-2xl shadow-2xl shadow-slate-900/15 p-2">
+          <form onSubmit={handleSearch} className="flex flex-col lg:flex-row items-stretch gap-2">
+            {/* Location */}
+            <div className="flex items-center gap-3 flex-[2] px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-text lg:border-r border-slate-100">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-primary text-sm">location_on</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Destination</label>
+                <input
+                  value={location} onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Where would you like to go?"
+                  className="w-full text-sm font-semibold text-slate-900 placeholder:text-slate-400 bg-transparent outline-none"
+                />
               </div>
             </div>
 
-            <Link className="bg-transparent border border-primary text-primary hover:bg-primary/5 px-6 py-2.5 rounded-lg text-sm font-bold transition-all" to="/register">
-              {t("navigation.register")}
-            </Link>
-            <Link className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20" to="/login">
-              {t("navigation.login")}
-            </Link>
+            {/* Check-in */}
+            <div className="flex items-center gap-3 flex-1 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors lg:border-r border-slate-100">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-primary text-sm">calendar_today</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Check-in</label>
+                <input type="date" min={today} value={checkIn}
+                  onChange={(e) => { setCheckIn(e.target.value); if (checkOut && e.target.value >= checkOut) setCheckOut(""); }}
+                  className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none" />
+              </div>
+            </div>
+
+            {/* Check-out */}
+            <div className="flex items-center gap-3 flex-1 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors lg:border-r border-slate-100">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-primary text-sm">event</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Check-out</label>
+                <input type="date" min={checkIn || today} value={checkOut}
+                  onChange={(e) => setCheckOut(e.target.value)}
+                  className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none" />
+              </div>
+            </div>
+
+            {/* Guests */}
+            <div ref={guestRef} className="relative flex items-center gap-3 flex-1 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
+              onClick={() => setShowGuests((v) => !v)}>
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-primary text-sm">group</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 cursor-pointer">Guests</label>
+                <p className="text-sm font-semibold text-slate-900">{guests} Guest{guests !== 1 ? "s" : ""}</p>
+              </div>
+              {showGuests && (
+                <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 p-5 w-56 z-50 animate-scale-in">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Number of guests</p>
+                  <div className="flex items-center justify-between">
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setGuests((g) => Math.max(1, g - 1)); }}
+                      className="w-9 h-9 rounded-full border border-slate-200 text-slate-700 font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center">
+                      <span className="material-symbols-outlined text-sm">remove</span>
+                    </button>
+                    <span className="text-2xl font-extrabold text-slate-900">{guests}</span>
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setGuests((g) => Math.min(10, g + 1)); }}
+                      className="w-9 h-9 rounded-full border border-slate-200 text-slate-700 font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center">
+                      <span className="material-symbols-outlined text-sm">add</span>
+                    </button>
+                  </div>
+                  <button type="button" onClick={() => setShowGuests(false)}
+                    className="mt-4 w-full bg-primary text-white py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">Done</button>
+                </div>
+              )}
+            </div>
+
+            {/* Search */}
+            <button type="submit"
+              className="bg-primary hover:bg-primary/90 active:scale-95 text-white px-12 py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/30 shrink-0">
+              <span className="material-symbols-outlined text-base">search</span>
+              Search
+            </button>
+          </form>
+
+          {/* Quick fills */}
+          <div className="flex items-center gap-2 px-4 pt-2 pb-1 flex-wrap">
+            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Popular:</span>
+            {["Paris", "Bali", "New York", "Tokyo", "Maldives"].map((dest) => (
+              <button key={dest} type="button" onClick={() => quickFill(dest)}
+                className="text-xs font-semibold text-slate-500 hover:text-primary hover:bg-primary/5 px-2.5 py-1 rounded-full transition-all border border-transparent hover:border-primary/20">
+                {dest}
+              </button>
+            ))}
           </div>
-        </div>
-      </nav>
-
-      <section className="relative h-[640px] w-full flex items-center justify-center overflow-hidden" id="search-experience">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-background-light dark:to-background-dark z-10" />
-          <img alt="Luxury resort exterior by the ocean" className="w-full h-full object-cover scale-110 blur-sm" src={background} />
-        </div>
-
-        <div className="relative z-20 max-w-5xl w-full px-6 text-center">
-          <h2 className="text-white text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">{t("home.hero.title")}</h2>
-          <p className="text-white/90 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-medium">{t("home.hero.subtitle")}</p>
         </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 -mt-16 relative z-30">
-        <form
-          className="bg-white dark:bg-slate-900 p-2 rounded-xl shadow-2xl flex flex-col md:flex-row items-stretch gap-2"
-          onSubmit={(e) => e.preventDefault()}
-        >
-          {/* Location */}
-          <div className="flex-1 flex items-center px-4 py-3 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800">
-            <span className="material-symbols-outlined text-slate-400 mr-3">location_on</span>
-            <div className="text-left w-full">
-              <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider" htmlFor="search-location">
-                {t("home.search.location")}
-              </label>
-              <input
-                className="w-full border-none p-0 focus:ring-0 bg-transparent text-sm font-semibold placeholder:text-slate-400 text-slate-900 dark:text-white outline-none"
-                id="search-location"
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder={t("home.search.location_placeholder")}
-                type="text"
-                value={location}
-              />
+      {/* ── PERKS ── */}
+      <section ref={perksRef} className="max-w-7xl mx-auto px-6 py-24">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {PERKS.map(({ icon, title, desc }, i) => (
+            <div key={title}
+              className={`group p-6 rounded-2xl border border-slate-100 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 card-hover ${perksVisible ? "animate-fade-up" : "opacity-0"}`}
+              style={{ animationDelay: `${i * 100}ms` }}>
+              <div className="w-12 h-12 rounded-xl bg-primary/8 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
+                <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+              </div>
+              <h3 className="font-extrabold text-slate-900 mb-2">{title}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
             </div>
-          </div>
-
-          {/* Check-in / Check-out */}
-          <div className="flex-1 flex items-center px-4 py-3 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800">
-            <span className="material-symbols-outlined text-slate-400 mr-3">calendar_today</span>
-            <div className="text-left w-full">
-              <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                {t("home.search.check_in_out")}
-              </label>
-              <button
-                className="w-full text-left text-sm font-semibold text-slate-400 truncate"
-                onClick={() =>
-                  setDateLabel(
-                    dateLabel === t("home.search.select_dates")
-                      ? t("home.search.sample_date_range")
-                      : t("home.search.select_dates")
-                  )
-                }
-                type="button"
-              >
-                {dateLabel}
-              </button>
-            </div>
-          </div>
-
-          {/* Guests */}
-          <div className="flex-1 flex items-center px-4 py-3">
-            <span className="material-symbols-outlined text-slate-400 mr-3">group</span>
-            <div className="text-left w-full">
-              <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                {t("home.search.guests")}
-              </label>
-              <button
-                className="w-full text-left text-sm font-semibold text-slate-400"
-                type="button"
-              >
-                {t("home.search.add_guests")}
-              </button>
-            </div>
-          </div>
-
-          {/* Search */}
-          <button
-            className="bg-primary hover:bg-primary/90 text-white md:w-40 py-4 md:py-0 rounded-lg font-bold flex items-center justify-center gap-2 transition-all"
-            type="submit"
-          >
-            <span className="material-symbols-outlined">search</span>
-            <span>{t("home.search.search")}</span>
-          </button>
-        </form>
+          ))}
+        </div>
       </section>
 
-      <section className="max-w-7xl mx-auto px-6 py-24" id="destinations-section">
-        <div className="flex justify-between items-end mb-8">
-          <div>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">{t("home.destinations.title")}</h3>
-            <p className="text-slate-500 dark:text-slate-400">{t("home.destinations.subtitle")}</p>
+      {/* ── FEATURED ROOMS ── */}
+      <section ref={roomsRef} className="bg-slate-50 py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className={`flex items-end justify-between mb-12 ${roomsVisible ? "animate-fade-up" : "opacity-0"}`}>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">Handpicked for you</p>
+              <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Featured stays</h2>
+              <p className="text-slate-500 mt-2 font-medium">Our most-loved rooms, loved by thousands of guests</p>
+            </div>
+            <Link to="/rooms" className="hidden md:flex items-center gap-2 text-sm font-bold text-primary hover:underline">
+              View all rooms <span className="material-symbols-outlined text-base">arrow_forward</span>
+            </Link>
           </div>
-          <a className="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#destinations-section">
-            {t("home.destinations.view_all")} <span class="material-symbols-outlined text-sm">arrow_forward</span>
-          </a>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredRooms.map((room, i) => (
+              <Link key={room.id} to={`/room-details/${room.id}`} state={{ room }}
+                className={`group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-slate-900/10 transition-all duration-400 card-hover ${roomsVisible ? "animate-fade-up" : "opacity-0"}`}
+                style={{ animationDelay: `${i * 80}ms` }}>
+                <div className="aspect-[4/3] overflow-hidden relative img-zoom">
+                  <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute top-3 left-3">
+                    <span className="text-[10px] font-bold uppercase tracking-widest bg-white/95 text-primary px-2.5 py-1 rounded-full shadow-sm">
+                      {room.category}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => e.preventDefault()}
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 flex items-center justify-center shadow-sm hover:scale-110 transition-transform">
+                    <span className="material-symbols-outlined text-sm text-slate-400" style={{ fontVariationSettings: "'FILL' 0" }}>favorite</span>
+                  </button>
+                  {/* Rating badge */}
+                  <div className="absolute bottom-3 right-3 glass px-2.5 py-1.5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-amber-400 text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                      <span className="text-xs font-bold text-white">{room.rating}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-extrabold text-slate-900 mb-1 text-sm leading-tight group-hover:text-primary transition-colors">{room.name}</h3>
+                  <div className="flex items-center gap-1 mb-3">
+                    <span className="material-symbols-outlined text-amber-400 text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                    <span className="text-xs font-bold text-slate-700">{room.rating}</span>
+                    <span className="text-xs text-slate-400">({room.reviews})</span>
+                  </div>
+                  <div className="flex items-center gap-3 mb-4">
+                    {room.amenities.slice(0, 2).map((a, idx) => (
+                      <div key={a} className="flex items-center gap-1 text-slate-400">
+                        <span className="material-symbols-outlined text-xs">{room.amenityIcons[idx]}</span>
+                        <span className="text-[10px] font-semibold">{a}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-semibold">From</span>
+                      <p className="text-lg font-extrabold text-slate-900">${room.price_per_night}<span className="text-xs font-medium text-slate-400">/night</span></p>
+                    </div>
+                    <div className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                      Free cancel
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center md:hidden">
+            <Link to="/rooms" className="inline-flex items-center gap-2 border border-primary text-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary/5 transition-all">
+              View all rooms <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </Link>
+          </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredDestinations.map((destination) => (
-            <div key={destination.name} className="group relative aspect-[4/5] rounded-xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all">
-              <img alt={destination.name} className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src={destination.image} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
-              <div className="absolute bottom-0 left-0 p-6 z-20">
-                <h4 className="text-white text-2xl font-bold mb-1">{destination.name}</h4>
-                <p className="text-white/80 text-sm">{destination.detail} • {destination.hotels}</p>
+      </section>
+
+      {/* ── DESTINATIONS ── */}
+      <section ref={destRef} className="max-w-7xl mx-auto px-6 py-24">
+        <div className={`mb-12 ${destVisible ? "animate-fade-up" : "opacity-0"}`}>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">Explore the world</p>
+          <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Top destinations</h2>
+          <p className="text-slate-500 mt-2 font-medium">Find your next adventure among our most popular locations</p>
+        </div>
+
+        {/* Magazine grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[260px]">
+          {/* Large card */}
+          <div
+            className={`md:col-span-2 md:row-span-2 relative rounded-3xl overflow-hidden cursor-pointer group img-zoom ${destVisible ? "animate-fade-up delay-100" : "opacity-0"}`}
+            onClick={() => quickFill(DESTINATIONS[0].name)}>
+            <img src={DESTINATIONS[0].image} alt={DESTINATIONS[0].name} className="w-full h-full object-cover" />
+            <div className={`absolute inset-0 bg-gradient-to-t ${DESTINATIONS[0].color} to-transparent`} />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 p-8">
+              <span className="text-3xl mb-2 block">{DESTINATIONS[0].flag}</span>
+              <h3 className="text-4xl font-extrabold text-white tracking-tight mb-1">{DESTINATIONS[0].name}</h3>
+              <p className="text-white/70 font-medium mb-3">{DESTINATIONS[0].tagline}</p>
+              <div className="flex items-center gap-3">
+                <span className="glass-dark text-white text-xs font-bold px-3 py-1.5 rounded-full">{DESTINATIONS[0].hotels}</span>
+                <span className="glass-dark text-white/70 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">arrow_forward</span> Explore
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Small cards */}
+          {DESTINATIONS.slice(1).map((dest, i) => (
+            <div
+              key={dest.name}
+              className={`relative rounded-3xl overflow-hidden cursor-pointer group img-zoom ${destVisible ? `animate-fade-up delay-${(i + 2) * 100}` : "opacity-0"}`}
+              onClick={() => quickFill(dest.name)}>
+              <img src={dest.image} alt={dest.name} className="w-full h-full object-cover" />
+              <div className={`absolute inset-0 bg-gradient-to-t ${dest.color} to-transparent`} />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-6">
+                <span className="text-xl mb-1 block">{dest.flag}</span>
+                <h3 className="text-2xl font-extrabold text-white tracking-tight">{dest.name}</h3>
+                <p className="text-white/60 text-sm font-medium">{dest.hotels}</p>
               </div>
             </div>
           ))}
         </div>
-        {filteredDestinations.length === 0 && (
-          <p className="mt-8 text-sm text-slate-500 dark:text-slate-400">
-            {t("home.search.no_match")}
-          </p>
-        )}
       </section>
 
-      <section class="bg-slate-50 dark:bg-slate-900/50 py-24 border-t border-slate-200 dark:border-slate-800">
-      <div class="max-w-7xl mx-auto px-6">
-      <div class="grid md:grid-cols-3 gap-16">
-      <div class="col-span-1 md:col-span-1">
-      <div class="flex items-center gap-2 mb-6">
-      <span class="material-symbols-outlined text-primary text-3xl">apartment</span>
-        <h4 class="text-xl font-bold text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</h4>
-      </div>
-      <p class="text-slate-600 dark:text-slate-400 leading-relaxed mb-8">
-                  {t("home.footer.about_text")}
-                      </p>
-      <div class="flex items-center gap-4">
-      <a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">public</span></a>
-      <a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">forum</span></a>
-      <a class="text-slate-400 hover:text-primary transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
-      </div>
-      </div>
-      <div class="col-span-1">
-      <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm">{t("home.footer.contact.title")}</h4>
-      <ul class="space-y-4">
-      <li class="flex items-start gap-3">
-      <span class="material-symbols-outlined text-primary">mail</span>
-      <div>
-      <p class="text-sm font-bold text-slate-900 dark:text-white">{t("home.footer.contact.email_label")}</p>
-      <p class="text-sm text-slate-600 dark:text-slate-400">{t("contact_page.direct_inquiry.email")}</p>
-      </div>
-      </li>
-      <li class="flex items-start gap-3">
-      <span class="material-symbols-outlined text-primary">call</span>
-      <div>
-      <p class="text-sm font-bold text-slate-900 dark:text-white">{t("home.footer.contact.call_label")}</p>
-      <p class="text-sm text-slate-600 dark:text-slate-400">{t("home.footer.contact.call_value")}</p>
-      </div>
-      </li>
-      <li class="flex items-start gap-3">
-      <span class="material-symbols-outlined text-primary">location_on</span>
-      <div>
-      <p class="text-sm font-bold text-slate-900 dark:text-white">{t("contact_page.headquarters.label")}</p>
-      <p class="text-sm text-slate-600 dark:text-slate-400">{t("home.footer.contact.hq_value")}</p>
-      </div>
-      </li>
-      </ul>
-      </div>
-      <div class="col-span-1">
-      <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-wider text-sm">{t("footer.quick_links.title")}</h4>
-      <ul class="grid grid-cols-1 gap-3">
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.privacy_policy")}</a></li>
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.terms_of_service")}</a></li>
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.help_center")}</a></li>
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("home.footer.careers")}</a></li>
-      <li><a class="text-sm text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">{t("footer.our_story")}</a></li>
-      </ul>
-      </div>
-      </div>
-      <div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 text-center">
-      <p class="text-sm text-slate-400">{t("footer.copyright")}</p>
-      </div>
-      </div>
+      {/* ── EXPERIENCE STRIP ── */}
+      <section className="bg-slate-900 py-20 overflow-hidden relative">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_50%,rgba(19,127,236,0.15),transparent_60%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_50%,rgba(167,139,250,0.1),transparent_60%)] pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-6 relative">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-4">The Azure Horizon experience</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
+                Every detail crafted<br />
+                <span style={{ background: "linear-gradient(135deg,#60a5fa,#a78bfa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                  for your comfort
+                </span>
+              </h2>
+              <p className="text-white/50 font-medium leading-relaxed mb-8 max-w-md">
+                From the moment you arrive, you'll feel the difference. Our team anticipates your every need, so you can focus on what matters — enjoying your stay.
+              </p>
+              <Link to="/rooms"
+                className="inline-flex items-center gap-2 bg-primary text-white px-7 py-3.5 rounded-xl font-bold hover:bg-primary/90 active:scale-95 transition-all shadow-lg shadow-primary/30">
+                Explore our rooms
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { icon: "room_service", title: "In-Room Dining", desc: "24-hour gourmet room service crafted by Michelin-star chefs" },
+                { icon: "pool", title: "Infinity Pool", desc: "Panoramic ocean views from our rooftop heated pool" },
+                { icon: "spa", title: "Luxury Spa", desc: "Full-service spa with holistic treatments and therapies" },
+                { icon: "fitness_center", title: "Premium Gym", desc: "State-of-the-art equipment with personal trainers on demand" },
+              ].map(({ icon, title, desc }, i) => (
+                <div key={title} className={`bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors ${i === 0 || i === 3 ? "mt-4" : ""}`}>
+                  <span className="material-symbols-outlined text-primary mb-3 block" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+                  <h4 className="font-bold text-white text-sm mb-1.5">{title}</h4>
+                  <p className="text-white/40 text-xs leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
+
+      {/* ── REVIEWS ── */}
+      <section ref={reviewsRef} className="bg-white py-24">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className={`text-center mb-14 ${reviewsVisible ? "animate-fade-up" : "opacity-0"}`}>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">What guests say</p>
+            <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Stories from our guests</h2>
+            <div className="flex items-center justify-center gap-1 mt-4">
+              {[...Array(5)].map((_, i) => (
+                <span key={i} className="material-symbols-outlined text-amber-400 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+              ))}
+              <span className="ml-2 text-sm font-bold text-slate-700">4.9 out of 5</span>
+              <span className="ml-1 text-sm text-slate-400">· 2,400+ reviews</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {REVIEWS.map(({ name, location, rating, text, avatar, stay }, i) => (
+              <div key={name}
+                className={`bg-slate-50 rounded-2xl p-7 border border-slate-100 hover:border-primary/20 hover:shadow-xl transition-all duration-300 card-hover ${reviewsVisible ? "animate-fade-up" : "opacity-0"}`}
+                style={{ animationDelay: `${i * 100}ms` }}>
+                {/* Stars */}
+                <div className="flex gap-0.5 mb-4">
+                  {[...Array(rating)].map((_, j) => (
+                    <span key={j} className="material-symbols-outlined text-amber-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                  ))}
+                </div>
+                <p className="text-slate-600 text-sm leading-relaxed mb-6 italic">&ldquo;{text}&rdquo;</p>
+                <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-extrabold text-primary">{avatar}</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900">{name}</p>
+                    <p className="text-[10px] text-slate-400 font-medium">{location} · {stay}</p>
+                  </div>
+                  <div className="ml-auto">
+                    <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="relative py-28 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img src={room2} alt="Luxury room" className="w-full h-full object-cover" style={{ filter: "brightness(.3)" }} />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-violet-600/30" />
+        </div>
+        <div className="relative z-10 text-center px-6 max-w-2xl mx-auto">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-4">Ready to travel?</p>
+          <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-5">
+            Book your dream stay today
+          </h2>
+          <p className="text-white/65 font-medium mb-10 leading-relaxed">
+            Join over 50,000 guests who've discovered the Azure Horizon difference. Your extraordinary experience awaits.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link to="/rooms"
+              className="bg-white text-primary px-8 py-4 rounded-xl font-extrabold hover:bg-white/95 active:scale-95 transition-all shadow-2xl">
+              Browse rooms
+            </Link>
+            {!isAuthenticated && (
+              <Link to="/register"
+                className="glass text-white px-8 py-4 rounded-xl font-bold hover:bg-white/20 active:scale-95 transition-all">
+                Create free account
+              </Link>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 }
