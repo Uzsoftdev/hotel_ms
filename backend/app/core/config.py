@@ -27,6 +27,7 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str
+    DATABASE_URL_SYNC: str = ""  # psycopg2 URL for Alembic (auto-derived if blank)
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"

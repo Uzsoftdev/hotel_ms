@@ -1,0 +1,45 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-backend.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/hms_prod
+          chmod 600 ~/.ssh/hms_prod
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Sync backend code
+        run: |
+          rsync -az --delete \
+            --exclude '__pycache__' \
+            --exclude '*.pyc' \
+            --exclude '*.pyo' \
+            --exclude '.env' \
+            --exclude '.env.*' \
+            --exclude 'alembic.ini' \
+            -e "ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no" \
+            backend/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/tmp/hms-backend-deploy/
+
+      - name: Install deps, migrate, restart
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            'bash /opt/hms/scripts/deploy-backend.sh'
