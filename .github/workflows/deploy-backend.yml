@@ -12,9 +12,7 @@ on:
   workflow_dispatch:
 
 env:
-  REGISTRY: ghcr.io/${{ github.repository_owner }}
-  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/hotel-backend
-  CELERY_IMAGE: ghcr.io/${{ github.repository_owner }}/hotel-celery
+  REGISTRY: ghcr.io
 
 jobs:
   build-and-push:
@@ -27,6 +25,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set lowercase image names
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "BACKEND_IMAGE=ghcr.io/${OWNER}/hotel-backend" >> $GITHUB_ENV
+          echo "CELERY_IMAGE=ghcr.io/${OWNER}/hotel-celery" >> $GITHUB_ENV
+          echo "IMAGE_REGISTRY=ghcr.io/${OWNER}" >> $GITHUB_ENV
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -86,13 +91,16 @@ jobs:
             docker-stack.yml docker/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/hotel/
 
+      - name: Set lowercase registry for deploy
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_REGISTRY=ghcr.io/${OWNER}" >> $GITHUB_ENV
+
       - name: Deploy stack (rolling update)
-        env:
-          IMAGE_TAG: ${{ github.sha }}
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
             "cd /opt/hotel && \
              echo '${{ secrets.GITHUB_TOKEN }}' | docker login ghcr.io -u ${{ github.actor }} --password-stdin && \
-             IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.REGISTRY }} \
+             IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.IMAGE_REGISTRY }} \
              docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel"
