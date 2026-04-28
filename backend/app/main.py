@@ -30,8 +30,24 @@ from app.api.v1.admin.users import router as admin_users_router
 from app.api.v1.ws import router as ws_router
 
 # Ensure all models are imported so SQLAlchemy can resolve relationships
-import app.models.hotel_facility  # noqa: F401
+import app.models.activity_log    # noqa: F401
+import app.models.amenity         # noqa: F401
+import app.models.blackout_date   # noqa: F401
+import app.models.booking         # noqa: F401
 import app.models.facility        # noqa: F401
+import app.models.hotel           # noqa: F401
+import app.models.hotel_facility  # noqa: F401
+import app.models.hotel_image     # noqa: F401
+import app.models.notification    # noqa: F401
+import app.models.payment         # noqa: F401
+import app.models.pricing_rule    # noqa: F401
+import app.models.review          # noqa: F401
+import app.models.room            # noqa: F401
+import app.models.room_amenity    # noqa: F401
+import app.models.room_image      # noqa: F401
+import app.models.room_type       # noqa: F401
+import app.models.user            # noqa: F401
+import app.models.wishlist        # noqa: F401
 
 from app.core.config import settings
 from app.exceptions.handlers import register_exception_handlers
