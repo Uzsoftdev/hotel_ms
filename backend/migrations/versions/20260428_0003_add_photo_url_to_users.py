@@ -16,13 +16,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    conn = op.get_bind()
-    cols = [r[0] for r in conn.execute(sa.text(
-        "SELECT column_name FROM information_schema.columns "
-        "WHERE table_name='users' AND column_name='photo_url'"
-    ))]
-    if not cols:
-        op.add_column("users", sa.Column("photo_url", sa.String(), nullable=True))
+    op.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS photo_url VARCHAR")
 
 
 def downgrade() -> None:
