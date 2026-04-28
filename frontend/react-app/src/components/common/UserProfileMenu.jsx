@@ -128,12 +128,13 @@ export default function UserProfileMenu() {
             </span>
             <button
               onClick={toggleTheme}
-              className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container-low transition-colors"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors"
               aria-label="Toggle theme"
             >
-              <span className="material-symbols-outlined text-[18px] text-on-surface-variant">
+              <span className="material-symbols-outlined text-[18px] text-on-surface-variant" style={{ fontVariationSettings: "'FILL' 1" }}>
                 {theme === "dark" ? "light_mode" : "dark_mode"}
               </span>
+              <span className="text-xs font-semibold text-on-surface-variant">{theme === "dark" ? "Light" : "Dark"}</span>
             </button>
           </div>
 

@@ -8,24 +8,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <style>
-      /* ── Azure Horizon design tokens ── */
+      /* ── Azure Horizon design tokens (light) ── */
       :root {
+        /* Brand */
         --primary:        #2563EB;
         --primary-dark:   #1D4ED8;
         --primary-light:  #DBEAFE;
+        /* Surfaces */
         --bg:             #F8FAFC;
         --surface:        #FFFFFF;
+        --surface-bright: #FFFFFF;
+        --surface-container-low: #F1F5F9;
+        --surface-container:     #E8EAEF;
+        /* Text */
         --text:           #0F172A;
         --text-secondary: #64748B;
         --text-tertiary:  #94A3B8;
+        /* Borders */
         --border:         #E2E8F0;
         --border-strong:  #CBD5E1;
+        /* Semantic */
         --success:        #16A34A;
         --success-bg:     #DCFCE7;
         --warning:        #D97706;
         --warning-bg:     #FEF3C7;
         --error:          #DC2626;
         --error-bg:       #FEE2E2;
+        /* Radius / shadow */
         --radius-card:    12px;
         --radius-input:   8px;
         --radius-pill:    9999px;
@@ -33,7 +42,47 @@
         --shadow-hover:   0 4px 12px rgba(15,23,42,.08), 0 2px 4px rgba(15,23,42,.05);
         --shadow-cta:     0 10px 40px rgba(37,99,235,.25);
         --shadow-cta-hover: 0 14px 50px rgba(37,99,235,.35);
+        /* Tailwind color tokens (referenced in config below) */
+        --tw-surface:           #F8FAFC;
+        --tw-surface-bright:    #FFFFFF;
+        --tw-on-surface:        #0F172A;
+        --tw-on-surface-var:    #64748B;
+        --tw-outline-var:       #E2E8F0;
+        --tw-surface-cont-low:  #F1F5F9;
+        --tw-surface-cont-low2: #FFFFFF;
+        --tw-surface-cont:      #E8EAEF;
       }
+
+      /* ── Dark mode overrides ── */
+      html.dark {
+        --bg:             #0F172A;
+        --surface:        #1E293B;
+        --surface-bright: #1E293B;
+        --surface-container-low: #263247;
+        --surface-container:     #334155;
+        --text:           #F1F5F9;
+        --text-secondary: #94A3B8;
+        --text-tertiary:  #64748B;
+        --border:         #334155;
+        --border-strong:  #475569;
+        --primary-light:  rgba(37,99,235,.25);
+        --success-bg:     rgba(22,163,74,.15);
+        --warning-bg:     rgba(217,119,6,.15);
+        --error-bg:       rgba(220,38,38,.15);
+        --shadow-card:    0 1px 3px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+        --shadow-hover:   0 4px 12px rgba(0,0,0,.4), 0 2px 4px rgba(0,0,0,.3);
+        /* Tailwind token overrides */
+        --tw-surface:          #0F172A;
+        --tw-surface-bright:   #1E293B;
+        --tw-on-surface:       #F1F5F9;
+        --tw-on-surface-var:   #94A3B8;
+        --tw-outline-var:      #334155;
+        --tw-surface-cont-low: #263247;
+        --tw-surface-cont-low2:#1E293B;
+        --tw-surface-cont:     #334155;
+      }
+
+      html.dark body { background-color: #0F172A; color: #F1F5F9; }
 
       /* ── Animations ── */
       @keyframes fadeUp   { from { opacity:0; transform:translateY(28px) } to { opacity:1; transform:translateY(0) } }
@@ -67,7 +116,7 @@
       .img-zoom:hover img { transform:scale(1.07); }
 
       /* ── Design-system component classes (ah-*) ── */
-      .ah-card { background:#fff; border-radius:var(--radius-card); box-shadow:var(--shadow-card); border:1px solid var(--border); }
+      .ah-card { background:var(--surface); border-radius:var(--radius-card); box-shadow:var(--shadow-card); border:1px solid var(--border); }
       .ah-card-hover:hover { box-shadow:var(--shadow-hover); transform:translateY(-2px); transition:all .2s; }
 
       .ah-btn { display:inline-flex; align-items:center; gap:8px; padding:0 18px; height:40px; border-radius:var(--radius-input); font-weight:700; font-size:14px; cursor:pointer; transition:all .15s; border:1.5px solid transparent; }
@@ -76,7 +125,7 @@
       .ah-btn-block { width:100%; justify-content:center; }
       .ah-btn-primary { background:var(--primary); color:#fff; box-shadow:var(--shadow-cta); }
       .ah-btn-primary:hover { background:var(--primary-dark); box-shadow:var(--shadow-cta-hover); }
-      .ah-btn-secondary { background:#fff; color:var(--text); border-color:var(--border-strong); }
+      .ah-btn-secondary { background:var(--surface); color:var(--text); border-color:var(--border-strong); }
       .ah-btn-secondary:hover { background:var(--bg); }
       .ah-btn-ghost { background:transparent; color:var(--text); border-color:transparent; }
       .ah-btn-ghost:hover { background:var(--bg); }
@@ -84,14 +133,14 @@
       .ah-btn-danger:hover { background:#b91c1c; }
       .ah-btn-pulse { animation:pulseRing 2s ease-out infinite; }
 
-      .ah-input { width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--radius-input); font-size:14px; font-weight:500; color:var(--text); background:#fff; outline:none; transition:border-color .15s; font-family:inherit; }
+      .ah-input { width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--radius-input); font-size:14px; font-weight:500; color:var(--text); background:var(--surface); outline:none; transition:border-color .15s; font-family:inherit; }
       .ah-input:focus { border-color:var(--primary); }
       .ah-input.is-error { border-color:var(--error); }
       .ah-label { display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-secondary); margin-bottom:6px; }
       .ah-help  { font-size:12px; font-weight:500; color:var(--text-secondary); margin-top:5px; display:block; }
       .ah-help.is-error { color:var(--error); }
       .ah-field { display:flex; flex-direction:column; }
-      .ah-textarea { width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--radius-input); font-size:14px; font-weight:500; color:var(--text); background:#fff; outline:none; resize:vertical; font-family:inherit; }
+      .ah-textarea { width:100%; padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--radius-input); font-size:14px; font-weight:500; color:var(--text); background:var(--surface); outline:none; resize:vertical; font-family:inherit; }
       .ah-textarea:focus { border-color:var(--primary); }
 
       .ah-badge { display:inline-flex; align-items:center; padding:3px 10px; border-radius:var(--radius-pill); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
@@ -100,13 +149,13 @@
       .ah-badge-cancelled  { background:var(--error-bg); color:var(--error); }
       .ah-badge-completed  { background:var(--primary-light); color:var(--primary-dark); }
 
-      .ah-stat { background:#fff; border-radius:var(--radius-card); border:1px solid var(--border); padding:20px; box-shadow:var(--shadow-card); }
+      .ah-stat { background:var(--surface); border-radius:var(--radius-card); border:1px solid var(--border); padding:20px; box-shadow:var(--shadow-card); }
       .ah-stat-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; }
       .ah-stat-val { font-size:26px; font-weight:800; letter-spacing:-0.02em; color:var(--text); }
       .ah-stat-lbl { font-size:13px; font-weight:600; color:var(--text-secondary); margin-top:4px; }
 
       .ah-tabs { display:flex; gap:0; border-bottom:2px solid var(--border); }
-      .ah-tab  { padding:10px 18px; font-size:14px; font-weight:700; color:var(--text-secondary); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; }
+      .ah-tab  { padding:10px 18px; font-size:14px; font-weight:700; color:var(--text-secondary); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .15s; background:none; }
       .ah-tab:hover { color:var(--text); }
       .ah-tab.is-active { color:var(--primary); border-bottom-color:var(--primary); }
 
@@ -119,14 +168,14 @@
       .ah-flip-inner { position:relative; transition:transform .55s cubic-bezier(.4,0,.2,1); transform-style:preserve-3d; }
       .ah-flip.is-flipped .ah-flip-inner { transform:rotateY(180deg); }
       .ah-flip-front, .ah-flip-back { backface-visibility:hidden; -webkit-backface-visibility:hidden; }
-      .ah-flip-back { position:absolute; inset:0; transform:rotateY(180deg); background:#fff; border-radius:var(--radius-card); border:1px solid var(--border); padding:24px; display:flex; flex-direction:column; gap:14px; justify-content:center; box-shadow:var(--shadow-card); }
+      .ah-flip-back { position:absolute; inset:0; transform:rotateY(180deg); background:var(--surface); border-radius:var(--radius-card); border:1px solid var(--border); padding:24px; display:flex; flex-direction:column; gap:14px; justify-content:center; box-shadow:var(--shadow-card); }
 
       .ah-avatar-upload { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,var(--primary),#06B6D4); color:#fff; font-weight:800; font-size:22px; display:flex; align-items:center; justify-content:center; position:relative; cursor:pointer; }
       .ah-avatar-upload-overlay { position:absolute; inset:0; border-radius:50%; background:rgba(0,0,0,.5); opacity:0; transition:opacity .18s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; color:#fff; font-size:11px; font-weight:700; }
       .ah-avatar-upload:hover .ah-avatar-upload-overlay { opacity:1; }
 
       .ah-check { display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:600; color:var(--text); }
-      .ah-check-box { width:20px; height:20px; border-radius:6px; border:2px solid var(--border-strong); display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#fff; }
+      .ah-check-box { width:20px; height:20px; border-radius:6px; border:2px solid var(--border-strong); display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--surface); }
       .ah-check.is-checked .ah-check-box { background:var(--primary); border-color:var(--primary); color:#fff; }
 
       .ah-eyebrow { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-secondary); }
@@ -135,13 +184,41 @@
       .ah-h3 { font-size:17px; font-weight:700; color:var(--text); }
       .ah-muted { color:var(--text-secondary); font-weight:500; }
 
-      .ah-skeleton { background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%); background-size:400px 100%; animation:shimmer 1.6s infinite; border-radius:6px; }
+      .ah-skeleton { background:linear-gradient(90deg,var(--border) 25%,var(--border-strong) 50%,var(--border) 75%); background-size:400px 100%; animation:shimmer 1.6s infinite; border-radius:6px; }
 
       /* ── Scrollbar ── */
       ::-webkit-scrollbar { width:6px; height:6px; }
       ::-webkit-scrollbar-track { background:transparent; }
-      ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:3px; }
+      ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
       input[type=date]::-webkit-calendar-picker-indicator { opacity:.5; cursor:pointer; }
+
+      /* ── Dark mode Tailwind surface overrides ── */
+      html.dark .bg-white { background-color: var(--surface) !important; }
+      html.dark .bg-surface-bright { background-color: var(--surface-bright) !important; }
+      html.dark .bg-surface { background-color: var(--bg) !important; }
+      html.dark .bg-surface-container-low { background-color: var(--surface-container-low) !important; }
+      html.dark .bg-surface-container-lowest { background-color: var(--surface) !important; }
+      html.dark .bg-surface-container { background-color: var(--surface-container) !important; }
+      html.dark .text-on-surface { color: var(--text) !important; }
+      html.dark .text-on-surface-variant { color: var(--text-secondary) !important; }
+      html.dark .text-slate-900 { color: var(--text) !important; }
+      html.dark .text-slate-700 { color: var(--text-secondary) !important; }
+      html.dark .text-slate-600 { color: var(--text-secondary) !important; }
+      html.dark .border-outline-variant\/30,
+      html.dark .border-slate-100,
+      html.dark .border-slate-200 { border-color: var(--border) !important; }
+      html.dark .border-b { border-color: var(--border); }
+      html.dark .border-t { border-color: var(--border); }
+      html.dark .hover\:bg-surface-container-low:hover { background-color: var(--surface-container-low) !important; }
+      html.dark .hover\:bg-slate-50:hover { background-color: var(--surface-container-low) !important; }
+      html.dark .hover\:bg-red-50:hover { background-color: rgba(220,38,38,.1) !important; }
+      html.dark select,
+      html.dark input[type=date],
+      html.dark input[type=text],
+      html.dark input[type=email],
+      html.dark input[type=password],
+      html.dark input[type=tel],
+      html.dark textarea { background-color: var(--surface); color: var(--text); }
     </style>
     <script>
       tailwind.config = {
@@ -149,20 +226,21 @@
         theme: {
           extend: {
             colors: {
-              primary:                 "#2563EB",
-              "primary-dark":          "#1D4ED8",
-              "primary-light":         "#DBEAFE",
-              "background-light":      "#F8FAFC",
-              "background-dark":       "#101922",
-              "on-surface":            "#0F172A",
-              "on-surface-variant":    "#64748B",
-              surface:                 "#F8FAFC",
-              "surface-bright":        "#FFFFFF",
-              outline:                 "#CBD5E1",
-              "outline-variant":       "#E2E8F0",
-              "surface-container-low": "#F1F5F9",
-              "surface-container-lowest": "#FFFFFF",
-              "surface-container":     "#E8EAEF",
+              primary:                    "#2563EB",
+              "primary-dark":             "#1D4ED8",
+              "primary-light":            "#DBEAFE",
+              "background-light":         "#F8FAFC",
+              "background-dark":          "#101922",
+              /* CSS-variable-backed tokens — respond to dark mode automatically */
+              "on-surface":               "var(--tw-on-surface)",
+              "on-surface-variant":       "var(--tw-on-surface-var)",
+              surface:                    "var(--tw-surface)",
+              "surface-bright":           "var(--tw-surface-bright)",
+              outline:                    "#CBD5E1",
+              "outline-variant":          "var(--tw-outline-var)",
+              "surface-container-low":    "var(--tw-surface-cont-low)",
+              "surface-container-lowest": "var(--tw-surface-cont-low2)",
+              "surface-container":        "var(--tw-surface-cont)",
             },
             fontFamily: {
               sans:    ["Plus Jakarta Sans", "-apple-system", "BlinkMacSystemFont", "sans-serif"],

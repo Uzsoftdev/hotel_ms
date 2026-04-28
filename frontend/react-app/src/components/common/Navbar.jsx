@@ -50,7 +50,7 @@ export default function Navbar({ transparent = false }) {
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isTransparent
           ? "bg-transparent"
-          : "bg-white/95 backdrop-blur-xl shadow-sm border-b border-slate-100"
+          : "bg-surface-bright/95 backdrop-blur-xl shadow-sm border-b border-outline-variant/30"
       }`}>
         <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between gap-6" style={{ height: "72px" }}>
           {/* Logo */}
@@ -90,11 +90,12 @@ export default function Navbar({ transparent = false }) {
                 <span className="text-xs uppercase tracking-widest">{i18n.language?.slice(0, 2) || "EN"}</span>
               </button>
               {langOpen && (
-                <div className="absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-2xl border border-slate-100 py-1.5 animate-slide-down z-50">
+                <div className="absolute right-0 mt-1 w-48 bg-surface-bright rounded-xl shadow-2xl border border-outline-variant/30 py-1.5 animate-slide-down z-50">
                   {LANGUAGES.map(({ code, flag, name }) => (
                     <button key={code} onClick={() => { i18n.changeLanguage(code); setLangOpen(false); }}
-                      className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${i18n.language === code ? "text-primary font-bold bg-primary/5" : "text-slate-700 hover:bg-slate-50"}`}>
+                      className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition-colors ${i18n.language.startsWith(code) ? "text-primary font-bold bg-primary/5" : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-700"}`}>
                       <span>{flag}</span>{name}
+                      {i18n.language.startsWith(code) && <span className="material-symbols-outlined text-xs ml-auto">check</span>}
                     </button>
                   ))}
                 </div>
@@ -132,7 +133,7 @@ export default function Navbar({ transparent = false }) {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden bg-white border-t border-slate-100 px-6 py-4 space-y-1 animate-slide-down">
+          <div className="md:hidden bg-surface-bright border-t border-outline-variant/30 px-6 py-4 space-y-1 animate-slide-down">
             {navLinks.map(({ to, label }) => (
               <Link key={to} to={to} onClick={() => setMobileOpen(false)}
                 className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors">
