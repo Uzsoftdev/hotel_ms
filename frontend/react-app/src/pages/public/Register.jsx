@@ -164,7 +164,7 @@ export default function Register() {
       </aside>
 
       {/* ── Right: form ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", overflowY: "auto", background: "#fff", padding: "48px 40px" }}>
+      <div className="flex flex-col justify-center overflow-y-auto bg-white px-5 py-10 sm:px-10 sm:py-12" style={{ flex: 1 }}>
         <div style={{ maxWidth: 460, width: "100%", margin: "0 auto" }}>
           {/* Mobile logo */}
           <Link to="/" className="lg:hidden" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", marginBottom: 32 }}>
@@ -189,7 +189,7 @@ export default function Register() {
           )}
 
           <form onSubmit={handleSubmit}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {/* First name */}
               <div className="ah-field">
                 <label className="ah-label">First name</label>
@@ -203,13 +203,13 @@ export default function Register() {
               </div>
 
               {/* Email */}
-              <div className="ah-field" style={{ gridColumn: "span 2" }}>
+              <div className="ah-field col-span-1 sm:col-span-2">
                 <label className="ah-label">Email address</label>
                 <input className="ah-input" type="email" placeholder="you@example.com" value={form.email} onChange={set("email")} required />
               </div>
 
               {/* Password */}
-              <div className="ah-field" style={{ gridColumn: "span 2" }}>
+              <div className="ah-field col-span-1 sm:col-span-2">
                 <label className="ah-label">Password</label>
                 <div style={{ position: "relative" }}>
                   <input className="ah-input" type={showPw ? "text" : "password"} placeholder="Min. 8 characters" value={form.password} onChange={set("password")} required style={{ paddingRight: 44 }} />
@@ -219,7 +219,7 @@ export default function Register() {
               </div>
 
               {/* Confirm password */}
-              <div className="ah-field" style={{ gridColumn: "span 2" }}>
+              <div className="ah-field col-span-1 sm:col-span-2">
                 <label className="ah-label">Confirm password</label>
                 <div style={{ position: "relative" }}>
                   <input

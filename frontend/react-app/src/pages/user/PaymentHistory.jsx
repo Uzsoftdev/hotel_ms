@@ -45,7 +45,7 @@ export default function PaymentHistory() {
 
         {/* Table card */}
         {loading ? (
-          <div className="ah-card" style={{ overflow: "hidden" }}>
+          <div className="ah-card" style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "var(--bg)" }}>
@@ -76,7 +76,7 @@ export default function PaymentHistory() {
             <p className="ah-muted" style={{ fontSize: 13, marginTop: 6 }}>Your transactions will appear here after your first booking.</p>
           </div>
         ) : (
-          <div className="ah-card" style={{ overflow: "hidden" }}>
+          <div className="ah-card" style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "var(--bg)", textAlign: "left" }}>

@@ -118,7 +118,7 @@ export default function Login() {
       </aside>
 
       {/* ── Right: form ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", background: "#fff", padding: "48px 32px", overflowY: "auto" }}>
+      <div className="flex flex-col justify-center items-center overflow-y-auto bg-white px-5 py-10 sm:px-8 sm:py-12" style={{ flex: 1 }}>
         <div style={{ width: "100%", maxWidth: 420 }}>
 
           {/* Mobile logo */}

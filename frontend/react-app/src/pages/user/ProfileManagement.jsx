@@ -90,7 +90,7 @@ export default function ProfileManagement() {
 
   return (
     <UserLayout>
-      <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", gap: 32 }}>
+      <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 md:gap-8">
         {/* ── Left nav ── */}
         <aside style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           {SECTIONS.map(({ key, icon, label }) => (
@@ -169,13 +169,13 @@ export default function ProfileManagement() {
                   </div>
                 ) : (
                   <form onSubmit={saveProfile}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {[
-                        { label: "Full name", key: "full_name", type: "text", col: "span 2" },
-                        { label: "Email",     key: "email",     type: "email", col: "span 2" },
-                        { label: "Phone",     key: "phone",     type: "tel",  col: "1" },
+                        { label: "Full name", key: "full_name", type: "text", col: "sm:col-span-2" },
+                        { label: "Email",     key: "email",     type: "email", col: "sm:col-span-2" },
+                        { label: "Phone",     key: "phone",     type: "tel",  col: "" },
                       ].map(({ label, key, type, col }) => (
-                        <div key={key} className="ah-field" style={{ gridColumn: col }}>
+                        <div key={key} className={`ah-field ${col}`}>
                           <label className="ah-label">{label}</label>
                           <input
                             className="ah-input"

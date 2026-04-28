@@ -57,7 +57,7 @@ export default function Dashboard() {
     <UserLayout>
       <div style={{ padding: "0 0 40px" }}>
         {/* ── Header ── */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28 }}>
+        <div className="flex flex-wrap justify-between items-start gap-3" style={{ marginBottom: 28 }}>
           <div>
             {loading
               ? <Skeleton h={13} w={160} />
@@ -80,7 +80,7 @@ export default function Dashboard() {
         </div>
 
         {/* ── Stat cards ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginBottom: 28 }}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ marginBottom: 28 }}>
           {loading
             ? Array(4).fill(0).map((_, i) => (
                 <div key={i} className="ah-stat">
@@ -102,7 +102,7 @@ export default function Dashboard() {
         </div>
 
         {/* ── Main two-column ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 24 }}>
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
           {/* Recent bookings table */}
           <div className="ah-card" style={{ overflow: "hidden" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px", borderBottom: "1px solid var(--border)" }}>
@@ -131,7 +131,7 @@ export default function Dashboard() {
                 <Link to="/rooms" className="ah-btn ah-btn-primary ah-btn-sm" style={{ marginTop: 14, display: "inline-flex" }}>Browse rooms</Link>
               </div>
             ) : (
-              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <div style={{ overflowX: "auto" }}><table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ background: "var(--bg)", textAlign: "left" }}>
                     {["Reference", "Dates", "Room", "Total", "Status"].map((h) => (
@@ -154,7 +154,7 @@ export default function Dashboard() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             )}
           </div>
 

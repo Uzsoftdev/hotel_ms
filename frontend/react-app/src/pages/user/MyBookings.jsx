@@ -119,7 +119,7 @@ export default function MyBookings() {
                 <div key={b.id} className="ah-flip" style={{ minHeight: 172 }}>
                   <div className="ah-flip-inner" style={isFlipped ? { transform: "rotateY(180deg)" } : {}}>
                     {/* Front */}
-                    <div className="ah-flip-front ah-card" style={{ display: "grid", gridTemplateColumns: "180px 1fr auto", gap: 20, padding: 16, alignItems: "center" }}>
+                    <div className="ah-flip-front ah-card grid grid-cols-1 sm:grid-cols-[160px_1fr_auto] items-center" style={{ gap: 20, padding: 16 }}>
                       {/* Image */}
                       <div style={{ borderRadius: 10, overflow: "hidden", height: 140, background: "linear-gradient(135deg,#dbeafe,#eff6ff)", flexShrink: 0 }}>
                         {image ? (

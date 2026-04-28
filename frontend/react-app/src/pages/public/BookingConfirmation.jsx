@@ -46,7 +46,7 @@ export default function BookingConfirmation() {
 
         {/* ── Booking ref card ── */}
         <div className="ah-card" style={{ overflow: "hidden", marginBottom: 32, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(16px)", transition: "all .7s .1s" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2">
             {/* Image side */}
             <div style={{ position: "relative", minHeight: 220, background: "linear-gradient(135deg,#1e3a8a,#2563eb)", overflow: "hidden" }}>
               {room?.image ? (
@@ -68,7 +68,7 @@ export default function BookingConfirmation() {
               <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 15, fontWeight: 700, color: "var(--primary)", marginBottom: 6 }}>{refCode}</div>
               <span className="ah-badge ah-badge-confirmed" style={{ marginBottom: 20, display: "inline-flex" }}>Confirmed</span>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px 12px", marginBottom: 20 }}>
+              <div className="grid grid-cols-2 gap-x-3 gap-y-4" style={{ marginBottom: 20 }}>
                 {[
                   { label: "Check-in",  value: checkIn },
                   { label: "Check-out", value: checkOut },
@@ -99,7 +99,7 @@ export default function BookingConfirmation() {
         {/* ── What's next ── */}
         <div style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(16px)", transition: "all .7s .2s" }}>
           <div className="ah-eyebrow" style={{ textAlign: "center", marginBottom: 20 }}>What's next</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {nextSteps.map(({ icon, title, desc }) => (
               <div key={title} className="ah-card" style={{ padding: 24, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
                 <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--primary-light)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
