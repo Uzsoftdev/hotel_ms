@@ -48,28 +48,16 @@ jobs:
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} 'bash -s' << 'ENDSSH'
           set -e
-          SNIPPET="/etc/nginx/conf.d/hms-static.conf"
-          if [ ! -f "$SNIPPET" ]; then
-            cat > "$SNIPPET" << 'EOF'
-          server_name _;
-          location /static/ {
-              alias /opt/hms/app/static/;
-              expires 7d;
-              add_header Cache-Control "public";
-          }
-          EOF
-            echo "Created $SNIPPET"
-          fi
+          mkdir -p /opt/hms/app/static/avatars
 
-          # More reliable: inject into existing site config if snippet approach won't work
+          # Patch nginx config to add /static/ location if missing
           for CONF in /etc/nginx/sites-enabled/* /etc/nginx/conf.d/*.conf; do
             [ -f "$CONF" ] || continue
             if grep -q "location /" "$CONF" && ! grep -q "location /static/" "$CONF"; then
-              sed -i 's|location / {|location /static/ {\n        alias /opt/hms/app/static/;\n        expires 7d;\n    }\n\n    location / {|' "$CONF"
+              sudo sed -i 's|location / {|location /static/ {\n        alias /opt/hms/app/static/;\n        expires 7d;\n    }\n\n    location / {|' "$CONF"
               echo "Patched $CONF"
             fi
           done
 
-          mkdir -p /opt/hms/app/static/avatars
-          nginx -t && systemctl reload nginx && echo "nginx reloaded"
+          sudo nginx -t && sudo systemctl reload nginx && echo "nginx reloaded"
           ENDSSH
