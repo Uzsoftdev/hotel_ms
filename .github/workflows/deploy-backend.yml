@@ -32,7 +32,6 @@ jobs:
             --exclude '*.pyo' \
             --exclude '.env' \
             --exclude '.env.*' \
-            --exclude 'alembic.ini' \
             -e "ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no" \
             backend/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/tmp/hms-backend-deploy/
