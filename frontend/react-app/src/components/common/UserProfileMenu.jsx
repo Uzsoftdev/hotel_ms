@@ -60,7 +60,7 @@ export default function UserProfileMenu() {
   const initials = getInitials(user?.full_name ?? user?.email ?? "");
   const avatarBg = ROLE_COLORS[role] ?? "bg-primary";
   const menuItems = MENU_ITEMS[role] ?? MENU_ITEMS.guest;
-  const photoUrl = user?.photo_url ? `http://localhost:8000${user.photo_url}` : null;
+  const photoUrl = user?.photo_url ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${user.photo_url}` : null;
 
   // Close on outside click
   useEffect(() => {

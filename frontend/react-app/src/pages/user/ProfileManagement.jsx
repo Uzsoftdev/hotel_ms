@@ -144,7 +144,7 @@ export default function ProfileManagement() {
                     style={{ cursor: uploadingPhoto ? "wait" : "pointer" }}
                   >
                     {loading ? "…" : profile.photo_url ? (
-                      <img src={`http://localhost:8000${profile.photo_url}`} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+                      <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${profile.photo_url}`} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
                     ) : getInitials(profile.full_name)}
                     <div className="ah-avatar-upload-overlay">
                       {uploadingPhoto

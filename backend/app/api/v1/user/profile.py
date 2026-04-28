@@ -87,6 +87,8 @@ async def upload_photo(
     if len(contents) > MAX_SIZE:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File is too large. Maximum size is 5 MB.")
 
+    os.makedirs(AVATAR_DIR, exist_ok=True)
+
     ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else "jpg"
     filename = f"user_{user.id}_{uuid.uuid4().hex}.{ext}"
     path = os.path.join(AVATAR_DIR, filename)
