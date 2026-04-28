@@ -6,7 +6,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_current_hotel, get_db
-from app.middleware.rbac import require_admin
+from app.middleware.rbac import require_staff_or_admin
 from app.models.booking import Booking
 from app.models.payment import Payment
 from app.models.room import Room
@@ -26,7 +26,7 @@ def occupancy_report(
     days: int = Query(30, ge=1, le=365),
     hotel_id: int = Depends(get_current_hotel),
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, end = _date_range(days)
     total_rooms = db.query(func.count(Room.id)).filter(Room.hotel_id == hotel_id, Room.is_active == True).scalar() or 1
@@ -66,7 +66,7 @@ def revenue_report(
     days: int = Query(30, ge=1, le=365),
     hotel_id: int = Depends(get_current_hotel),
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, end = _date_range(days)
 
@@ -106,7 +106,7 @@ def guest_analytics(
     days: int = Query(30, ge=1, le=365),
     hotel_id: int = Depends(get_current_hotel),
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, _ = _date_range(days)
 
@@ -145,7 +145,7 @@ def activity_logs(
     limit: int = Query(50, ge=1, le=200),
     hotel_id: int = Depends(get_current_hotel),
     db: Session = Depends(get_db),
-    _: User = Depends(require_admin),
+    _: User = Depends(require_staff_or_admin),
 ) -> Any:
     from app.models.activity_log import ActivityLog
     logs = (

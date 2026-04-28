@@ -64,6 +64,11 @@ def seed() -> None:
         db.add(hotel)
         db.flush()
 
+        # Assign hotel to admin and staff
+        admin.hotel_id = hotel.id
+        staff.hotel_id = hotel.id
+        db.flush()
+
         # ── Facilities ────────────────────────────────────────────────────
         facilities = []
         for name in ["WiFi", "Pool", "Gym", "Spa", "Restaurant", "Bar", "Parking", "Concierge"]:

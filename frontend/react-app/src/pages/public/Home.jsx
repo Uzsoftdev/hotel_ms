@@ -102,7 +102,7 @@ export default function Home() {
       <section className="relative overflow-hidden" style={{ height: "min(100vh, 900px)", minHeight: 560, display: "flex", alignItems: "flex-end", paddingBottom: 80 }}>
         {/* Background */}
         <div className="absolute inset-0 z-0">
-          <img src={background} alt="Azure Horizon Hotel" className="w-full h-full object-cover scale-105" style={{ filter: "brightness(.55)" }} />
+          <img src={background} alt="Azure Horizon Hotel" className="w-full h-full object-cover" style={{ filter: "brightness(.65)", imageRendering: "high-quality" }} fetchpriority="high" decoding="sync" />
           <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.85) 100%)" }} />
         </div>
 
