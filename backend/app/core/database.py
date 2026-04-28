@@ -3,8 +3,12 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.core.config import settings
 
+_sync_url = settings.DATABASE_URL_SYNC or settings.DATABASE_URL.replace(
+    "postgresql+asyncpg://", "postgresql://"
+)
+
 engine = create_engine(
-    settings.DATABASE_URL,
+    _sync_url,
     pool_pre_ping=True,
     pool_size=10,
     max_overflow=20,
