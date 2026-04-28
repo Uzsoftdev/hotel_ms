@@ -1,43 +1,26 @@
 """
-Nightly batch pipeline (R10 — Batch or Stream Processing Pipeline).
+Batch pipeline tasks — moved from background_tasks.py.
 
-Workflow (BPMN-mapped):
-  START → [Trigger: 02:00 UTC daily]
-       → Aggregate bookings created yesterday
-       → Compute revenue sum per room_type
-       → Write snapshot to daily_revenue_snapshots (Postgres)
-       → Invalidate stale Redis availability cache keys older than 24h
-       → Log completion + metrics
-  END
-
-APScheduler runs inside the FastAPI process (no separate worker needed for a
-hotel-scale system; Celery/Airflow would be over-engineering at this scale).
-The scheduler is started in main.py on the `startup` lifespan event and stopped
-on shutdown.
+These are sync Celery tasks (no async/await needed — Celery workers run in
+their own process and can call SessionLocal() directly without an event loop).
+Celery Beat triggers them on schedule, replacing APScheduler.
 """
-
 import logging
 from datetime import date, timedelta
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
 from sqlalchemy import text
-from sqlalchemy.orm import Session
 
+from app.celery_app import celery_app
 from app.core.database import SessionLocal
 
 logger = logging.getLogger(__name__)
 
-scheduler = AsyncIOScheduler(timezone="UTC")
 
-
-async def nightly_revenue_snapshot() -> None:
-    """
-    Aggregate yesterday's revenue and write a daily snapshot row.
-    This is the primary batch job in the pipeline.
-    """
+@celery_app.task(name="app.tasks.batch_tasks.nightly_revenue_snapshot")
+def nightly_revenue_snapshot() -> None:
+    """Aggregate yesterday's revenue and write a daily snapshot to activity_logs."""
     yesterday = date.today() - timedelta(days=1)
-    db: Session = SessionLocal()
+    db = SessionLocal()
     try:
         result = db.execute(
             text("""
@@ -57,14 +40,10 @@ async def nightly_revenue_snapshot() -> None:
         rows = result.fetchall()
 
         total_rev = sum(float(row.total_revenue) for row in rows)
-        total_bk  = sum(int(row.total_bookings) for row in rows)
+        total_bk  = sum(int(row.total_bookings)  for row in rows)
 
-        logger.info(
-            "[BATCH] Nightly snapshot %s: %d bookings, $%.2f revenue",
-            yesterday, total_bk, total_rev,
-        )
+        logger.info("[BATCH] Nightly snapshot %s: %d bookings, $%.2f revenue", yesterday, total_bk, total_rev)
 
-        # Write to activity log so the admin dashboard can surface it
         if rows:
             db.execute(
                 text("""
@@ -74,12 +53,14 @@ async def nightly_revenue_snapshot() -> None:
                 {
                     "detail": (
                         f"date={yesterday} bookings={total_bk} revenue={total_rev:.2f} "
-                        + " | ".join(f"{r.room_type}:{r.total_bookings}:{float(r.total_revenue):.2f}" for r in rows)
+                        + " | ".join(
+                            f"{r.room_type}:{r.total_bookings}:{float(r.total_revenue):.2f}"
+                            for r in rows
+                        )
                     )
                 },
             )
             db.commit()
-
     except Exception as exc:
         logger.error("[BATCH] nightly_revenue_snapshot failed: %s", exc, exc_info=True)
         db.rollback()
@@ -87,41 +68,25 @@ async def nightly_revenue_snapshot() -> None:
         db.close()
 
 
-async def hourly_cache_warmup() -> None:
-    """
-    Pre-warm availability cache for the next 7 days to reduce cold-miss latency.
-    Runs every hour.
-    """
-    from datetime import date, timedelta
+@celery_app.task(name="app.tasks.batch_tasks.hourly_cache_warmup")
+def hourly_cache_warmup() -> None:
+    """Pre-warm availability cache for the next 7 days to cut cold-miss latency."""
+    from app.models.hotel import Hotel
     from app.services.availability import get_available_rooms
     from app.services.cache import set_cached_availability
 
-    db: Session = SessionLocal()
+    db = SessionLocal()
     try:
-        from app.models.hotel import Hotel
-        hotels = db.query(Hotel).filter(Hotel.id is not None).all()
+        hotels = db.query(Hotel).all()
         today = date.today()
-
         for hotel in hotels:
             for delta in range(7):
                 ci = today + timedelta(days=delta)
                 co = ci + timedelta(days=1)
                 rooms = get_available_rooms(db, hotel.id, ci, co)
                 set_cached_availability(hotel.id, ci, co, [r.id for r in rooms])
-
         logger.info("[BATCH] Cache warmup complete for %d hotels", len(hotels))
     except Exception as exc:
         logger.warning("[BATCH] cache_warmup failed: %s", exc)
     finally:
         db.close()
-
-
-def start_scheduler() -> None:
-    # Batch jobs are now handled by Celery Beat (app/tasks/batch_tasks.py).
-    # This stub is kept so main.py lifespan doesn't need to change until
-    # Celery Beat is confirmed working in production.
-    logger.info("APScheduler disabled — batch jobs run via Celery Beat")
-
-
-def stop_scheduler() -> None:
-    pass

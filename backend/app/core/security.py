@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
@@ -24,6 +25,7 @@ def _build_token(data: dict, expires_delta: timedelta) -> str:
         raise ValueError(f"Missing required token fields: {', '.join(missing)}")
 
     payload = dict(data)
+    payload["jti"] = uuid.uuid4().hex   # unique token ID — required for blacklist on logout
     payload["exp"] = datetime.now(timezone.utc) + expires_delta
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=ALGORITHM)
 

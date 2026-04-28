@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, Index, Integer, String, func
+from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Index, Integer, String, func
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
@@ -19,6 +19,7 @@ class User(Base):
     )
     phone = Column(String, nullable=True)
     photo_url = Column(String, nullable=True)
+    is_email_verified = Column(Boolean, nullable=False, default=False)
     hotel_id = Column(Integer, ForeignKey("hotels.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 

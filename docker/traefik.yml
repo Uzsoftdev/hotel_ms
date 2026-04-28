@@ -1,0 +1,51 @@
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: hotel_network
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+
+certificatesResolvers:
+  # Default resolver — HTTP-01 challenge. Works without Cloudflare.
+  letsencrypt:
+    acme:
+      email: "${ACME_EMAIL}"
+      storage: /letsencrypt/acme.json
+      httpChallenge:
+        entryPoint: web
+
+  # DNS-01 resolver — use this when the domain is proxied through Cloudflare
+  # (HTTP challenge fails behind Cloudflare proxy). Set CF_API_TOKEN in .env
+  # and switch router labels to: tls.certresolver=letsencrypt-dns
+  letsencrypt-dns:
+    acme:
+      email: "${ACME_EMAIL}"
+      storage: /letsencrypt/acme-dns.json
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
+
+api:
+  dashboard: true
+  insecure: false   # protect dashboard behind auth middleware in production
+
+log:
+  level: WARN
+
+accessLog: {}

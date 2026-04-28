@@ -1,0 +1,276 @@
+version: "3.9"
+
+# Docker Swarm production stack (Phase 3).
+# Deploy with:
+#   docker stack deploy -c docker-stack.yml hotel
+#
+# Prerequisites:
+#   docker swarm init                          # on the manager node
+#   docker secret create ...                   # for each secret (see .env.example)
+#   docker build + push images to a registry   # CI does this automatically
+#
+# Secret references use Docker Secrets (docker secret create) instead of plain
+# env vars so that credentials are never written to disk in cleartext.
+
+x-backend-common: &backend-common
+  image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-backend:${IMAGE_TAG:-latest}
+  env_file: .env
+  networks:
+    - hotel_network
+  depends_on:
+    - db
+    - redis
+
+services:
+
+  # ── Database ─────────────────────────────────────────────────────────────────
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-replication.sh:/docker-entrypoint-initdb.d/init-replication.sh:ro
+    command: >
+      postgres
+        -c wal_level=replica
+        -c max_wal_senders=5
+        -c wal_keep_size=256
+        -c hot_standby=on
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: any
+
+  # ── DB replica ───────────────────────────────────────────────────────────────
+  db_replica1:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_replica1_data:/var/lib/postgresql/data
+    command: >
+      bash -c "
+        if [ ! -f /var/lib/postgresql/data/pgdata/PG_VERSION ]; then
+          until pg_basebackup -h db -D /var/lib/postgresql/data/pgdata -U replicator -Fp -Xs -P -R --slot=replica1_slot; do
+            echo 'Waiting for primary...'; sleep 3;
+          done
+        fi
+        postgres -D /var/lib/postgresql/data/pgdata
+      "
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  # ── PgBouncer ────────────────────────────────────────────────────────────────
+  pgbouncer:
+    image: bitnami/pgbouncer:1.22.1
+    environment:
+      POSTGRESQL_HOST: db
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DATABASE: ${POSTGRES_DB}
+      POSTGRESQL_USERNAME: ${POSTGRES_USER}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MAX_CLIENT_CONN: 1000
+      PGBOUNCER_DEFAULT_POOL_SIZE: 25
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  # ── Redis ────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: any
+
+  # ── Backend (8 replicas, rolling update) ─────────────────────────────────────
+  backend:
+    <<: *backend-common
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${DOMAIN:-localhost}`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backend.middlewares=circuit-breaker,retry"
+      - "traefik.http.routers.backend.priority=10"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.name=SERVERID"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.secure=true"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.httponly=true"
+    deploy:
+      replicas: 8
+      update_config:
+        parallelism: 2          # roll two replicas at a time
+        delay: 10s
+        failure_action: rollback
+        order: start-first      # zero-downtime: new container starts before old stops
+      rollback_config:
+        parallelism: 2
+        delay: 5s
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+
+  # ── Celery worker ────────────────────────────────────────────────────────────
+  celery_worker:
+    image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-celery:${IMAGE_TAG:-latest}
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=8
+    env_file: .env
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 512M
+
+  # ── Celery Beat — exactly ONE replica, pinned to manager ─────────────────────
+  # Two replicas = duplicate scheduled jobs (nightly snapshots twice, etc.)
+  celery_beat:
+    image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-celery:${IMAGE_TAG:-latest}
+    command: celery -A app.celery_app beat --loglevel=info
+    env_file: .env
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]   # only one instance, ever
+      restart_policy:
+        condition: any
+
+  # ── Traefik ──────────────────────────────────────────────────────────────────
+  traefik:
+    image: traefik:v3.1
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    environment:
+      CF_API_TOKEN: ${CF_API_TOKEN:-}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./docker/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./docker/traefik-dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - traefik_certs:/letsencrypt
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: any
+
+  # ── Frontend static ───────────────────────────────────────────────────────────
+  nginx_static:
+    image: nginx:1.25-alpine
+    volumes:
+      - ./frontend/react-app/dist:/usr/share/nginx/html:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend.priority=1"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: any
+
+  # ── Meilisearch ───────────────────────────────────────────────────────────────
+  meilisearch:
+    image: getmeili/meilisearch:v1.7.3
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY}
+      MEILI_ENV: production
+    volumes:
+      - meilisearch_data:/meili_data
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: any
+
+  # ── MinIO ─────────────────────────────────────────────────────────────────────
+  minio:
+    image: minio/minio:RELEASE.2024-06-13T22-53-53Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - minio_data:/data
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: any
+
+  # ── Jaeger ────────────────────────────────────────────────────────────────────
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+volumes:
+  postgres_data:
+  postgres_replica1_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  traefik_certs:
+  meilisearch_data:
+  minio_data:
+
+networks:
+  hotel_network:
+    driver: overlay
+    attachable: true

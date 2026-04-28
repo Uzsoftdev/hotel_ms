@@ -1,0 +1,21 @@
+http:
+  middlewares:
+    # Open the circuit when >30% of requests are network errors or >25% return 5xx.
+    # Traefik will stop forwarding requests to the backend until it recovers.
+    circuit-breaker:
+      circuitBreaker:
+        expression: "NetworkErrorRatio() > 0.30 || ResponseCodeRatio(500, 600, 0, 600) > 0.25"
+
+    # Retry failed requests up to 3 times with exponential backoff.
+    # Only retries on network errors — not on 4xx/5xx to avoid duplicate side-effects.
+    retry:
+      retry:
+        attempts: 3
+        initialInterval: 100ms
+
+    # Redirect www → non-www (optional, enable when domain is configured)
+    # www-redirect:
+    #   redirectRegex:
+    #     regex: "^https://www\\.(.*)"
+    #     replacement: "https://${1}"
+    #     permanent: true

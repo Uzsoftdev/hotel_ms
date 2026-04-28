@@ -29,11 +29,31 @@ redis==5.2.1
 # Email
 aiosmtplib==3.0.2
 
-# Batch pipeline (R10)
+# Batch pipeline (R10) — APScheduler kept for import compatibility; jobs now run via Celery Beat
 apscheduler==3.10.4
+
+# WSGI server (multi-worker, --max-requests for memory-leak prevention)
+gunicorn==22.0.0
+
+# Task queue
+celery[redis]==5.4.0
+flower==2.0.1
+
+# Full-text search
+meilisearch==0.31.4
+
+# Object storage (MinIO/S3-compatible avatar store — Phase 3)
+boto3==1.35.0
 
 # Observability / Prometheus metrics (R12)
 prometheus-client==0.21.0
+
+# OpenTelemetry tracing → Jaeger (Phase 3)
+opentelemetry-sdk==1.25.0
+opentelemetry-exporter-otlp-proto-grpc==1.25.0
+opentelemetry-instrumentation-fastapi==0.46b0
+opentelemetry-instrumentation-sqlalchemy==0.46b0
+opentelemetry-instrumentation-redis==0.46b0
 
 # Utilities
 python-dotenv==1.0.1

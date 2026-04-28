@@ -27,7 +27,9 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str
-    DATABASE_URL_SYNC: str = ""  # psycopg2 URL for Alembic (auto-derived if blank)
+    DATABASE_URL_SYNC: str = ""        # psycopg2 URL for Alembic (auto-derived if blank)
+    DATABASE_URL_PRIMARY: str = ""     # write path via PgBouncer → primary (falls back to DATABASE_URL_SYNC)
+    DATABASE_URL_REPLICA: str = ""     # read path via PgBouncer → replica(s) (falls back to primary)
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
@@ -44,6 +46,23 @@ class Settings(BaseSettings):
 
     def get_allowed_origins(self) -> List[str]:
         return [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
+
+    # Meilisearch full-text search
+    MEILISEARCH_URL: str = "http://meilisearch:7700"
+    MEILISEARCH_KEY: str = ""
+
+    # Frontend URL — used for email verification and password reset links
+    FRONTEND_URL: str = "http://localhost:5173"
+
+    # MinIO object storage (Phase 3 — multi-replica avatar fix)
+    MINIO_ENDPOINT: str = "http://minio:9000"
+    MINIO_ACCESS_KEY: str = "minioadmin"
+    MINIO_SECRET_KEY: str = "minioadmin"
+    MINIO_BUCKET: str = "hotel-avatars"
+    MINIO_PUBLIC_URL: str = "http://localhost:9000"   # override in prod with CDN/domain
+
+    # Jaeger / OpenTelemetry tracing (Phase 3)
+    JAEGER_ENDPOINT: str = ""   # e.g. http://jaeger:4317 — tracing disabled if blank
 
     # Email (SMTP)
     SMTP_HOST: str = "smtp.gmail.com"

@@ -48,8 +48,11 @@ import app.models.room_image      # noqa: F401
 import app.models.room_type       # noqa: F401
 import app.models.user            # noqa: F401
 import app.models.wishlist        # noqa: F401
+import app.models.email_verification  # noqa: F401
+import app.models.password_reset      # noqa: F401
 
 from app.core.config import settings
+from app.core.tracing import setup_tracing
 from app.exceptions.handlers import register_exception_handlers
 from app.middleware.auth import DBSessionMiddleware
 from app.middleware.token_bucket_middleware import TokenBucketMiddleware
@@ -59,6 +62,8 @@ from app.workers.background_tasks import start_scheduler, stop_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    from app.services.websocket import ws_manager
+    await ws_manager.start_subscriber()   # Redis Pub/Sub cross-replica WS broadcast
     start_scheduler()
     yield
     stop_scheduler()
@@ -72,6 +77,9 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+# ── Tracing (must happen before middleware so spans cover all requests) ───────
+setup_tracing(app)
 
 # ── Middleware (outermost first) ──────────────────────────────────────────────
 app.add_middleware(PrometheusMiddleware)

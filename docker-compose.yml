@@ -16,10 +16,81 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-replication.sh:/docker-entrypoint-initdb.d/init-replication.sh:ro
+    networks:
+      - hotel_network
+    # Allow the replicator user to connect for streaming replication
+    command: >
+      postgres
+        -c wal_level=replica
+        -c max_wal_senders=5
+        -c wal_keep_size=256
+        -c hot_standby=on
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── DB replica (streaming replication from primary) ─────────────────────────
+  db_replica1:
+    image: postgres:15
+    container_name: hotel_db_replica1
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_replica1_data:/var/lib/postgresql/data
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - hotel_network
+    # pg_basebackup streams a base backup from the primary then starts postgres
+    # in hot-standby mode (read-only replica).
+    command: >
+      bash -c "
+        if [ ! -f /var/lib/postgresql/data/pgdata/PG_VERSION ]; then
+          until pg_basebackup -h db -D /var/lib/postgresql/data/pgdata -U replicator -Fp -Xs -P -R --slot=replica1_slot; do
+            echo 'Waiting for primary to be ready for replication...'; sleep 3;
+          done
+        fi
+        postgres -D /var/lib/postgresql/data/pgdata
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── PgBouncer connection pooler ───────────────────────────────────────────────
+  pgbouncer:
+    image: bitnami/pgbouncer:1.22.1
+    container_name: hotel_pgbouncer
+    restart: always
+    environment:
+      POSTGRESQL_HOST: db
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DATABASE: ${POSTGRES_DB}
+      POSTGRESQL_USERNAME: ${POSTGRES_USER}
+      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MAX_CLIENT_CONN: 1000
+      PGBOUNCER_DEFAULT_POOL_SIZE: 25
+      PGBOUNCER_RESERVE_POOL_SIZE: 5
+      PGBOUNCER_SERVER_IDLE_TIMEOUT: 600
+      PGBOUNCER_LOG_CONNECTIONS: 0
+      PGBOUNCER_LOG_DISCONNECTIONS: 0
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - hotel_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 6432 -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -57,6 +128,19 @@ services:
       - REPLICA_ID=1
     networks:
       - hotel_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${DOMAIN:-localhost}`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backend.middlewares=circuit-breaker,retry"
+      - "traefik.http.routers.backend.priority=10"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      # Sticky sessions keep WS clients on the same replica during the transition
+      # period before Redis Pub/Sub is fully battle-tested in production.
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.name=SERVERID"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.secure=true"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.httponly=true"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 15s
@@ -80,27 +164,163 @@ services:
       - REPLICA_ID=2
     networks:
       - hotel_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${DOMAIN:-localhost}`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.backend.middlewares=circuit-breaker,retry"
+      - "traefik.http.routers.backend.priority=10"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.name=SERVERID"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.secure=true"
+      - "traefik.http.services.backend.loadbalancer.sticky.cookie.httponly=true"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 15s
       timeout: 5s
       retries: 3
 
-  # ── Nginx API gateway + frontend (R8) ────────────────────────────────────────
-  nginx:
-    image: nginx:1.25-alpine
-    container_name: hotel_nginx
+  # ── Traefik reverse proxy + SSL (replaces Nginx — R8) ───────────────────────
+  # DOMAIN and ACME_EMAIL must be set in .env for production SSL.
+  # For local dev, HTTPS is not required — traffic goes to port 80 directly.
+  traefik:
+    image: traefik:v3.1
+    container_name: hotel_traefik
     restart: always
     ports:
       - "80:80"
+      - "443:443"
+      - "8080:8080"   # Traefik dashboard — firewall this port in production
+    environment:
+      # Required only when using the letsencrypt-dns resolver (Cloudflare DNS-01 challenge).
+      # Leave blank if using the default httpChallenge resolver.
+      CF_API_TOKEN: ${CF_API_TOKEN:-}
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./docker/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./docker/traefik-dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - traefik_certs:/letsencrypt
+    networks:
+      - hotel_network
+
+  # ── Frontend static files (served by nginx behind Traefik) ──────────────────
+  # Cloudflare (Phase 4) will replace this by serving the React SPA from the edge.
+  nginx_static:
+    image: nginx:1.25-alpine
+    container_name: hotel_nginx_static
+    restart: always
+    volumes:
       - ./frontend/react-app/dist:/usr/share/nginx/html:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN:-localhost}`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.frontend.priority=1"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
+    networks:
+      - hotel_network
+
+  # ── MinIO object storage (Phase 3 — multi-replica avatar fix) ──────────────
+  minio:
+    image: minio/minio:RELEASE.2024-06-13T22-53-53Z
+    container_name: hotel_minio
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web console — firewall in production
+    networks:
+      - hotel_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── Celery worker (async task queue — R10) ──────────────────────────────────
+  celery_worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.celery
+    container_name: hotel_celery_worker
+    restart: always
+    command: celery -A app.celery_app worker --loglevel=info --concurrency=8
     depends_on:
-      backend1:
+      redis:
         condition: service_healthy
-      backend2:
+      db:
         condition: service_healthy
+    env_file: .env
+    networks:
+      - hotel_network
+
+  # ── Celery Beat scheduler (ONE replica only — two = duplicate jobs) ──────────
+  celery_beat:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.celery
+    container_name: hotel_celery_beat
+    restart: always
+    command: celery -A app.celery_app beat --loglevel=info
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file: .env
+    networks:
+      - hotel_network
+
+  # ── Flower — Celery task monitor (dev convenience) ───────────────────────────
+  flower:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.celery
+    container_name: hotel_flower
+    restart: always
+    command: celery -A app.celery_app flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file: .env
+    networks:
+      - hotel_network
+
+  # ── Meilisearch full-text search engine ─────────────────────────────────────
+  meilisearch:
+    image: getmeili/meilisearch:v1.7.3
+    container_name: hotel_meilisearch
+    restart: always
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY}
+      MEILI_ENV: production
+    volumes:
+      - meilisearch_data:/meili_data
+    networks:
+      - hotel_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── Observability: Jaeger all-in-one (Phase 3 — distributed tracing) ────────
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: hotel_jaeger
+    restart: always
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"   # Jaeger UI — firewall in production
+      - "4317:4317"     # OTLP gRPC receiver
     networks:
       - hotel_network
 
@@ -170,6 +390,32 @@ services:
     networks:
       - hotel_network
 
+  # ── Observability: postgres_exporter (R12) ──────────────────────────────────
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: hotel_postgres_exporter
+    restart: always
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - hotel_network
+
+  # ── Observability: redis_exporter (R12) ─────────────────────────────────────
+  redis_exporter:
+    image: oliver006/redis_exporter:v1.60.0
+    container_name: hotel_redis_exporter
+    restart: always
+    environment:
+      REDIS_ADDR: "redis://redis:6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    depends_on:
+      - redis
+    networks:
+      - hotel_network
+
   # ── pgAdmin (dev convenience) ────────────────────────────────────────────────
   pgadmin:
     image: dpage/pgadmin4
@@ -188,10 +434,14 @@ services:
 
 volumes:
   postgres_data:
+  postgres_replica1_data:
   redis_data:
   prometheus_data:
   grafana_data:
   loki_data:
+  traefik_certs:
+  meilisearch_data:
+  minio_data:
 
 networks:
   hotel_network:

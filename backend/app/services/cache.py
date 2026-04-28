@@ -31,6 +31,9 @@ _redis_client: redis_lib.Redis | None = None
 AVAILABILITY_TTL = 300       # 5 minutes — short enough to stay fresh
 SEARCH_RESULT_TTL = 60       # 1 minute for search result sets
 PRICING_RULE_TTL = 600       # 10 minutes for pricing rules (rarely change)
+HOTEL_LIST_TTL = 300         # 5 minutes for the full hotel list
+HOTEL_DETAIL_TTL = 300       # 5 minutes for a single hotel
+USER_PROFILE_TTL = 60        # 1 minute for user profile
 
 
 def get_redis() -> redis_lib.Redis:
@@ -43,6 +46,20 @@ def get_redis() -> redis_lib.Redis:
             socket_timeout=2,
         )
     return _redis_client
+
+
+# ── Key helpers ───────────────────────────────────────────────────────────────
+
+def hotel_list_key() -> str:
+    return "hotel:list"
+
+
+def hotel_detail_key(hotel_id: int) -> str:
+    return f"hotel:detail:{hotel_id}"
+
+
+def user_profile_key(user_id: int) -> str:
+    return f"user:profile:{user_id}"
 
 
 # ── Availability cache ────────────────────────────────────────────────────────

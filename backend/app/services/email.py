@@ -2,7 +2,6 @@
 Email service using aiosmtplib for async SMTP delivery.
 Set EMAILS_ENABLED=true and SMTP_* variables in .env to activate.
 """
-import asyncio
 import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -55,38 +54,40 @@ async def _send(to: str, subject: str, html: str) -> None:
 
 
 def send_welcome_email(to: str, full_name: str) -> None:
-    html = _load_template("welcome_email.html", {"full_name": full_name})
-    asyncio.create_task(_send(to, f"Welcome to {settings.APP_NAME}!", html))
+    from app.tasks.email_tasks import send_welcome_email_task
+    send_welcome_email_task.delay(to=to, full_name=full_name)
 
 
 def send_booking_confirmation(to: str, full_name: str, booking_id: int, check_in: str, check_out: str, room: str, total: str) -> None:
-    html = _load_template(
-        "booking_confirmation.html",
-        {
-            "full_name": full_name,
-            "booking_id": booking_id,
-            "check_in": check_in,
-            "check_out": check_out,
-            "room": room,
-            "total": total,
-        },
+    from app.tasks.email_tasks import send_booking_confirmation_task
+    send_booking_confirmation_task.delay(
+        to=to,
+        full_name=full_name,
+        booking_id=booking_id,
+        check_in=check_in,
+        check_out=check_out,
+        room=room,
+        total=total,
     )
-    asyncio.create_task(_send(to, f"Booking #{booking_id} Confirmed", html))
 
 
 def send_booking_cancellation(to: str, full_name: str, booking_id: int) -> None:
-    html = _load_template("booking_cancellation.html", {"full_name": full_name, "booking_id": booking_id})
-    asyncio.create_task(_send(to, f"Booking #{booking_id} Cancelled", html))
+    from app.tasks.email_tasks import send_booking_cancellation_task
+    send_booking_cancellation_task.delay(to=to, full_name=full_name, booking_id=booking_id)
 
 
 def send_password_reset(to: str, reset_link: str) -> None:
+    # No Celery task for this yet — use asyncio.run() as a direct fallback
+    # since password reset is a synchronous auth flow where the user is waiting.
+    import asyncio
     html = _load_template("password_reset.html", {"reset_link": reset_link})
-    asyncio.create_task(_send(to, "Reset your password", html))
+    try:
+        loop = asyncio.get_event_loop()
+        loop.create_task(_send(to, "Reset your password", html))
+    except RuntimeError:
+        asyncio.run(_send(to, "Reset your password", html))
 
 
 def send_checkin_reminder(to: str, full_name: str, check_in: str, hotel_name: str) -> None:
-    html = _load_template(
-        "reminder_checkin.html",
-        {"full_name": full_name, "check_in": check_in, "hotel_name": hotel_name},
-    )
-    asyncio.create_task(_send(to, f"Reminder: Your check-in at {hotel_name} is tomorrow", html))
+    from app.tasks.email_tasks import send_checkin_reminder_task
+    send_checkin_reminder_task.delay(to=to, full_name=full_name, check_in=check_in, hotel_name=hotel_name)

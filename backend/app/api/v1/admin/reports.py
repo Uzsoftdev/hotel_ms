@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.dependencies import get_current_hotel, get_db
+from app.dependencies import get_current_hotel, get_read_db
 from app.middleware.rbac import require_staff_or_admin
 from app.models.booking import Booking
 from app.models.payment import Payment
@@ -25,7 +25,7 @@ def _date_range(days: int) -> tuple[date, date]:
 def occupancy_report(
     days: int = Query(30, ge=1, le=365),
     hotel_id: int = Depends(get_current_hotel),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, end = _date_range(days)
@@ -65,7 +65,7 @@ def occupancy_report(
 def revenue_report(
     days: int = Query(30, ge=1, le=365),
     hotel_id: int = Depends(get_current_hotel),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, end = _date_range(days)
@@ -105,7 +105,7 @@ def revenue_report(
 def guest_analytics(
     days: int = Query(30, ge=1, le=365),
     hotel_id: int = Depends(get_current_hotel),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, _ = _date_range(days)
@@ -144,7 +144,7 @@ def guest_analytics(
 def activity_logs(
     limit: int = Query(50, ge=1, le=200),
     hotel_id: int = Depends(get_current_hotel),
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
     from app.models.activity_log import ActivityLog
