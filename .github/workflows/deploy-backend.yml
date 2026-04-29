@@ -84,6 +84,12 @@ jobs:
           chmod 600 ~/.ssh/hms_prod
           ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
 
+      - name: Ensure /opt/hotel exists on server
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "sudo mkdir -p /opt/hotel && sudo chown \$(id -u):\$(id -g) /opt/hotel"
+
       - name: Sync stack file to server
         run: |
           rsync -az \
