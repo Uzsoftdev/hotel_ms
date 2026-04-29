@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
 import BookingSearchBar from "../../components/public/BookingSearchBar";
+import AIHelper from "../../components/public/AIHelper";
 import { ROOMS } from "../../data/rooms";
 
 import background from "../../assets/images/background.png";
@@ -391,6 +392,7 @@ export default function Home() {
       </section>
 
       <Footer />
+      <AIHelper />
     </div>
   );
 }
