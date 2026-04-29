@@ -49,7 +49,7 @@ export default function Footer() {
               <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
               </div>
-              <span className="text-xl font-extrabold tracking-tight">allStay</span>
+              <span className="text-xl font-extrabold tracking-tight"><span className="text-white">all</span><span className="text-primary">Stay</span></span>
             </div>
             <p className="text-sm text-white/50 leading-relaxed max-w-xs">
               Where every stay becomes a cherished memory. World-class luxury and warm hospitality, curated for the modern traveller.

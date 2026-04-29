@@ -58,8 +58,8 @@ export default function Navbar({ transparent = false }) {
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isTransparent ? "bg-white/20" : "bg-primary/10"}`}>
               <span className={`material-symbols-outlined text-lg ${isTransparent ? "text-white" : "text-primary"}`} style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
             </div>
-            <span className={`text-xl font-extrabold tracking-tight ${isTransparent ? "text-white" : "text-slate-900"}`}>
-              Azure <span className={isTransparent ? "text-white/70" : "text-primary"}>Horizon</span>
+            <span className="text-xl font-extrabold tracking-tight">
+              <span className={isTransparent ? "text-white" : "text-slate-900"}>all</span><span className="text-primary">Stay</span>
             </span>
           </Link>
 
