@@ -102,12 +102,20 @@ jobs:
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "IMAGE_REGISTRY=ghcr.io/${OWNER}" >> $GITHUB_ENV
 
+      - name: Find docker binary on server
+        run: |
+          DOCKER_BIN=$(ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "command -v docker 2>/dev/null || \
+             find /usr/bin /usr/local/bin /snap/bin /opt -maxdepth 3 -name docker -type f 2>/dev/null | head -1")
+          echo "DOCKER_BIN=${DOCKER_BIN}" >> $GITHUB_ENV
+          echo "Found docker at: ${DOCKER_BIN}"
+
       - name: Deploy stack (rolling update)
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "export PATH=\$PATH:/usr/local/bin:/usr/bin && \
-             cd /opt/hotel && \
-             echo '${{ secrets.GITHUB_TOKEN }}' | docker login ghcr.io -u ${{ github.actor }} --password-stdin && \
+            "cd /opt/hotel && \
+             echo '${{ secrets.GITHUB_TOKEN }}' | ${{ env.DOCKER_BIN }} login ghcr.io -u ${{ github.actor }} --password-stdin && \
              IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.IMAGE_REGISTRY }} \
-             docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel"
+             ${{ env.DOCKER_BIN }} stack deploy --with-registry-auth --prune -c docker-stack.yml hotel"
