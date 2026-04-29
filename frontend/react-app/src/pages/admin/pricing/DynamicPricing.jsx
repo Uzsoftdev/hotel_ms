@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../Layout/AdminLayout";
 import { getPricingRules, createPricingRule, deletePricingRule } from "../../../services/admin";
+import DateRangePicker from "../../common/DateRangePicker";
 
 const EMPTY = { name: "", multiplier: "", start_date: "", end_date: "", day_of_week: "", room_type_id: "", priority: "1" };
 
@@ -78,15 +79,13 @@ export default function DynamicPricing() {
                 <input required type="number" step="0.01" min="0.1" value={form.multiplier} onChange={(e) => set("multiplier", e.target.value)}
                   className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary" />
               </div>
-              <div>
-                <label className="block text-xs font-bold text-on-surface-variant mb-1">Start Date</label>
-                <input type="date" value={form.start_date} onChange={(e) => set("start_date", e.target.value)}
-                  className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-on-surface-variant mb-1">End Date</label>
-                <input type="date" value={form.end_date} onChange={(e) => set("end_date", e.target.value)}
-                  className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary" />
+              <div className="col-span-2">
+                <DateRangePicker
+                  checkIn={form.start_date}
+                  checkOut={form.end_date}
+                  onChange={({ checkIn, checkOut }) => { set("start_date", checkIn); set("end_date", checkOut); }}
+                  label="Start Date — End Date"
+                />
               </div>
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant mb-1">Day of Week (optional)</label>

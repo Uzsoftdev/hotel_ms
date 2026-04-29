@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useWishlist } from "../../contexts/WishlistContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
+import DateRangePicker from "../../components/common/DateRangePicker";
 
 const today = new Date().toISOString().split("T")[0];
 
@@ -182,15 +183,14 @@ export default function SearchResults() {
                   className="text-sm font-semibold bg-transparent outline-none text-slate-900 placeholder:text-slate-400 flex-1 min-w-0" />
               </div>
             </div>
-            <div className="flex flex-col gap-1 min-w-36">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Check-in</label>
-              <input type="date" value={sb.checkIn} min={today} onChange={(e) => setSb({ ...sb, checkIn: e.target.value })}
-                className="border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold bg-white outline-none focus:border-primary transition-colors" />
-            </div>
-            <div className="flex flex-col gap-1 min-w-36">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Check-out</label>
-              <input type="date" value={sb.checkOut} min={sb.checkIn || today} onChange={(e) => setSb({ ...sb, checkOut: e.target.value })}
-                className="border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold bg-white outline-none focus:border-primary transition-colors" />
+            <div className="flex flex-col gap-1 min-w-64">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Dates</label>
+              <DateRangePicker
+                checkIn={sb.checkIn}
+                checkOut={sb.checkOut}
+                onChange={({ checkIn, checkOut }) => setSb({ ...sb, checkIn, checkOut })}
+                compact
+              />
             </div>
             <div className="flex flex-col gap-1 min-w-28">
               <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Guests</label>

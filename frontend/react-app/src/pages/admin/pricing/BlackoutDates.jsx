@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../Layout/AdminLayout";
 import { getBlackoutDates, createBlackoutDate, deleteBlackoutDate } from "../../../services/admin";
+import DateRangePicker from "../../common/DateRangePicker";
 
 export default function BlackoutDates() {
   const [dates, setDates] = useState([]);
@@ -53,15 +54,13 @@ export default function BlackoutDates() {
           <div className="bg-white rounded-xl border border-outline-variant/30 p-6">
             <h2 className="font-extrabold mb-4">New Blackout Period</h2>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-on-surface-variant mb-1">Start Date *</label>
-                <input required type="date" value={form.start_date} onChange={(e) => setForm((p) => ({ ...p, start_date: e.target.value }))}
-                  className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary" />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-on-surface-variant mb-1">End Date *</label>
-                <input required type="date" value={form.end_date} min={form.start_date} onChange={(e) => setForm((p) => ({ ...p, end_date: e.target.value }))}
-                  className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary" />
+              <div className="md:col-span-2">
+                <DateRangePicker
+                  checkIn={form.start_date}
+                  checkOut={form.end_date}
+                  onChange={({ checkIn, checkOut }) => setForm((p) => ({ ...p, start_date: checkIn, end_date: checkOut }))}
+                  label="Start Date — End Date *"
+                />
               </div>
               <div>
                 <label className="block text-xs font-bold text-on-surface-variant mb-1">Reason</label>

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams, useLocation } from "react-router-do
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import Navbar from "../../components/common/Navbar";
+import DateRangePicker from "../../components/common/DateRangePicker";
 import { createBooking } from "../../services/bookings";
 import { processPayment as makePayment } from "../../services/payment";
 
@@ -178,13 +179,13 @@ export default function Booking() {
               <section className="bg-surface-bright p-8 rounded-xl shadow-sm border border-outline-variant/30">
                 <div className="flex items-center gap-3 mb-8"><span className="material-symbols-outlined text-primary">calendar_month</span><h2 className="text-2xl font-extrabold">{t("booking_page.step2.title")}</h2></div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("booking_page.step2.check_in")}</label>
-                    <input min={today} type="date" value={dates.checkIn} onChange={(e) => setDates({ ...dates, checkIn: e.target.value })} className="bg-transparent border-0 border-b border-outline-variant focus:border-primary py-2 text-sm font-semibold outline-none transition-colors" />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("booking_page.step2.check_out")}</label>
-                    <input min={dates.checkIn || today} type="date" value={dates.checkOut} onChange={(e) => setDates({ ...dates, checkOut: e.target.value })} className="bg-transparent border-0 border-b border-outline-variant focus:border-primary py-2 text-sm font-semibold outline-none transition-colors" />
+                  <div className="md:col-span-2">
+                    <DateRangePicker
+                      checkIn={dates.checkIn}
+                      checkOut={dates.checkOut}
+                      onChange={({ checkIn, checkOut }) => setDates({ ...dates, checkIn, checkOut })}
+                      label={`${t("booking_page.step2.check_in")} — ${t("booking_page.step2.check_out")}`}
+                    />
                   </div>
                   <div className="flex flex-col gap-1">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("booking_page.step2.guests")}</label>

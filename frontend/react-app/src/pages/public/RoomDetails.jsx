@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useWishlist } from "../../contexts/WishlistContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
+import DateRangePicker from "../../components/common/DateRangePicker";
 
 const AMENITIES_LIST = [
   "High-speed fibre Wi-Fi (1 Gbps)",
@@ -235,16 +236,12 @@ export default function RoomDetails() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 border border-outline-variant/30 rounded-lg overflow-hidden">
-                <div className="p-3 border-r border-outline-variant/30">
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Check-in</label>
-                  <input className="w-full bg-transparent text-sm font-bold text-on-surface outline-none" type="date" min={today} value={widgetCheckIn} onChange={(e) => { setWidgetCheckIn(e.target.value); if (widgetCheckOut && e.target.value >= widgetCheckOut) setWidgetCheckOut(""); }} />
-                </div>
-                <div className="p-3">
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Check-out</label>
-                  <input className="w-full bg-transparent text-sm font-bold text-on-surface outline-none" type="date" min={widgetCheckIn || today} value={widgetCheckOut} onChange={(e) => setWidgetCheckOut(e.target.value)} />
-                </div>
-              </div>
+              <DateRangePicker
+                checkIn={widgetCheckIn}
+                checkOut={widgetCheckOut}
+                onChange={({ checkIn, checkOut }) => { setWidgetCheckIn(checkIn); setWidgetCheckOut(checkOut); }}
+                label="Check-in — Check-out"
+              />
 
               <div className="p-3 border border-outline-variant/30 rounded-lg">
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Guests</label>
