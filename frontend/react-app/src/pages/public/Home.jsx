@@ -76,7 +76,7 @@ export default function Home() {
       <Navbar transparent />
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden" style={{ height: "min(100vh, 900px)", minHeight: 560, display: "flex", alignItems: "center", paddingBottom: 120 }}>
+      <section className="relative overflow-hidden" style={{ height: "min(100vh, 900px)", minHeight: 560, display: "flex", alignItems: "center", paddingBottom: 220 }}>
         {/* Background */}
         <div className="absolute inset-0 z-0">
           <img src={background} alt="allStay Hotel" className="w-full h-full object-cover" style={{ filter: "brightness(.65)", imageRendering: "high-quality" }} fetchpriority="high" decoding="sync" />
@@ -125,7 +125,7 @@ export default function Home() {
       </section>
 
       {/* ── SEARCH BAR (overlapping) ── */}
-      <section className="w-full relative z-20 animate-fade-up delay-400" style={{ maxWidth: 1400, margin: "-80px auto 0", padding: "0 32px" }}>
+      <section className="w-full relative z-20 animate-fade-up delay-400" style={{ maxWidth: 1400, margin: "-140px auto 0", padding: "0 32px" }}>
         <BookingSearchBar />
       </section>
 
