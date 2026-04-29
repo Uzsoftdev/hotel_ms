@@ -8,13 +8,13 @@ import BookingSearchBar from "../../components/public/BookingSearchBar";
 import AIHelper from "../../components/public/AIHelper";
 import { ROOMS } from "../../data/rooms";
 
-import background from "../../assets/images/background.png";
 import parisImage from "../../assets/images/paris_1.png";
 import baliImage from "../../assets/images/bali_1.png";
 import newyorkImage from "../../assets/images/new_york_1.png";
-import room1 from "../../assets/images/room1.png";
-import room2 from "../../assets/images/room2.png";
+import oceanSuite from "../../assets/images/ocean_suite.png";
 import hotel3 from "../../assets/images/hotel3.png";
+import poolInfinity from "../../assets/images/pool_infinity.png";
+import room2 from "../../assets/images/room2.png";
 
 const DESTINATIONS = [
   { name: "Paris", country: "France", flag: "🇫🇷", tagline: "City of lights & love", hotels: "124 stays", image: parisImage, color: "from-rose-900/80" },
@@ -35,12 +35,6 @@ const REVIEWS = [
   { name: "Marie L.", location: "Paris, FR", rating: 5, text: "Je reviendrai certainement. The room was immaculate, the views stunning, and the breakfast simply magnificent.", avatar: "ML", stay: "Azure Standard King" },
 ];
 
-const STATS = [
-  { value: "50K+", label: "Happy Guests",       color: "#60a5fa" },
-  { value: "4.9★", label: "Avg Rating",          color: "#fbbf24" },
-  { value: "12",   label: "Years of Excellence", color: "#a78bfa" },
-  { value: "98%",  label: "Would Return",        color: "#34d399" },
-];
 
 function useInView(threshold = 0.15) {
   const ref = useRef(null);
@@ -74,60 +68,94 @@ export default function Home() {
 
   return (
     <div className="bg-white text-slate-900 min-h-screen">
-      <Navbar transparent />
+      <Navbar />
 
       {/* ── HERO ── */}
-      <section className="relative overflow-hidden" style={{ height: "min(100vh, 900px)", minHeight: 560, display: "flex", alignItems: "center", paddingBottom: 220 }}>
-        {/* Background */}
-        <div className="absolute inset-0 z-0">
-          <img src={background} alt="allStay Hotel" className="w-full h-full object-cover" style={{ filter: "brightness(.65)", imageRendering: "high-quality" }} fetchpriority="high" decoding="sync" />
-          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.85) 100%)" }} />
-        </div>
+      <section className="bg-white pt-8 md:pt-10">
+        <div className="max-w-[1180px] mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
-
-        {/* Content */}
-        <div className="relative z-10 text-left px-6 max-w-5xl mx-auto w-full" style={{ paddingLeft: 48 }}>
-          {/* Eyebrow — exact handoff design */}
-          <div className="animate-fade-up" style={{ fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 700, color: "rgba(255,255,255,0.85)", marginBottom: 20 }}>
-            ★★★★★ &nbsp;&nbsp; Miami · South Beach
-          </div>
-
-          {/* Headline — exact handoff copy & style */}
-          <h1 className="animate-fade-up delay-100" style={{ fontSize: "clamp(48px,6vw,72px)", fontWeight: 900, letterSpacing: "-0.04em", lineHeight: 0.95, color: "#fff", margin: "0 0 20px", maxWidth: 720 }}>
-            Where the<br />
-            Atlantic meets<br />
-            <em style={{ fontWeight: 400, fontStyle: "italic" }}>quiet luxury.</em>
-          </h1>
-
-          {/* Subtitle — exact handoff copy */}
-          <p className="animate-fade-up delay-200" style={{ fontSize: 17, color: "rgba(255,255,255,0.9)", maxWidth: 480, marginBottom: 40, fontWeight: 500, lineHeight: 1.55 }}>
-            Oceanfront suites, three-time Michelin dining, and a private stretch of South Beach.
-          </p>
-
-          {/* Stats */}
-          <div className="flex items-center gap-8 animate-fade-up delay-300">
-            {STATS.map(({ value, label, color }, i) => (
-              <div key={label} className="flex items-center gap-8">
-                <div>
-                  <p style={{ fontSize: 22, fontWeight: 800, color, letterSpacing: "-0.02em" }}>{value}</p>
-                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{label}</p>
-                </div>
-                {i < STATS.length - 1 && <div style={{ width: 1, height: 32, background: "rgba(255,255,255,0.2)" }} />}
+            {/* LEFT — text content */}
+            <div className="py-4 lg:py-8">
+              {/* Tag pills */}
+              <div className="flex flex-wrap gap-2 mb-6 md:mb-7">
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#b45309", background: "#fef3c7", padding: "4px 12px", borderRadius: 20 }}>★★★★★</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#1d4ed8", background: "#dbeafe", padding: "4px 12px", borderRadius: 20 }}>MIAMI</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#64748b", background: "#f1f5f9", padding: "4px 12px", borderRadius: 20 }}>EST. 2012</span>
               </div>
-            ))}
+
+              {/* Headline */}
+              <h1 className="font-black tracking-tight text-slate-900 mb-4 md:mb-5" style={{ fontSize: "clamp(38px, 5.5vw, 68px)", lineHeight: 1.02, letterSpacing: "-0.035em" }}>
+                A horizon<br />of your own.
+              </h1>
+
+              {/* Subtitle */}
+              <p className="text-slate-500 leading-relaxed mb-8 md:mb-9" style={{ fontSize: 16, maxWidth: 380 }}>
+                Sixty-four oceanfront suites and residences on a private mile of South Beach. Open year-round.
+              </p>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap items-center gap-4 mb-10 md:mb-12">
+                <Link to="/rooms" className="inline-flex items-center justify-center px-6 py-3 rounded-lg font-bold text-sm text-white" style={{ background: "#1d4ed8", textDecoration: "none" }}>
+                  Check availability
+                </Link>
+                <Link to="/about" className="inline-flex items-center gap-1.5 font-semibold text-sm text-slate-900" style={{ textDecoration: "none" }}>
+                  Take the tour <span>→</span>
+                </Link>
+              </div>
+
+              {/* Stats */}
+              <div className="flex flex-wrap items-center gap-0">
+                {[
+                  { value: "4.9", sub: "2,847 reviews" },
+                  { value: "64", sub: "oceanfront suites" },
+                  { value: "1mi", sub: "private beach" },
+                ].map(({ value, sub }, i) => (
+                  <div key={sub} className="flex items-center">
+                    <div className="pr-5 sm:pr-7">
+                      <p className="font-extrabold text-slate-900 m-0" style={{ fontSize: 22, lineHeight: 1.1 }}>{value}</p>
+                      <p className="text-slate-400 m-0" style={{ fontSize: 11, marginTop: 3 }}>{sub}</p>
+                    </div>
+                    {i < 2 && <div className="mr-5 sm:mr-7 shrink-0" style={{ width: 1, height: 32, background: "#e2e8f0" }} />}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* RIGHT — image cards (hidden on mobile, visible md+) */}
+            <div className="hidden md:grid grid-cols-2 gap-3" style={{ gridTemplateRows: "190px 190px" }}>
+              {/* Tall left */}
+              <div className="rounded-2xl overflow-hidden relative" style={{ gridRow: "1 / 3" }}>
+                <img src={oceanSuite} alt="Grand Ocean Suite" className="w-full h-full object-cover" />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%)" }} />
+                <div className="absolute bottom-5 left-5">
+                  <p style={{ fontSize: 10, color: "rgba(255,255,255,0.85)", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 700, margin: 0 }}>Grand / Ocean Suite</p>
+                </div>
+              </div>
+              {/* Top right */}
+              <div className="rounded-2xl overflow-hidden relative">
+                <img src={hotel3} alt="Sky Suite" className="w-full h-full object-cover" />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%)" }} />
+                <div className="absolute bottom-3.5 left-3.5">
+                  <p style={{ fontSize: 10, color: "rgba(255,255,255,0.85)", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 700, margin: 0 }}>Sky Suite</p>
+                </div>
+              </div>
+              {/* Bottom right */}
+              <div className="rounded-2xl overflow-hidden relative">
+                <img src={poolInfinity} alt="Infinity Pool" className="w-full h-full object-cover" />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%)" }} />
+                <div className="absolute bottom-3.5 left-3.5">
+                  <p style={{ fontSize: 10, color: "rgba(255,255,255,0.85)", textTransform: "uppercase", letterSpacing: "0.15em", fontWeight: 700, margin: 0 }}>Infinity Pool</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Scroll hint */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 animate-float">
-          <span className="text-[10px] text-white/40 uppercase tracking-widest">Scroll</span>
-          <span className="material-symbols-outlined text-white/40 text-sm">keyboard_arrow_down</span>
+        {/* Search bar */}
+        <div className="max-w-[1180px] mx-auto px-4 sm:px-6 lg:px-12 pb-10 mt-6 md:mt-10">
+          <BookingSearchBar />
         </div>
-      </section>
-
-      {/* ── SEARCH BAR (overlapping) ── */}
-      <section className="w-full relative z-20 animate-fade-up delay-400" style={{ maxWidth: 1400, margin: "-140px auto 0", padding: "0 32px" }}>
-        <BookingSearchBar />
       </section>
 
       {/* ── PERKS ── */}

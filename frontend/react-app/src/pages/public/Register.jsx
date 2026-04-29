@@ -132,7 +132,7 @@ export default function Register() {
           <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
             <span className="material-symbols-outlined text-white text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
           </div>
-          <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em", color: "#fff" }}>allStay</span>
+          <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em" }}><span style={{ color: "#fff" }}>all</span><span style={{ color: "#93c5fd" }}>Stay</span></span>
         </Link>
 
         {/* Quote */}
@@ -171,7 +171,7 @@ export default function Register() {
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <span className="material-symbols-outlined text-primary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
             </div>
-            <span style={{ fontSize: 18, fontWeight: 800, color: "#0f172a" }}>Azure <span style={{ color: "#2563EB" }}>Horizon</span></span>
+            <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em" }}><span style={{ color: "#0f172a" }}>all</span><span style={{ color: "#2563EB" }}>Stay</span></span>
           </Link>
 
           <h1 className="ah-h1" style={{ fontSize: 30, marginBottom: 6 }}>Create your account</h1>

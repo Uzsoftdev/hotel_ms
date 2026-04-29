@@ -194,98 +194,53 @@ export default function BookingSearchBar() {
   return (
     <div>
       <form onSubmit={handleSearch}>
-        {/* ── Main bar ── */}
-        <div style={{
-          display: "flex", alignItems: "stretch",
-          border: `2px solid ${YELLOW}`, borderRadius: 4,
-          background: "#fff", overflow: "visible",
-        }}>
+        <div className="search-bar-row">
 
           {/* Destination */}
-          <label style={{ ...fieldStyle, flex: "0 0 38%", borderRight: "1px solid #e0e0e0", cursor: "text" }}>
+          <label style={{ ...fieldStyle, flex: "0 0 38%", border: `2px solid ${YELLOW}`, borderRadius: 4, cursor: "text", background: "#fff" }}>
             <span style={iconStyle}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M3 9l2-2m0 0l7-7 7 7M5 7v12a1 1 0 001 1h4m4 0h4a1 1 0 001-1V7m-9 5h4"/>
               </svg>
             </span>
-            <input
-              ref={destRef}
-              value={destination}
-              onChange={e => setDestination(e.target.value)}
-              placeholder="Where are you going?"
-              style={inputStyle}
-              autoComplete="off"
-            />
+            <input ref={destRef} value={destination} onChange={e => setDestination(e.target.value)}
+              placeholder="Where are you going?" style={inputStyle} autoComplete="off" />
           </label>
 
           {/* Date range */}
-          <div
-            ref={calRef}
-            style={{ ...fieldStyle, flex: "0 0 30%", borderRight: "1px solid #e0e0e0", cursor: "pointer", position: "relative" }}
-            onClick={() => { setShowCal(v => !v); setShowGuests(false); }}
-          >
+          <div ref={calRef}
+            style={{ ...fieldStyle, flex: "0 0 30%", border: `2px solid ${YELLOW}`, borderRadius: 4, cursor: "pointer", position: "relative", background: "#fff" }}
+            onClick={() => { setShowCal(v => !v); setShowGuests(false); }}>
             <span style={iconStyle}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/>
                 <line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="7" y1="14" x2="17" y2="14" strokeOpacity=".4" strokeWidth="1"/>
               </svg>
             </span>
             <span style={{ fontSize: 14, color: checkIn ? "#1a1a1a" : "#767676", whiteSpace: "nowrap" }}>
               {dateLabel}
             </span>
-
-            {/* Calendar popup */}
             {showCal && (
-              <div
-                onClick={e => e.stopPropagation()}
-                style={{
-                  position: "absolute", top: "calc(100% + 8px)", left: 0,
-                  background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8,
-                  boxShadow: "0 8px 32px rgba(0,0,0,.15)", zIndex: 200,
-                  padding: 20, minWidth: 580,
-                }}
-              >
-                {/* Tabs */}
-                <div style={{ display: "flex", gap: 0, borderBottom: "1px solid #e0e0e0", marginBottom: 16 }}>
+              <div onClick={e => e.stopPropagation()}
+                style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, boxShadow: "0 8px 32px rgba(0,0,0,.15)", zIndex: 200, padding: 20, minWidth: 580 }}>
+                <div style={{ display: "flex", borderBottom: "1px solid #e0e0e0", marginBottom: 16 }}>
                   {["calendar", "flexible"].map(tab => (
-                    <button
-                      key={tab} type="button"
-                      onClick={() => setCalTab(tab)}
-                      style={{
-                        padding: "8px 20px", fontSize: 13, fontWeight: 600,
-                        background: "none", border: "none", cursor: "pointer",
-                        color: calTab === tab ? BLUE : "#555",
-                        borderBottom: calTab === tab ? `2px solid ${BLUE}` : "2px solid transparent",
-                        marginBottom: -1,
-                      }}
-                    >
+                    <button key={tab} type="button" onClick={() => setCalTab(tab)}
+                      style={{ padding: "8px 20px", fontSize: 13, fontWeight: 600, background: "none", border: "none", cursor: "pointer", color: calTab === tab ? BLUE : "#555", borderBottom: calTab === tab ? `2px solid ${BLUE}` : "2px solid transparent", marginBottom: -1 }}>
                       {tab === "calendar" ? "Calendar" : "I'm flexible"}
                     </button>
                   ))}
                 </div>
-
                 {calTab === "calendar" ? (
                   <>
-                    {/* Two months side by side */}
                     <div style={{ display: "flex", gap: 24 }}>
                       {renderMonth(viewYear, viewMonth, true, false)}
-                      {renderMonth(rYear,    rMonth,    false, true)}
+                      {renderMonth(rYear, rMonth, false, true)}
                     </div>
-                    {/* Flex options */}
                     <div style={{ display: "flex", gap: 8, marginTop: 16, justifyContent: "center", flexWrap: "wrap" }}>
                       {FLEX_OPTIONS.map(({ label, days }) => (
-                        <button
-                          key={label} type="button"
-                          onClick={() => setFlexDays(days)}
-                          style={{
-                            padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600,
-                            border: `1px solid ${flexDays === days ? BLUE : "#d0d0d0"}`,
-                            background: flexDays === days ? "#e8f0fe" : "#fff",
-                            color: flexDays === days ? BLUE : "#444",
-                            cursor: "pointer",
-                          }}
-                        >
+                        <button key={label} type="button" onClick={() => setFlexDays(days)}
+                          style={{ padding: "6px 16px", borderRadius: 20, fontSize: 13, fontWeight: 600, border: `1px solid ${flexDays === days ? BLUE : "#d0d0d0"}`, background: flexDays === days ? "#e8f0fe" : "#fff", color: flexDays === days ? BLUE : "#444", cursor: "pointer" }}>
                           {label}
                         </button>
                       ))}
@@ -296,10 +251,7 @@ export default function BookingSearchBar() {
                     <p style={{ marginBottom: 8, fontWeight: 600 }}>How long do you want to stay?</p>
                     <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
                       {["Weekend", "1 week", "2 weeks", "1 month"].map(opt => (
-                        <button key={opt} type="button" style={{
-                          padding: "8px 20px", borderRadius: 20, border: "1px solid #d0d0d0",
-                          background: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600,
-                        }}>{opt}</button>
+                        <button key={opt} type="button" style={{ padding: "8px 20px", borderRadius: 20, border: "1px solid #d0d0d0", background: "#fff", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{opt}</button>
                       ))}
                     </div>
                   </div>
@@ -309,11 +261,9 @@ export default function BookingSearchBar() {
           </div>
 
           {/* Guests */}
-          <div
-            ref={guestRef}
-            style={{ ...fieldStyle, flex: 1, cursor: "pointer", position: "relative" }}
-            onClick={() => { setShowGuests(v => !v); setShowCal(false); }}
-          >
+          <div ref={guestRef}
+            style={{ ...fieldStyle, flex: 1, border: `2px solid ${YELLOW}`, borderRadius: 4, cursor: "pointer", position: "relative", background: "#fff" }}
+            onClick={() => { setShowGuests(v => !v); setShowCal(false); }}>
             <span style={iconStyle}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -323,22 +273,13 @@ export default function BookingSearchBar() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" style={{ marginLeft: 4 }}>
               <path d="M6 9l6 6 6-6"/>
             </svg>
-
-            {/* Guests popup */}
             {showGuests && (
-              <div
-                onClick={e => e.stopPropagation()}
-                style={{
-                  position: "absolute", top: "calc(100% + 8px)", right: 0,
-                  background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8,
-                  boxShadow: "0 8px 32px rgba(0,0,0,.15)", zIndex: 200,
-                  padding: "16px 20px", minWidth: 280,
-                }}
-              >
+              <div onClick={e => e.stopPropagation()}
+                style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8, boxShadow: "0 8px 32px rgba(0,0,0,.15)", zIndex: 200, padding: "16px 20px", minWidth: 280 }}>
                 {[
-                  { label: "Adults",   sub: "Age 18+",  val: adults,   set: setAdults,   min: 1,  max: 30 },
-                  { label: "Children", sub: "Age 0–17", val: children, set: setChildren, min: 0,  max: 10 },
-                  { label: "Rooms",    sub: null,        val: rooms,    set: setRooms,    min: 1,  max: 30 },
+                  { label: "Adults",   sub: "Age 18+",  val: adults,   set: setAdults,   min: 1, max: 30 },
+                  { label: "Children", sub: "Age 0–17", val: children, set: setChildren, min: 0, max: 10 },
+                  { label: "Rooms",    sub: null,        val: rooms,    set: setRooms,    min: 1, max: 30 },
                 ].map(({ label, sub, val, set, min, max }) => (
                   <div key={label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid #f0f0f0" }}>
                     <div>
@@ -352,8 +293,6 @@ export default function BookingSearchBar() {
                     </div>
                   </div>
                 ))}
-
-                {/* Pets */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 0" }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600 }}>Traveling with pets?</div>
@@ -362,30 +301,13 @@ export default function BookingSearchBar() {
                       <span style={{ color: BLUE, cursor: "pointer", textDecoration: "underline" }}>Learn more</span>
                     </div>
                   </div>
-                  <div
-                    onClick={() => setPets(v => !v)}
-                    style={{
-                      width: 44, height: 24, borderRadius: 12, cursor: "pointer", flexShrink: 0,
-                      background: pets ? BLUE : "#ccc", transition: "background .2s", position: "relative",
-                    }}
-                  >
-                    <div style={{
-                      position: "absolute", top: 2, left: pets ? 22 : 2, width: 20, height: 20,
-                      borderRadius: "50%", background: "#fff", transition: "left .2s",
-                      boxShadow: "0 1px 3px rgba(0,0,0,.2)",
-                    }} />
+                  <div onClick={() => setPets(v => !v)}
+                    style={{ width: 44, height: 24, borderRadius: 12, cursor: "pointer", flexShrink: 0, background: pets ? BLUE : "#ccc", transition: "background .2s", position: "relative" }}>
+                    <div style={{ position: "absolute", top: 2, left: pets ? 22 : 2, width: 20, height: 20, borderRadius: "50%", background: "#fff", transition: "left .2s", boxShadow: "0 1px 3px rgba(0,0,0,.2)" }} />
                   </div>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => setShowGuests(false)}
-                  style={{
-                    marginTop: 8, width: "100%", padding: "10px 0",
-                    background: "#fff", border: `2px solid ${BLUE}`, borderRadius: 4,
-                    color: BLUE, fontWeight: 700, fontSize: 14, cursor: "pointer",
-                  }}
-                >
+                <button type="button" onClick={() => setShowGuests(false)}
+                  style={{ marginTop: 8, width: "100%", padding: "10px 0", background: "#fff", border: `2px solid ${BLUE}`, borderRadius: 4, color: BLUE, fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
                   Done
                 </button>
               </div>
@@ -393,37 +315,28 @@ export default function BookingSearchBar() {
           </div>
 
           {/* Search button */}
-          <button
-            type="submit"
-            style={{
-              padding: "0 28px", background: BLUE, color: "#fff",
-              border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700,
-              flexShrink: 0, borderRadius: "0 2px 2px 0",
-              transition: "background .15s",
-            }}
+          <button type="submit"
+            style={{ padding: "0 40px", background: BLUE, color: "#fff", border: `2px solid ${YELLOW}`, borderRadius: 4, cursor: "pointer", fontSize: 15, fontWeight: 700, flexShrink: 0, transition: "background .15s", display: "flex", alignItems: "center", gap: 9 }}
             onMouseEnter={e => e.currentTarget.style.background = "#005fa3"}
-            onMouseLeave={e => e.currentTarget.style.background = BLUE}
-          >
+            onMouseLeave={e => e.currentTarget.style.background = BLUE}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="7"/><line x1="17" y1="17" x2="22" y2="22"/>
+            </svg>
             Search
           </button>
         </div>
       </form>
 
-      {/* I'm traveling for work */}
-      <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, cursor: "pointer" }}>
-        <input
-          type="checkbox"
-          checked={forWork}
-          onChange={e => setForWork(e.target.checked)}
-          style={{ width: 16, height: 16, accentColor: BLUE, cursor: "pointer" }}
-        />
-        <span style={{ fontSize: 13, color: "#fff", fontWeight: 500 }}>I'm traveling for work</span>
+      <label style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 12, cursor: "pointer" }}>
+        <input type="checkbox" checked={forWork} onChange={e => setForWork(e.target.checked)}
+          style={{ width: 16, height: 16, accentColor: BLUE, cursor: "pointer" }} />
+        <span style={{ fontSize: 13, color: "#64748b", fontWeight: 500 }}>I'm traveling for work</span>
       </label>
     </div>
   );
 }
 
-// ── Shared micro-styles ────────────────────────────────────────────────────────
+// ── Micro-styles ──────────────────────────────────────────────────────────────
 
 const fieldStyle = {
   display: "flex", alignItems: "center", gap: 10,
@@ -436,15 +349,13 @@ const iconStyle = {
 
 const inputStyle = {
   flex: 1, fontSize: 14, border: "none", outline: "none",
-  background: "transparent", color: "#1a1a1a",
-  fontFamily: "inherit",
+  background: "transparent", color: "#1a1a1a", fontFamily: "inherit",
 };
 
 const navBtnStyle = {
   width: 28, height: 28, borderRadius: "50%", border: "1px solid #d0d0d0",
   background: "#fff", cursor: "pointer", fontSize: 18, lineHeight: 1,
-  display: "flex", alignItems: "center", justifyContent: "center",
-  color: "#333",
+  display: "flex", alignItems: "center", justifyContent: "center", color: "#333",
 };
 
 function counterBtnStyle(disabled) {
@@ -453,7 +364,6 @@ function counterBtnStyle(disabled) {
     border: `1px solid ${disabled ? "#e0e0e0" : "#999"}`,
     background: "#fff", cursor: disabled ? "default" : "pointer",
     fontSize: 18, color: disabled ? "#ccc" : "#333",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    fontWeight: 400,
+    display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 400,
   };
 }

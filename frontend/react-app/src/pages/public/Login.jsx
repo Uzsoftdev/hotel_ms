@@ -82,7 +82,7 @@ export default function Login() {
             <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
               <span className="material-symbols-outlined text-white text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
             </div>
-            <span style={{ fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>allStay</span>
+            <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em" }}><span style={{ color: "#fff" }}>all</span><span style={{ color: "#93c5fd" }}>Stay</span></span>
           </Link>
         </div>
 
@@ -127,7 +127,7 @@ export default function Login() {
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary" style={{ fontSize: 18, fontVariationSettings: "'FILL' 1" }}>hotel</span>
               </div>
-              <span style={{ fontSize: 17, fontWeight: 800, color: "#0f172a" }}>Azure <span style={{ color: "#2563EB" }}>Horizon</span></span>
+              <span style={{ fontSize: 17, fontWeight: 800, letterSpacing: "-0.02em" }}><span style={{ color: "#0f172a" }}>all</span><span style={{ color: "#2563EB" }}>Stay</span></span>
             </Link>
           </div>
 
