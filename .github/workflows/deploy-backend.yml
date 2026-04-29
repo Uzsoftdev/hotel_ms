@@ -105,8 +105,8 @@ jobs:
       - name: Deploy stack (rolling update)
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "cd /opt/hotel && \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} bash -lc \
+            "'cd /opt/hotel && \
              echo '${{ secrets.GITHUB_TOKEN }}' | docker login ghcr.io -u ${{ github.actor }} --password-stdin && \
              IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.IMAGE_REGISTRY }} \
-             docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel"
+             docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel'"
