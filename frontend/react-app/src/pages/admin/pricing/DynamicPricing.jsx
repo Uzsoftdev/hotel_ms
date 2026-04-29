@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../Layout/AdminLayout";
 import { getPricingRules, createPricingRule, deletePricingRule } from "../../../services/admin";
-import DateRangePicker from "../../common/DateRangePicker";
+import DateRangePicker from "../../../components/common/DateRangePicker";
 
 const EMPTY = { name: "", multiplier: "", start_date: "", end_date: "", day_of_week: "", room_type_id: "", priority: "1" };
 

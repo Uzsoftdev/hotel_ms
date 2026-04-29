@@ -6,6 +6,7 @@ import { useWishlist } from "../../contexts/WishlistContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
 import DateRangePicker from "../../components/common/DateRangePicker";
+import GuestsPicker from "../../components/common/GuestsPicker";
 
 const AMENITIES_LIST = [
   "High-speed fibre Wi-Fi (1 Gbps)",
@@ -42,11 +43,14 @@ export default function RoomDetails() {
   const [promptAction, setPromptAction] = useState("");
   const [widgetCheckIn, setWidgetCheckIn] = useState(location.state?.checkIn || "");
   const [widgetCheckOut, setWidgetCheckOut] = useState(location.state?.checkOut || "");
-  const [widgetGuests, setWidgetGuests] = useState(location.state?.guests || 1);
+  const [widgetAdults, setWidgetAdults] = useState(location.state?.guests || 1);
+  const [widgetChildren, setWidgetChildren] = useState(0);
+  const [widgetRooms, setWidgetRooms] = useState(1);
+  const [widgetPets, setWidgetPets] = useState(false);
 
   function requireAuth(action) {
     if (isAuthenticated) {
-      if (action === "book") navigate("/booking", { state: { room, checkIn: widgetCheckIn, checkOut: widgetCheckOut, guests: widgetGuests } });
+      if (action === "book") navigate("/booking", { state: { room, checkIn: widgetCheckIn, checkOut: widgetCheckOut, guests: widgetAdults + widgetChildren } });
       if (action === "wishlist") wishlistToggle(room.id);
     } else {
       setPromptAction(action);
@@ -243,11 +247,15 @@ export default function RoomDetails() {
                 label="Check-in — Check-out"
               />
 
-              <div className="p-3 border border-outline-variant/30 rounded-lg">
+              <div>
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Guests</label>
-                <select className="w-full bg-transparent text-sm font-bold text-on-surface outline-none cursor-pointer" value={widgetGuests} onChange={(e) => setWidgetGuests(Number(e.target.value))}>
-                  {[1, 2, 3, 4].map((n) => <option key={n} value={n}>{n} {n === 1 ? "Guest" : "Guests"}</option>)}
-                </select>
+                <GuestsPicker
+                  adults={widgetAdults}
+                  children={widgetChildren}
+                  rooms={widgetRooms}
+                  pets={widgetPets}
+                  onChange={({ adults, children, rooms, pets }) => { setWidgetAdults(adults); setWidgetChildren(children); setWidgetRooms(rooms); setWidgetPets(pets); }}
+                />
               </div>
 
               {/* Login notice when not authenticated */}

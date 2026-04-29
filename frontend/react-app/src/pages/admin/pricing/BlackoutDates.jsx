@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../Layout/AdminLayout";
 import { getBlackoutDates, createBlackoutDate, deleteBlackoutDate } from "../../../services/admin";
-import DateRangePicker from "../../common/DateRangePicker";
+import DateRangePicker from "../../../components/common/DateRangePicker";
 
 export default function BlackoutDates() {
   const [dates, setDates] = useState([]);

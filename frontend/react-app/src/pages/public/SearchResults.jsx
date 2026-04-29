@@ -6,6 +6,7 @@ import { useWishlist } from "../../contexts/WishlistContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
 import DateRangePicker from "../../components/common/DateRangePicker";
+import GuestsPicker from "../../components/common/GuestsPicker";
 
 const today = new Date().toISOString().split("T")[0];
 
@@ -52,9 +53,11 @@ export default function SearchResults() {
   const initLocation = searchParams.get("location") || "";
   const initCheckIn = searchParams.get("checkIn") || "";
   const initCheckOut = searchParams.get("checkOut") || "";
-  const initGuests = Number(searchParams.get("guests")) || 1;
+  const initAdults = Number(searchParams.get("adults")) || Number(searchParams.get("guests")) || 1;
+  const initChildren = Number(searchParams.get("children")) || 0;
+  const initRooms = Number(searchParams.get("rooms")) || 1;
 
-  const [sb, setSb] = useState({ location: initLocation, checkIn: initCheckIn, checkOut: initCheckOut, guests: initGuests });
+  const [sb, setSb] = useState({ location: initLocation, checkIn: initCheckIn, checkOut: initCheckOut, adults: initAdults, children: initChildren, rooms: initRooms, pets: false });
   const [priceRange, setPriceRange] = useState(1500);
   const [selectedCats, setSelectedCats] = useState([]);
   const [selectedAmenities, setSelectedAmenities] = useState([]);
@@ -74,7 +77,7 @@ export default function SearchResults() {
 
   function handleSearch(e) {
     e.preventDefault();
-    setSearchParams({ location: sb.location, checkIn: sb.checkIn, checkOut: sb.checkOut, guests: sb.guests });
+    setSearchParams({ location: sb.location, checkIn: sb.checkIn, checkOut: sb.checkOut, adults: sb.adults, children: sb.children, rooms: sb.rooms });
   }
 
   function handleBook(room) {
@@ -88,7 +91,7 @@ export default function SearchResults() {
       if (selectedCats.length > 0 && !selectedCats.includes(r.category)) return false;
       if (selectedAmenities.length > 0 && !selectedAmenities.every((a) => r.amenities.includes(a))) return false;
       if (r.rating < minRating) return false;
-      if (initGuests > 0 && r.capacity < initGuests) return false;
+      if (initAdults + initChildren > 0 && r.capacity < initAdults + initChildren) return false;
       return true;
     });
     if (sort === "price_asc") list = [...list].sort((a, b) => a.price_per_night - b.price_per_night);
@@ -192,12 +195,15 @@ export default function SearchResults() {
                 compact
               />
             </div>
-            <div className="flex flex-col gap-1 min-w-28">
+            <div className="flex flex-col gap-1 min-w-52">
               <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Guests</label>
-              <select value={sb.guests} onChange={(e) => setSb({ ...sb, guests: Number(e.target.value) })}
-                className="border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold bg-white outline-none focus:border-primary transition-colors cursor-pointer">
-                {[1,2,3,4,5,6].map((n) => <option key={n} value={n}>{n} {n === 1 ? "Guest" : "Guests"}</option>)}
-              </select>
+              <GuestsPicker
+                adults={sb.adults}
+                children={sb.children}
+                rooms={sb.rooms}
+                pets={sb.pets}
+                onChange={({ adults, children, rooms, pets }) => setSb({ ...sb, adults, children, rooms, pets })}
+              />
             </div>
             <button type="submit" className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 active:scale-95 transition-all shadow-md shadow-primary/20">
               <span className="material-symbols-outlined text-sm">search</span>Update
@@ -237,7 +243,7 @@ export default function SearchResults() {
                 <p className="text-sm text-slate-400 mt-0.5">
                   {filtered.length} room{filtered.length !== 1 ? "s" : ""} found
                   {initCheckIn && initCheckOut ? ` · ${initCheckIn} → ${initCheckOut}` : ""}
-                  {initGuests > 0 ? ` · ${initGuests} guest${initGuests !== 1 ? "s" : ""}` : ""}
+                  {initAdults > 0 ? ` · ${initAdults + initChildren} guest${initAdults + initChildren !== 1 ? "s" : ""}` : ""}
                 </p>
               </div>
               <div className="flex items-center gap-3">

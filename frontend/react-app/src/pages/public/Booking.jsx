@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import Navbar from "../../components/common/Navbar";
 import DateRangePicker from "../../components/common/DateRangePicker";
+import GuestsPicker from "../../components/common/GuestsPicker";
 import { createBooking } from "../../services/bookings";
 import { processPayment as makePayment } from "../../services/payment";
 
@@ -66,7 +67,7 @@ export default function Booking() {
     }
   }, [user]);
 
-  const [dates, setDates] = useState({ checkIn: preCheckIn, checkOut: preCheckOut, guests: preGuests, specialRequests: "" });
+  const [dates, setDates] = useState({ checkIn: preCheckIn, checkOut: preCheckOut, adults: preGuests, children: 0, rooms: 1, pets: false, specialRequests: "" });
   const [payment, setPayment] = useState({ cardNumber: "", expiry: "", cvv: "" });
 
   const nights =
@@ -113,7 +114,7 @@ export default function Booking() {
           bookingId: booking.id,
           checkIn: dates.checkIn,
           checkOut: dates.checkOut,
-          guests: dates.guests,
+          guests: dates.adults + dates.children,
           total: booking.total_price ?? total,
         },
       });
@@ -189,9 +190,13 @@ export default function Booking() {
                   </div>
                   <div className="flex flex-col gap-1">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("booking_page.step2.guests")}</label>
-                    <select value={dates.guests} onChange={(e) => setDates({ ...dates, guests: Number(e.target.value) })} className="bg-transparent border-0 border-b border-outline-variant py-2 text-sm font-semibold outline-none">
-                      {[1,2,3,4].map((n) => <option key={n} value={n}>{n} {n === 1 ? "Guest" : "Guests"}</option>)}
-                    </select>
+                    <GuestsPicker
+                      adults={dates.adults}
+                      children={dates.children}
+                      rooms={dates.rooms}
+                      pets={dates.pets}
+                      onChange={({ adults, children, rooms, pets }) => setDates({ ...dates, adults, children, rooms, pets })}
+                    />
                   </div>
                   <div className="flex flex-col gap-1 md:col-span-2">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{t("booking_page.step2.special_requests")}</label>
@@ -254,7 +259,7 @@ export default function Booking() {
                 <div className="space-y-3 border-b border-outline-variant/30 pb-5">
                   <div className="flex justify-between text-sm"><span className="text-on-surface-variant">Check-in</span><span className="font-bold">{dates.checkIn || "—"}</span></div>
                   <div className="flex justify-between text-sm"><span className="text-on-surface-variant">Check-out</span><span className="font-bold">{dates.checkOut || "—"}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-on-surface-variant">Guests</span><span className="font-bold">{dates.guests}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-on-surface-variant">Guests</span><span className="font-bold">{dates.adults + dates.children}</span></div>
                 </div>
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm"><span className="text-on-surface-variant">${pricePerNight} × {nights} nights</span><span className="font-semibold">${subtotal.toLocaleString()}</span></div>

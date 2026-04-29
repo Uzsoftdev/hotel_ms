@@ -36,10 +36,10 @@ const REVIEWS = [
 ];
 
 const STATS = [
-  { value: "50K+", label: "Happy Guests" },
-  { value: "4.9★", label: "Avg Rating" },
-  { value: "12", label: "Years of Excellence" },
-  { value: "98%", label: "Would Return" },
+  { value: "50K+", label: "Happy Guests",       color: "#60a5fa" },
+  { value: "4.9★", label: "Avg Rating",          color: "#fbbf24" },
+  { value: "12",   label: "Years of Excellence", color: "#a78bfa" },
+  { value: "98%",  label: "Would Return",        color: "#34d399" },
 ];
 
 function useInView(threshold = 0.15) {
@@ -106,10 +106,10 @@ export default function Home() {
 
           {/* Stats */}
           <div className="flex items-center gap-8 animate-fade-up delay-300">
-            {STATS.map(({ value, label }, i) => (
+            {STATS.map(({ value, label, color }, i) => (
               <div key={label} className="flex items-center gap-8">
                 <div>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>{value}</p>
+                  <p style={{ fontSize: 22, fontWeight: 800, color, letterSpacing: "-0.02em" }}>{value}</p>
                   <p style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{label}</p>
                 </div>
                 {i < STATS.length - 1 && <div style={{ width: 1, height: 32, background: "rgba(255,255,255,0.2)" }} />}
