@@ -5,7 +5,7 @@
     { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" }
   ],
   "annotations": { "list": [] },
-  "description": "Azure Horizon HMS — API, WebSocket, cache, and infrastructure overview",
+  "description": "allStay HMS — API, WebSocket, cache, and infrastructure overview",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,

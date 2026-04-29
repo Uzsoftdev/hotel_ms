@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "azure_horizon": "Azure Horizon",
+    "azure_horizon": "allStay",
     "home": "ホーム",
     "rooms": "客室",
     "about": "会社概要",
@@ -97,7 +97,7 @@
       "timeline": [
         {
           "year": "2018",
-          "event": "Azure Horizonがサンフランシスコで設立され、ラグジュアリー旅行を再定義するというビジョンを掲げる。"
+          "event": "allStayがサンフランシスコで設立され、ラグジュアリー旅行を再定義するというビジョンを掲げる。"
         },
         {
           "year": "2020",
@@ -138,7 +138,7 @@
           "answer": "もちろんです。グローバルコンシェルジュチームがプライベート航空パートナーと連携し、お客様の到着がスムーズかつ慎重に行われるようにします。"
         },
         {
-          "question": "Azure Horizonメンバーシップとは何ですか？",
+          "question": "allStayメンバーシップとは何ですか？",
           "answer": "Horizon Circleは招待制のプログラムで、非公開物件のヴィラ、プライベートアイランド、優先予約への独占的なアクセスを提供します。"
         },
         {
@@ -281,7 +281,7 @@
     "rating_text": "4.9 / 5.0",
     "verified_reviews": "128 Verified Reviews",
     "location_detail": "7th Arrondissement, Paris",
-    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of allStay, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
     "room_highlights": "Room Highlights",
     "luxury_amenities": "Luxury Amenities",
     "guest_reviews": "Guest Reviews",
@@ -309,7 +309,7 @@
   },
   "booking_page": {
     "title": "予約を完了する",
-    "subtitle": "Azure Horizonであなたの聖域を確保する",
+    "subtitle": "allStayであなたの聖域を確保する",
     "step_indicator": {
       "step1": "ゲスト情報",
       "step2": "滞在情報",
@@ -346,7 +346,7 @@
     },
     "room_summary": {
       "title": "客室概要",
-      "room_name": "Azure Horizon ロイヤルスイート",
+      "room_name": "allStay ロイヤルスイート",
       "type": "オーシャンビュー",
       "check_in": "10月12日",
       "check_out": "2024年10月18日",
@@ -427,7 +427,7 @@
         "price": 850
       },
       {
-        "name": "Azure Horizon サンクチュアリ",
+        "name": "allStay サンクチュアリ",
         "location": "バリ",
         "rating": 4.9,
         "badge": "プレミア",
@@ -595,11 +595,11 @@
     "global_presence": "Our Global Presence",
     "concierge_wisdom": "Concierge Wisdom",
     "frequently_asked": "Frequently Asked",
-    "map_location": "Azure Horizon • Monte Carlo"
+    "map_location": "allStay • Monte Carlo"
   },
   "faq_page": {
     "title": "ヘルプとFAQ",
-    "subtitle": "Azure Horizonについて知っておくべきすべて",
+    "subtitle": "allStayについて知っておくべきすべて",
     "categories": {
       "all": "すべて",
       "bookings": "予約",
@@ -611,7 +611,7 @@
       {
         "category": "bookings",
         "question": "予約を変更するにはどうすればよいですか？",
-        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+        "answer": "Reservations can be modified through your allStay account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
       },
       {
         "category": "bookings",
@@ -656,7 +656,7 @@
       {
         "category": "policies",
         "question": "喫煙は許可されていますか？",
-        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+        "answer": "All allStay properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
       }
     ],
     "still_have_questions": {
@@ -687,7 +687,7 @@
   },
   "register_page": {
     "title": "アカウントを作成",
-    "subtitle": "Azure Horizonに参加して、特別なラグジュアリー特典とシームレスな予約をお楽しみください。",
+    "subtitle": "allStayに参加して、特別なラグジュアリー特典とシームレスな予約をお楽しみください。",
     "upload_photo": "写真をアップロード",
     "photo_hint": "推奨 400x400",
     "quote": "特別な旅先への旅は、一歩から始まります。",
@@ -723,7 +723,7 @@
     "already_have_account": "Already have an account?",
     "cookie_policy": "Cookie Policy",
     "contact_us": "Contact Us",
-    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+    "copyright": "© 2024 allStay Luxury Hotels & Resorts. All rights reserved."
   },
   "footer": {
     "quick_links": {
@@ -736,7 +736,7 @@
     "terms_of_service": "利用規約",
     "help_center": "ヘルプセンター",
     "our_story": "私たちのストーリー",
-    "copyright": "© 2024 Azure Horizon. All rights reserved."
+    "copyright": "© 2024 allStay. All rights reserved."
   },
   "languages": {
     "en": "English",

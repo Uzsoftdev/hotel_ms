@@ -72,7 +72,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Azure Horizon Hotel Management API — full-stack distributed system",
+    description="allStay Hotel Management API — full-stack distributed system",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,

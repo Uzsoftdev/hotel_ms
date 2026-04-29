@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "azure_horizon": "Azure Horizon",
+    "azure_horizon": "allStay",
     "home": "Início",
     "rooms": "Quartos",
     "about": "Sobre",
@@ -97,7 +97,7 @@
       "timeline": [
         {
           "year": "2018",
-          "event": "Azure Horizon é fundada em São Francisco com a visão de redefinir viagens de luxo."
+          "event": "allStay é fundada em São Francisco com a visão de redefinir viagens de luxo."
         },
         {
           "year": "2020",
@@ -138,7 +138,7 @@
           "answer": "Absolutamente. Nossa equipe de Concierge Global coordena com parceiros de aviação particular para garantir que sua chegada seja tranquila e discreta."
         },
         {
-          "question": "O que é a assinatura do Azure Horizon?",
+          "question": "O que é a assinatura do allStay?",
           "answer": "Horizon Circle é um programa apenas por convite que oferece acesso exclusivo a vilas fora do mercado, ilhas particulares e reservas prioritárias."
         },
         {
@@ -281,7 +281,7 @@
     "rating_text": "4.9 / 5.0",
     "verified_reviews": "128 Verified Reviews",
     "location_detail": "7th Arrondissement, Paris",
-    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of allStay, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
     "room_highlights": "Room Highlights",
     "luxury_amenities": "Luxury Amenities",
     "guest_reviews": "Guest Reviews",
@@ -309,7 +309,7 @@
   },
   "booking_page": {
     "title": "Complete sua reserva",
-    "subtitle": "Garanta seu santuário no Azure Horizon",
+    "subtitle": "Garanta seu santuário no allStay",
     "step_indicator": {
       "step1": "Hóspede",
       "step2": "Estadia",
@@ -346,7 +346,7 @@
     },
     "room_summary": {
       "title": "Resumo do quarto",
-      "room_name": "Azure Horizon Royal Suite",
+      "room_name": "allStay Royal Suite",
       "type": "Vista para o oceano",
       "check_in": "12 Out",
       "check_out": "18 Out 2024",
@@ -427,7 +427,7 @@
         "price": 850
       },
       {
-        "name": "Azure Horizon Sanctuary",
+        "name": "allStay Sanctuary",
         "location": "Bali",
         "rating": 4.9,
         "badge": "Premium",
@@ -595,11 +595,11 @@
     "global_presence": "Our Global Presence",
     "concierge_wisdom": "Concierge Wisdom",
     "frequently_asked": "Frequently Asked",
-    "map_location": "Azure Horizon • Monte Carlo"
+    "map_location": "allStay • Monte Carlo"
   },
   "faq_page": {
     "title": "Ajuda e perguntas frequentes",
-    "subtitle": "Tudo o que você precisa saber sobre o Azure Horizon",
+    "subtitle": "Tudo o que você precisa saber sobre o allStay",
     "categories": {
       "all": "Todos",
       "bookings": "Reservas",
@@ -611,7 +611,7 @@
       {
         "category": "bookings",
         "question": "Como faço para modificar minha reserva?",
-        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+        "answer": "Reservations can be modified through your allStay account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
       },
       {
         "category": "bookings",
@@ -656,7 +656,7 @@
       {
         "category": "policies",
         "question": "Fumar é permitido?",
-        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+        "answer": "All allStay properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
       }
     ],
     "still_have_questions": {
@@ -687,7 +687,7 @@
   },
   "register_page": {
     "title": "Crie sua conta",
-    "subtitle": "Junte-se ao Azure Horizon para benefícios exclusivos de luxo e reservas sem complicações.",
+    "subtitle": "Junte-se ao allStay para benefícios exclusivos de luxo e reservas sem complicações.",
     "upload_photo": "Enviar foto",
     "photo_hint": "Recomendado 400x400",
     "quote": "Sua jornada para destinos extraordinários começa com um único passo.",
@@ -723,7 +723,7 @@
     "already_have_account": "Already have an account?",
     "cookie_policy": "Cookie Policy",
     "contact_us": "Contact Us",
-    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+    "copyright": "© 2024 allStay Luxury Hotels & Resorts. All rights reserved."
   },
   "footer": {
     "quick_links": {
@@ -736,7 +736,7 @@
     "terms_of_service": "Termos de serviço",
     "help_center": "Central de ajuda",
     "our_story": "Nossa história",
-    "copyright": "© 2024 Azure Horizon. Todos os direitos reservados."
+    "copyright": "© 2024 allStay. Todos os direitos reservados."
   },
   "languages": {
     "en": "English",

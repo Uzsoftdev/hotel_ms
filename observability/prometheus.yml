@@ -3,7 +3,7 @@ global:
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: "azure_horizon_backend"
+  - job_name: "allStay_backend"
     static_configs:
       - targets: ["backend1:8000", "backend2:8000"]
     metrics_path: /metrics

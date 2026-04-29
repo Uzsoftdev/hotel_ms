@@ -44,6 +44,7 @@ const MENU_ITEMS = {
   guest: [
     { label: "My Profile", icon: "manage_accounts", to: "/profile" },
     { label: "My Bookings", icon: "book_online", to: "/my-bookings" },
+    { label: "Saved Rooms", icon: "favorite", to: "/saved" },
     { label: "Notifications", icon: "notifications", to: "/notifications" },
     { label: "Settings", icon: "settings", to: "/settings" },
   ],

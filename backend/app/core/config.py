@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     )
 
     # App
-    APP_NAME: str = "Azure Horizon Hotel API"
+    APP_NAME: str = "allStay Hotel API"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
     ENVIRONMENT: str = "production"
@@ -70,7 +70,7 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASSWORD: str = ""
     EMAIL_FROM: str = ""
-    EMAIL_FROM_NAME: str = "Azure Horizon"
+    EMAIL_FROM_NAME: str = "allStay"
     EMAILS_ENABLED: bool = False
 
 

@@ -49,14 +49,14 @@ export default function Footer() {
               <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center">
                 <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
               </div>
-              <span className="text-xl font-extrabold tracking-tight">Azure Horizon</span>
+              <span className="text-xl font-extrabold tracking-tight">allStay</span>
             </div>
             <p className="text-sm text-white/50 leading-relaxed max-w-xs">
               Where every stay becomes a cherished memory. World-class luxury and warm hospitality, curated for the modern traveller.
             </p>
             <div className="space-y-3">
               {[
-                { icon: "mail", text: "concierge@azurehorizon.com" },
+                { icon: "mail", text: "concierge@allstay.com" },
                 { icon: "call", text: "+1 (800) 928-7468" },
                 { icon: "location_on", text: "1 Azure Drive, Miami Beach, FL" },
               ].map(({ icon, text }) => (
@@ -91,7 +91,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/30">© 2026 Azure Horizon. All rights reserved.</p>
+          <p className="text-xs text-white/30">© 2026 allStay. All rights reserved.</p>
           <p className="text-xs text-white/20">Crafted with care for travellers who love the extraordinary.</p>
         </div>
       </div>

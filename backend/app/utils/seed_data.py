@@ -28,13 +28,13 @@ def seed() -> None:
         # ── Users ─────────────────────────────────────────────────────────
         admin = User(
             full_name="Admin User",
-            email="admin@azurehorizon.com",
+            email="admin@allstay.com",
             hashed_password=hash_password("Admin@12345"),
             role="super_admin",
         )
         staff = User(
             full_name="Staff Member",
-            email="staff@azurehorizon.com",
+            email="staff@allstay.com",
             hashed_password=hash_password("Staff@12345"),
             role="staff",
         )
@@ -49,14 +49,14 @@ def seed() -> None:
 
         # ── Hotel ─────────────────────────────────────────────────────────
         hotel = Hotel(
-            name="Azure Horizon Hotel",
+            name="allStay Hotel",
             description="A luxury hotel with stunning ocean views and world-class amenities.",
             address="123 Ocean Drive",
             city="Miami",
             country="United States",
             country_code="US",
             phone="+1-305-555-0100",
-            email="info@azurehorizon.com",
+            email="info@allstay.com",
             latitude=25.7617,
             longitude=-80.1918,
             rating=4.8,
@@ -111,8 +111,8 @@ def seed() -> None:
 
         db.commit()
         print("✓ Seed complete.")
-        print("  admin@azurehorizon.com / Admin@12345")
-        print("  staff@azurehorizon.com / Staff@12345")
+        print("  admin@allstay.com / Admin@12345")
+        print("  staff@allstay.com / Staff@12345")
         print("  guest@example.com      / Guest@12345")
     except Exception as exc:
         db.rollback()

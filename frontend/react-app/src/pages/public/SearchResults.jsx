@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { ROOMS } from "../../data/rooms";
 import { useAuth } from "../../contexts/AuthContext";
+import { useWishlist } from "../../contexts/WishlistContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
 
@@ -59,15 +60,15 @@ export default function SearchResults() {
   const [minRating, setMinRating] = useState(0);
   const [sort, setSort] = useState("recommended");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [wishlist, setWishlist] = useState([]);
   const [authModal, setAuthModal] = useState(null);
   const [view, setView] = useState("list");
+  const { isSaved, toggle: wishlistToggle } = useWishlist();
 
   const hasFilters = selectedCats.length > 0 || selectedAmenities.length > 0 || minRating > 0 || priceRange < 1500;
 
   function toggleCat(cat) { setSelectedCats((p) => p.includes(cat) ? p.filter((c) => c !== cat) : [...p, cat]); }
   function toggleAmenity(a) { setSelectedAmenities((p) => p.includes(a) ? p.filter((x) => x !== a) : [...p, a]); }
-  function toggleWishlist(room) { if (!isAuthenticated) { setAuthModal(room); return; } setWishlist((p) => p.includes(room.id) ? p.filter((id) => id !== room.id) : [...p, room.id]); }
+  function toggleWishlist(room) { if (!isAuthenticated) { setAuthModal(room); return; } wishlistToggle(room.id); }
   function clearFilters() { setSelectedCats([]); setSelectedAmenities([]); setMinRating(0); setPriceRange(1500); }
 
   function handleSearch(e) {
@@ -277,8 +278,8 @@ export default function SearchResults() {
                       <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
                       <button type="button" onClick={() => toggleWishlist(room)}
                         className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow hover:scale-110 transition-transform">
-                        <span className={`material-symbols-outlined text-sm ${wishlist.includes(room.id) ? "text-rose-500" : "text-slate-300"}`}
-                          style={{ fontVariationSettings: wishlist.includes(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                        <span className={`material-symbols-outlined text-sm ${isSaved(room.id) ? "text-rose-500" : "text-slate-300"}`}
+                          style={{ fontVariationSettings: isSaved(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                       </button>
                       <div className="absolute bottom-3 left-3">
                         <span className="bg-white/95 text-primary text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">{room.category}</span>
@@ -348,8 +349,8 @@ export default function SearchResults() {
                       <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
                       <button type="button" onClick={() => toggleWishlist(room)}
                         className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow hover:scale-110 transition-transform">
-                        <span className={`material-symbols-outlined text-sm ${wishlist.includes(room.id) ? "text-rose-500" : "text-slate-300"}`}
-                          style={{ fontVariationSettings: wishlist.includes(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                        <span className={`material-symbols-outlined text-sm ${isSaved(room.id) ? "text-rose-500" : "text-slate-300"}`}
+                          style={{ fontVariationSettings: isSaved(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                       </button>
                       <div className="absolute bottom-3 left-3">
                         <span className="bg-white/95 text-primary text-[10px] font-bold px-2.5 py-1 rounded-full">{room.category}</span>

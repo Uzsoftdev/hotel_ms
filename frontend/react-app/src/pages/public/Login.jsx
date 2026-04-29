@@ -73,7 +73,7 @@ export default function Login() {
 
       {/* ── Left: image panel ── */}
       <aside className="hidden lg:flex" style={{ flex: "0 0 48%", position: "relative", overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: 56 }}>
-        <img src={loginBack} alt="Azure Horizon" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={loginBack} alt="allStay" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(15,23,42,.82) 0%, rgba(37,99,235,.35) 100%)", zIndex: 1 }} />
 
         {/* Logo */}
@@ -82,7 +82,7 @@ export default function Login() {
             <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
               <span className="material-symbols-outlined text-white text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
             </div>
-            <span style={{ fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>Azure Horizon</span>
+            <span style={{ fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "-0.02em" }}>allStay</span>
           </Link>
         </div>
 
@@ -113,7 +113,7 @@ export default function Login() {
           <p style={{ fontSize: 13, fontStyle: "italic", color: "rgba(255,255,255,.65)", lineHeight: 1.6 }}>
             "The finest luxury is the pleasure of being where you belong."
           </p>
-          <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,.35)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: 6 }}>Azure Horizon</p>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,.35)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: 6 }}>allStay</p>
         </div>
       </aside>
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
+import { useWishlist } from "../../contexts/WishlistContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
 
@@ -30,6 +31,7 @@ const today = new Date().toISOString().split("T")[0];
 export default function RoomDetails() {
   const { t } = useTranslation("pub_translation");
   const { isAuthenticated } = useAuth();
+  const { isSaved, toggle: wishlistToggle } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,6 +46,7 @@ export default function RoomDetails() {
   function requireAuth(action) {
     if (isAuthenticated) {
       if (action === "book") navigate("/booking", { state: { room, checkIn: widgetCheckIn, checkOut: widgetCheckOut, guests: widgetGuests } });
+      if (action === "wishlist") wishlistToggle(room.id);
     } else {
       setPromptAction(action);
       setShowLoginPrompt(true);
@@ -271,10 +274,14 @@ export default function RoomDetails() {
                 <button
                   onClick={() => requireAuth("wishlist")}
                   type="button"
-                  className="w-full border border-primary text-primary py-3 rounded-lg font-bold text-sm hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
+                  className={`w-full py-3 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 ${
+                    isAuthenticated && isSaved(room.id)
+                      ? "bg-rose-50 border border-rose-300 text-rose-500"
+                      : "border border-primary text-primary hover:bg-primary/5"
+                  }`}
                 >
-                  <span className="material-symbols-outlined text-sm">favorite</span>
-                  {isAuthenticated ? "Add to Wishlist" : "Sign in to Save"}
+                  <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: isAuthenticated && isSaved(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                  {isAuthenticated ? (isSaved(room.id) ? "Saved" : "Save Room") : "Sign in to Save"}
                 </button>
               </div>
 

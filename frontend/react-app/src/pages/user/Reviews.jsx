@@ -138,7 +138,7 @@ export default function Reviews() {
                 {/* Hotel response (placeholder — extend when backend supports it) */}
                 {r.response && (
                   <div style={{ marginTop: 14, padding: 14, background: "var(--bg)", borderRadius: 10, borderLeft: "3px solid var(--primary)" }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--primary)", marginBottom: 4 }}>Response from Azure Horizon</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "var(--primary)", marginBottom: 4 }}>Response from allStay</div>
                     <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.55, color: "var(--text)" }}>{r.response}</div>
                   </div>
                 )}

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
+import BookingSearchBar from "../../components/public/BookingSearchBar";
 import { ROOMS } from "../../data/rooms";
 
 import background from "../../assets/images/background.png";
@@ -13,8 +14,6 @@ import newyorkImage from "../../assets/images/new_york_1.png";
 import room1 from "../../assets/images/room1.png";
 import room2 from "../../assets/images/room2.png";
 import hotel3 from "../../assets/images/hotel3.png";
-
-const today = new Date().toISOString().split("T")[0];
 
 const DESTINATIONS = [
   { name: "Paris", country: "France", flag: "🇫🇷", tagline: "City of lights & love", hotels: "124 stays", image: parisImage, color: "from-rose-900/80" },
@@ -60,19 +59,6 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const [location, setLocation] = useState("");
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [guests, setGuests] = useState(2);
-  const [showGuests, setShowGuests] = useState(false);
-  const guestRef = useRef(null);
-
-  useEffect(() => {
-    const h = (e) => { if (guestRef.current && !guestRef.current.contains(e.target)) setShowGuests(false); };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, []);
-
   const [perksRef, perksVisible] = useInView();
   const [roomsRef, roomsVisible] = useInView();
   const [reviewsRef, reviewsVisible] = useInView();
@@ -80,18 +66,9 @@ export default function Home() {
 
   const featuredRooms = useMemo(() => ROOMS.slice(0, 4), []);
 
-  function handleSearch(e) {
-    e.preventDefault();
-    const p = new URLSearchParams();
-    if (location) p.set("location", location);
-    if (checkIn) p.set("checkIn", checkIn);
-    if (checkOut) p.set("checkOut", checkOut);
-    p.set("guests", guests);
-    navigate(`/search?${p.toString()}`);
-  }
-
   function quickFill(dest) {
-    setLocation(dest);
+    // destination cards pass the name, but search is handled by BookingSearchBar
+    navigate(`/search?location=${encodeURIComponent(dest)}`);
   }
 
   return (
@@ -102,7 +79,7 @@ export default function Home() {
       <section className="relative overflow-hidden" style={{ height: "min(100vh, 900px)", minHeight: 560, display: "flex", alignItems: "flex-end", paddingBottom: 80 }}>
         {/* Background */}
         <div className="absolute inset-0 z-0">
-          <img src={background} alt="Azure Horizon Hotel" className="w-full h-full object-cover" style={{ filter: "brightness(.65)", imageRendering: "high-quality" }} fetchpriority="high" decoding="sync" />
+          <img src={background} alt="allStay Hotel" className="w-full h-full object-cover" style={{ filter: "brightness(.65)", imageRendering: "high-quality" }} fetchpriority="high" decoding="sync" />
           <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(15,23,42,0) 0%, rgba(15,23,42,0.85) 100%)" }} />
         </div>
 
@@ -148,99 +125,8 @@ export default function Home() {
       </section>
 
       {/* ── SEARCH BAR (overlapping) ── */}
-      <section className="w-full px-8 -mt-10 relative z-20 animate-fade-up delay-400" style={{ maxWidth: 1400, margin: "-40px auto 0" }}>
-        <div className="bg-white rounded-2xl shadow-2xl shadow-slate-900/15 p-2">
-          <form onSubmit={handleSearch} className="flex flex-col lg:flex-row items-stretch gap-2">
-            {/* Location */}
-            <div className="flex items-center gap-3 flex-[2] px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-text lg:border-r border-slate-100">
-              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-primary text-sm">location_on</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Destination</label>
-                <input
-                  value={location} onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Where would you like to go?"
-                  className="w-full text-sm font-semibold text-slate-900 placeholder:text-slate-400 bg-transparent outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Check-in */}
-            <div className="flex items-center gap-3 flex-1 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors lg:border-r border-slate-100">
-              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-primary text-sm">calendar_today</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Check-in</label>
-                <input type="date" min={today} value={checkIn}
-                  onChange={(e) => { setCheckIn(e.target.value); if (checkOut && e.target.value >= checkOut) setCheckOut(""); }}
-                  className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none" />
-              </div>
-            </div>
-
-            {/* Check-out */}
-            <div className="flex items-center gap-3 flex-1 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors lg:border-r border-slate-100">
-              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-primary text-sm">event</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Check-out</label>
-                <input type="date" min={checkIn || today} value={checkOut}
-                  onChange={(e) => setCheckOut(e.target.value)}
-                  className="w-full text-sm font-semibold text-slate-900 bg-transparent outline-none" />
-              </div>
-            </div>
-
-            {/* Guests */}
-            <div ref={guestRef} className="relative flex items-center gap-3 flex-1 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
-              onClick={() => setShowGuests((v) => !v)}>
-              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                <span className="material-symbols-outlined text-primary text-sm">group</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1 cursor-pointer">Guests</label>
-                <p className="text-sm font-semibold text-slate-900">{guests} Guest{guests !== 1 ? "s" : ""}</p>
-              </div>
-              {showGuests && (
-                <div className="absolute top-full left-0 mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 p-5 w-56 z-50 animate-scale-in">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Number of guests</p>
-                  <div className="flex items-center justify-between">
-                    <button type="button" onClick={(e) => { e.stopPropagation(); setGuests((g) => Math.max(1, g - 1)); }}
-                      className="w-9 h-9 rounded-full border border-slate-200 text-slate-700 font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center">
-                      <span className="material-symbols-outlined text-sm">remove</span>
-                    </button>
-                    <span className="text-2xl font-extrabold text-slate-900">{guests}</span>
-                    <button type="button" onClick={(e) => { e.stopPropagation(); setGuests((g) => Math.min(10, g + 1)); }}
-                      className="w-9 h-9 rounded-full border border-slate-200 text-slate-700 font-bold hover:border-primary hover:text-primary transition-all flex items-center justify-center">
-                      <span className="material-symbols-outlined text-sm">add</span>
-                    </button>
-                  </div>
-                  <button type="button" onClick={() => setShowGuests(false)}
-                    className="mt-4 w-full bg-primary text-white py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">Done</button>
-                </div>
-              )}
-            </div>
-
-            {/* Search */}
-            <button type="submit"
-              className="bg-primary hover:bg-primary/90 active:scale-95 text-white px-12 py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/30 shrink-0">
-              <span className="material-symbols-outlined text-base">search</span>
-              Search
-            </button>
-          </form>
-
-          {/* Quick fills */}
-          <div className="flex items-center gap-2 px-4 pt-2 pb-1 flex-wrap">
-            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Popular:</span>
-            {["Paris", "Bali", "New York", "Tokyo", "Maldives"].map((dest) => (
-              <button key={dest} type="button" onClick={() => quickFill(dest)}
-                className="text-xs font-semibold text-slate-500 hover:text-primary hover:bg-primary/5 px-2.5 py-1 rounded-full transition-all border border-transparent hover:border-primary/20">
-                {dest}
-              </button>
-            ))}
-          </div>
-        </div>
+      <section className="w-full relative z-20 animate-fade-up delay-400" style={{ maxWidth: 1400, margin: "-40px auto 0", padding: "0 32px" }}>
+        <BookingSearchBar />
       </section>
 
       {/* ── PERKS ── */}
@@ -395,7 +281,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-4">The Azure Horizon experience</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-4">The allStay experience</p>
               <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight mb-6">
                 Every detail crafted<br />
                 <span style={{ background: "linear-gradient(135deg,#60a5fa,#a78bfa)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
@@ -487,7 +373,7 @@ export default function Home() {
             Book your dream stay today
           </h2>
           <p className="text-white/65 font-medium mb-10 leading-relaxed">
-            Join over 50,000 guests who've discovered the Azure Horizon difference. Your extraordinary experience awaits.
+            Join over 50,000 guests who've discovered the allStay difference. Your extraordinary experience awaits.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/rooms"

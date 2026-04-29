@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "azure_horizon": "Azure Horizon",
+    "azure_horizon": "allStay",
     "home": "首页",
     "rooms": "客房",
     "about": "关于我们",
@@ -97,7 +97,7 @@
       "timeline": [
         {
           "year": "2018",
-          "event": "Azure Horizon 在旧金山成立，致力于重新定义奢华旅行。"
+          "event": "allStay 在旧金山成立，致力于重新定义奢华旅行。"
         },
         {
           "year": "2020",
@@ -138,7 +138,7 @@
           "answer": "当然可以。我们的全球礼宾团队与私人航空合作伙伴协调，确保您的抵达轻松而私密。"
         },
         {
-          "question": "Azure Horizon 会员是什么？",
+          "question": "allStay 会员是什么？",
           "answer": "Horizon Circle 是仅限受邀者的计划，提供对非公开市场别墅、私人岛屿和优先预订的独家访问权。"
         },
         {
@@ -281,7 +281,7 @@
     "rating_text": "4.9 / 5.0",
     "verified_reviews": "128 Verified Reviews",
     "location_detail": "7th Arrondissement, Paris",
-    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of allStay, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
     "room_highlights": "Room Highlights",
     "luxury_amenities": "Luxury Amenities",
     "guest_reviews": "Guest Reviews",
@@ -309,7 +309,7 @@
   },
   "booking_page": {
     "title": "完成预订",
-    "subtitle": "在 Azure Horizon 预订您的专属圣地",
+    "subtitle": "在 allStay 预订您的专属圣地",
     "step_indicator": {
       "step1": "客人信息",
       "step2": "住宿信息",
@@ -346,7 +346,7 @@
     },
     "room_summary": {
       "title": "客房摘要",
-      "room_name": "Azure Horizon 皇家套房",
+      "room_name": "allStay 皇家套房",
       "type": "海景",
       "check_in": "10月12日",
       "check_out": "2024年10月18日",
@@ -427,7 +427,7 @@
         "price": 850
       },
       {
-        "name": "Azure Horizon 圣所",
+        "name": "allStay 圣所",
         "location": "巴厘岛",
         "rating": 4.9,
         "badge": "顶级",
@@ -595,11 +595,11 @@
     "global_presence": "Our Global Presence",
     "concierge_wisdom": "Concierge Wisdom",
     "frequently_asked": "Frequently Asked",
-    "map_location": "Azure Horizon • Monte Carlo"
+    "map_location": "allStay • Monte Carlo"
   },
   "faq_page": {
     "title": "帮助与常见问题",
-    "subtitle": "关于 Azure Horizon 您需要知道的一切",
+    "subtitle": "关于 allStay 您需要知道的一切",
     "categories": {
       "all": "全部",
       "bookings": "预订",
@@ -611,7 +611,7 @@
       {
         "category": "bookings",
         "question": "如何修改我的预订？",
-        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+        "answer": "Reservations can be modified through your allStay account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
       },
       {
         "category": "bookings",
@@ -656,7 +656,7 @@
       {
         "category": "policies",
         "question": "允许吸烟吗？",
-        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+        "answer": "All allStay properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
       }
     ],
     "still_have_questions": {
@@ -687,7 +687,7 @@
   },
   "register_page": {
     "title": "创建您的账户",
-    "subtitle": "加入 Azure Horizon，享受独家奢华优惠和流畅的预订体验。",
+    "subtitle": "加入 allStay，享受独家奢华优惠和流畅的预订体验。",
     "upload_photo": "上传照片",
     "photo_hint": "建议 400x400",
     "quote": "通往非凡目的地的旅程，从一步开始。",
@@ -723,7 +723,7 @@
     "already_have_account": "Already have an account?",
     "cookie_policy": "Cookie Policy",
     "contact_us": "Contact Us",
-    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+    "copyright": "© 2024 allStay Luxury Hotels & Resorts. All rights reserved."
   },
   "footer": {
     "quick_links": {
@@ -736,7 +736,7 @@
     "terms_of_service": "服务条款",
     "help_center": "帮助中心",
     "our_story": "我们的故事",
-    "copyright": "© 2024 Azure Horizon。保留所有权利。"
+    "copyright": "© 2024 allStay。保留所有权利。"
   },
   "languages": {
     "en": "English",

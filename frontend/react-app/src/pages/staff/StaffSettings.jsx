@@ -48,7 +48,7 @@ export default function StaffSettings() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-on-surface">Staff Member</p>
-                <p className="text-xs text-on-surface-variant">staff@azurehorizon.com</p>
+                <p className="text-xs text-on-surface-variant">staff@allstay.com</p>
               </div>
             </div>
           </div>

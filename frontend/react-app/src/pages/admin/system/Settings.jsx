@@ -56,7 +56,7 @@ export default function Settings() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-on-surface">Admin User</p>
-                <p className="text-xs text-on-surface-variant">admin@azurehorizon.com</p>
+                <p className="text-xs text-on-surface-variant">admin@allstay.com</p>
               </div>
             </div>
           </div>

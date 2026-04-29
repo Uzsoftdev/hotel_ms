@@ -86,7 +86,7 @@ export default function AdminProfile() {
           <form onSubmit={saveProfile} className="space-y-4">
             {[
               { label: "Full Name", key: "full_name", type: "text", placeholder: "Admin User" },
-              { label: "Email Address", key: "email", type: "email", placeholder: "admin@azurehorizon.com" },
+              { label: "Email Address", key: "email", type: "email", placeholder: "admin@allstay.com" },
               { label: "Phone Number", key: "phone", type: "tel", placeholder: "+1 555 000 0000" },
             ].map(({ label, key, type, placeholder }) => (
               <div key={key} className="space-y-1.5">

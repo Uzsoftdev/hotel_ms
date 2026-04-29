@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "azure_horizon": "Azure Horizon",
+    "azure_horizon": "allStay",
     "home": "홈",
     "rooms": "객실",
     "about": "소개",
@@ -97,7 +97,7 @@
       "timeline": [
         {
           "year": "2018",
-          "event": "Azure Horizon이 샌프란시스코에 설립되어 럭셔리 여행의 새로운 패러다임을 제시합니다."
+          "event": "allStay이 샌프란시스코에 설립되어 럭셔리 여행의 새로운 패러다임을 제시합니다."
         },
         {
           "year": "2020",
@@ -138,7 +138,7 @@
           "answer": "물론입니다. 글로벌 컨시어지 팀이 전용 항공 파트너와 협력하여 귀하의 도착이 원활하고 신중하게 이루어지도록 보장합니다."
         },
         {
-          "question": "Azure Horizon 멤버십이 무엇인가요?",
+          "question": "allStay 멤버십이 무엇인가요?",
           "answer": "Horizon Circle은 초대 전용 프로그램으로, 비공개 빌라, 프라이빗 아일랜드 및 우선 예약에 대한 독점적인 접근을 제공합니다."
         },
         {
@@ -281,7 +281,7 @@
     "rating_text": "4.9 / 5.0",
     "verified_reviews": "128 Verified Reviews",
     "location_detail": "7th Arrondissement, Paris",
-    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of Azure Horizon, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
+    "description": "Experience the pinnacle of Parisian luxury in our Celestial Terrace Suite. Perched on the highest floor of allStay, this expansive 1,290 sq ft sanctuary offers an unparalleled 270-degree view of the city's iconic landmarks. Hand-curated modernist furniture meets classical architectural details, creating an atmosphere of timeless sophistication and modern comfort.",
     "room_highlights": "Room Highlights",
     "luxury_amenities": "Luxury Amenities",
     "guest_reviews": "Guest Reviews",
@@ -309,7 +309,7 @@
   },
   "booking_page": {
     "title": "예약 완료하기",
-    "subtitle": "Azure Horizon에서 당신의 성역을 예약하세요",
+    "subtitle": "allStay에서 당신의 성역을 예약하세요",
     "step_indicator": {
       "step1": "고객 정보",
       "step2": "숙박 정보",
@@ -346,7 +346,7 @@
     },
     "room_summary": {
       "title": "객실 요약",
-      "room_name": "Azure Horizon 로열 스위트",
+      "room_name": "allStay 로열 스위트",
       "type": "오션 뷰",
       "check_in": "10월 12일",
       "check_out": "2024년 10월 18일",
@@ -427,7 +427,7 @@
         "price": 850
       },
       {
-        "name": "Azure Horizon 생추어리",
+        "name": "allStay 생추어리",
         "location": "발리",
         "rating": 4.9,
         "badge": "프리미어",
@@ -595,11 +595,11 @@
     "global_presence": "Our Global Presence",
     "concierge_wisdom": "Concierge Wisdom",
     "frequently_asked": "Frequently Asked",
-    "map_location": "Azure Horizon • Monte Carlo"
+    "map_location": "allStay • Monte Carlo"
   },
   "faq_page": {
     "title": "도움말 및 FAQ",
-    "subtitle": "Azure Horizon에 대해 알아야 할 모든 정보",
+    "subtitle": "allStay에 대해 알아야 할 모든 정보",
     "categories": {
       "all": "전체",
       "bookings": "예약",
@@ -611,7 +611,7 @@
       {
         "category": "bookings",
         "question": "예약을 어떻게 수정하나요?",
-        "answer": "Reservations can be modified through your Azure Horizon account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
+        "answer": "Reservations can be modified through your allStay account under 'My Stays'. Changes are subject to availability and the rate conditions of your original booking."
       },
       {
         "category": "bookings",
@@ -656,7 +656,7 @@
       {
         "category": "policies",
         "question": "흡연이 허용되나요?",
-        "answer": "All Azure Horizon properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
+        "answer": "All allStay properties are entirely non-smoking indoors. Designated outdoor smoking areas are available. A deep-cleaning fee applies if smoking occurs in guest rooms."
       }
     ],
     "still_have_questions": {
@@ -687,7 +687,7 @@
   },
   "register_page": {
     "title": "계정 만들기",
-    "subtitle": "Azure Horizon에 가입하여 독점적인 럭셔리 혜택과 원활한 예약을 경험하세요.",
+    "subtitle": "allStay에 가입하여 독점적인 럭셔리 혜택과 원활한 예약을 경험하세요.",
     "upload_photo": "사진 업로드",
     "photo_hint": "400x400 권장",
     "quote": "특별한 여행지는 한 걸음부터 시작됩니다.",
@@ -723,7 +723,7 @@
     "already_have_account": "Already have an account?",
     "cookie_policy": "Cookie Policy",
     "contact_us": "Contact Us",
-    "copyright": "© 2024 Azure Horizon Luxury Hotels & Resorts. All rights reserved."
+    "copyright": "© 2024 allStay Luxury Hotels & Resorts. All rights reserved."
   },
   "footer": {
     "quick_links": {
@@ -736,7 +736,7 @@
     "terms_of_service": "이용약관",
     "help_center": "고객센터",
     "our_story": "회사 소개",
-    "copyright": "© 2024 Azure Horizon. 모든 권리 보유."
+    "copyright": "© 2024 allStay. 모든 권리 보유."
   },
   "languages": {
     "en": "English",

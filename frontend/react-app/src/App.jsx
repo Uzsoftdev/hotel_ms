@@ -56,6 +56,7 @@ import StaffSettings from "./pages/staff/StaffSettings";
 // User extra
 import UserSettings from "./pages/user/UserSettings";
 import EditBooking from "./pages/user/EditBooking";
+import SavedRooms from "./pages/user/SavedRooms";
 
 export default function App() {
   return (
@@ -83,6 +84,7 @@ export default function App() {
       <Route path="/reviews" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><Reviews /></PrivateRoute>} />
       <Route path="/notifications" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><Notifications /></PrivateRoute>} />
       <Route path="/settings" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><UserSettings /></PrivateRoute>} />
+      <Route path="/saved" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><SavedRooms /></PrivateRoute>} />
 
       {/* Admin */}
       <Route path="/admin" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AdminDashboard /></PrivateRoute>} />

@@ -5,6 +5,7 @@ import UserProfileMenu from "../../../components/common/UserProfileMenu";
 const navItems = [
   { to: "/dashboard",     icon: "dashboard",     label: "Dashboard" },
   { to: "/my-bookings",   icon: "book_online",   label: "My Bookings" },
+  { to: "/saved",         icon: "favorite",      label: "Saved Rooms" },
   { to: "/payments",      icon: "receipt_long",  label: "Payments" },
   { to: "/reviews",       icon: "star",          label: "Reviews" },
   { to: "/notifications", icon: "notifications", label: "Notifications" },

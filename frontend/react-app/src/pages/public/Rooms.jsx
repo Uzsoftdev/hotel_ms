@@ -1,9 +1,11 @@
 import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ROOMS } from "../../data/rooms";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
+import { useAuth } from "../../contexts/AuthContext";
+import { useWishlist } from "../../contexts/WishlistContext";
 import background from "../../assets/images/room_back.png";
 
 const CATEGORIES = ["All", "Standard", "Economy", "Deluxe", "Suite", "Presidential"];
@@ -31,9 +33,12 @@ function StarRating({ rating }) {
 
 export default function Rooms() {
   const { t } = useTranslation("pub_translation");
+  const { isAuthenticated } = useAuth();
+  const { isSaved, toggle } = useWishlist();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("All");
   const [view, setView] = useState("grid"); // grid | list
-  const [wishlist, setWishlist] = useState([]);
+  const [authModal, setAuthModal] = useState(false);
 
   const filtered = useMemo(() =>
     activeTab === "All" ? ROOMS : ROOMS.filter((r) => r.category === activeTab),
@@ -42,7 +47,8 @@ export default function Rooms() {
 
   function toggleWishlist(e, id) {
     e.preventDefault();
-    setWishlist((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+    if (!isAuthenticated) { setAuthModal(true); return; }
+    toggle(id);
   }
 
   return (
@@ -124,8 +130,8 @@ export default function Rooms() {
                   </div>
                   <button type="button" onClick={(e) => toggleWishlist(e, room.id)}
                     className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-sm hover:scale-110 transition-transform">
-                    <span className={`material-symbols-outlined text-sm ${wishlist.includes(room.id) ? "text-rose-500" : "text-slate-300"}`}
-                      style={{ fontVariationSettings: wishlist.includes(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                    <span className={`material-symbols-outlined text-sm ${isSaved(room.id) ? "text-rose-500" : "text-slate-300"}`}
+                      style={{ fontVariationSettings: isSaved(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                   </button>
                   {room.tags.slice(0, 1).map((tag) => (
                     <div key={tag} className="absolute bottom-3 left-3">
@@ -178,8 +184,8 @@ export default function Rooms() {
                   </div>
                   <button type="button" onClick={(e) => toggleWishlist(e, room.id)}
                     className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/95 flex items-center justify-center hover:scale-110 transition-transform">
-                    <span className={`material-symbols-outlined text-xs ${wishlist.includes(room.id) ? "text-rose-500" : "text-slate-300"}`}
-                      style={{ fontVariationSettings: wishlist.includes(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                    <span className={`material-symbols-outlined text-xs ${isSaved(room.id) ? "text-rose-500" : "text-slate-300"}`}
+                      style={{ fontVariationSettings: isSaved(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
                   </button>
                 </div>
                 <div className="flex-1 p-5 flex flex-col justify-between">
@@ -238,6 +244,28 @@ export default function Rooms() {
           </Link>
         </div>
       </section>
+
+      {/* Auth gate modal */}
+      {authModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setAuthModal(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 space-y-5" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+              </div>
+              <div>
+                <p className="font-extrabold text-slate-900">Sign in to save</p>
+                <p className="text-xs text-slate-500 mt-0.5">Create an account to keep your favourite rooms.</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-3">
+              <button onClick={() => navigate("/login")} className="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm hover:bg-primary/90 transition-all">Sign in</button>
+              <button onClick={() => navigate("/register")} className="w-full border border-slate-200 text-slate-700 py-3 rounded-xl font-bold text-sm hover:bg-slate-50 transition-all">Create account</button>
+              <button onClick={() => setAuthModal(false)} className="text-sm text-slate-400 hover:text-slate-600 font-medium transition-colors">Maybe later</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

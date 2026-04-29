@@ -124,7 +124,7 @@ export default function Register() {
       {/* ── Left: ocean brand panel (hidden on mobile) ── */}
       <aside style={{ flex: "0 0 45%", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 56 }}
         className="hidden lg:flex">
-        <img src={registerBack} alt="Azure Horizon Hotel" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={registerBack} alt="allStay Hotel" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(15,23,42,.45) 0%, rgba(15,23,42,.75) 100%)", zIndex: 1 }} />
 
         {/* Logo */}
@@ -132,7 +132,7 @@ export default function Register() {
           <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
             <span className="material-symbols-outlined text-white text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
           </div>
-          <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em", color: "#fff" }}>Azure Horizon</span>
+          <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em", color: "#fff" }}>allStay</span>
         </Link>
 
         {/* Quote */}
