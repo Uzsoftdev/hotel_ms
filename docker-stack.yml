@@ -13,7 +13,7 @@ version: "3.9"
 # env vars so that credentials are never written to disk in cleartext.
 
 x-backend-common: &backend-common
-  image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-backend:${IMAGE_TAG:-latest}
+  image: ${REGISTRY:-ghcr.io/uzsoftdev}/hotel-backend:${IMAGE_TAG:-latest}
   env_file: .env
   environment:
     DATABASE_URL: ${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}
@@ -143,7 +143,7 @@ services:
 
   # ── Celery worker ────────────────────────────────────────────────────────────
   celery_worker:
-    image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-celery:${IMAGE_TAG:-latest}
+    image: ${REGISTRY:-ghcr.io/uzsoftdev}/hotel-celery:${IMAGE_TAG:-latest}
     command: celery -A app.celery_app worker --loglevel=info --concurrency=8
     env_file: .env
     environment:
@@ -162,7 +162,7 @@ services:
   # ── Celery Beat — exactly ONE replica, pinned to manager ─────────────────────
   # Two replicas = duplicate scheduled jobs (nightly snapshots twice, etc.)
   celery_beat:
-    image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-celery:${IMAGE_TAG:-latest}
+    image: ${REGISTRY:-ghcr.io/uzsoftdev}/hotel-celery:${IMAGE_TAG:-latest}
     command: celery -A app.celery_app beat --loglevel=info
     env_file: .env
     environment:
