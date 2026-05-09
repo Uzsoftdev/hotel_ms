@@ -94,7 +94,7 @@ jobs:
         run: |
           rsync -az \
             -e "ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no" \
-            docker-stack.yml docker/ \
+            docker-stack.yml docker \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/hotel/
 
       - name: Set lowercase registry for deploy
