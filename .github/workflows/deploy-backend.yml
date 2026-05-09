@@ -5,8 +5,7 @@ on:
     branches: [main, master]
     paths:
       - "backend/**"
-      - "docker/Dockerfile.backend"
-      - "docker/Dockerfile.celery"
+      - "docker/**"
       - "docker-stack.yml"
       - ".github/workflows/deploy-backend.yml"
   workflow_dispatch:
