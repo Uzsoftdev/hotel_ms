@@ -46,7 +46,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "sudo mkdir -p /opt/hms/frontend && sudo chown \$(id -u):\$(id -g) /opt/hms/frontend"
+            "mkdir -p /opt/hms/frontend && chmod 755 /opt/hms/frontend"
 
       - name: Sync build to server
         run: |
