@@ -105,11 +105,9 @@ jobs:
       - name: Deploy stack (rolling update)
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} bash -s << 'ENDSSH'
-          export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
-          cd /opt/hotel
-          echo "${{ secrets.GITHUB_TOKEN }}" | /usr/bin/docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.IMAGE_REGISTRY }} \
-          DOMAIN=allstay.rest ACME_EMAIL=sunnatakhmad@gmail.com \
-          /usr/bin/docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel
-          ENDSSH
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "echo '${{ secrets.GITHUB_TOKEN }}' | /usr/bin/docker login ghcr.io -u ${{ github.actor }} --password-stdin && \
+             cd /opt/hotel && \
+             IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.IMAGE_REGISTRY }} \
+             DOMAIN=allstay.rest ACME_EMAIL=sunnatakhmad@gmail.com \
+             /usr/bin/docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel"
