@@ -106,8 +106,11 @@ jobs:
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "echo '${{ secrets.GITHUB_TOKEN }}' | /usr/bin/docker login ghcr.io -u ${{ github.actor }} --password-stdin && \
-             cd /opt/hotel && \
-             IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.IMAGE_REGISTRY }} \
-             DOMAIN=allstay.rest ACME_EMAIL=sunnatakhmad@gmail.com \
-             /usr/bin/docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel"
+            "chmod +x /opt/hotel/docker/deploy.sh && \
+             DEPLOY_TOKEN='${{ secrets.GITHUB_TOKEN }}' \
+             DEPLOY_ACTOR='${{ github.actor }}' \
+             IMAGE_TAG='${{ github.sha }}' \
+             REGISTRY='${{ env.IMAGE_REGISTRY }}' \
+             DOMAIN='allstay.rest' \
+             ACME_EMAIL='sunnatakhmad@gmail.com' \
+             /opt/hotel/docker/deploy.sh"
