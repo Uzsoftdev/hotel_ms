@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict, field_validator
 
@@ -18,7 +18,7 @@ class PricingRuleBase(BaseModel):
     def validate_price_or_multiplier(cls, v):
         return v
 
-    def model_post_init(self, __context):
+    def model_post_init(self, _context: Any) -> None:
         if self.price is None and self.multiplier is None:
             raise ValueError("Either price or multiplier must be provided")
 

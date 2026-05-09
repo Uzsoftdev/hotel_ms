@@ -41,6 +41,10 @@ fi
 # Ensure frontend dist dir exists so nginx_static can mount it
 mkdir -p /opt/hms/frontend
 
+# Hand port 80 and 443 to Traefik — system nginx would block ACME HTTP-01 challenge
+sudo systemctl stop nginx  || true
+sudo systemctl disable nginx || true
+
 # Export all vars docker stack deploy needs for variable substitution
 export DATABASE_URL="${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}"
 export REGISTRY="${REGISTRY:-ghcr.io/uzsoftdev}"
