@@ -31,16 +31,16 @@ services:
   # ── Backend ──────────────────────────────────────────────────────────────────
   backend:
     <<: *backend-common
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`${DOMAIN:-allstay.rest}`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
-      - "traefik.http.routers.backend.entrypoints=websecure"
-      - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.backend.middlewares=www-redirect,circuit-breaker,retry"
-      - "traefik.http.routers.backend.priority=10"
-      - "traefik.http.services.backend.loadbalancer.server.port=8000"
     deploy:
       replicas: 2
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.backend.rule=Host(`${DOMAIN:-allstay.rest}`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
+        - "traefik.http.routers.backend.entrypoints=websecure"
+        - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.backend.middlewares=www-redirect,circuit-breaker,retry"
+        - "traefik.http.routers.backend.priority=10"
+        - "traefik.http.services.backend.loadbalancer.server.port=8000"
       update_config:
         parallelism: 1
         delay: 10s
@@ -104,7 +104,7 @@ services:
     environment:
       ACME_EMAIL: ${ACME_EMAIL:-sunnatakhmad@gmail.com}
       DOCKER_API_VERSION: "1.47"
-      TRAEFIK_CONFIG_HASH: "swarm-provider-v1"
+      TRAEFIK_CONFIG_HASH: "swarm-provider-v2"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker/traefik.yml:/etc/traefik/traefik.yml:ro
@@ -128,18 +128,18 @@ services:
     volumes:
       - /opt/hms/frontend:/usr/share/nginx/html:ro
       - ./docker/nginx-static.conf:/etc/nginx/conf.d/default.conf:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN:-allstay.rest}`) || Host(`www.${DOMAIN:-allstay.rest}`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.frontend.middlewares=www-redirect"
-      - "traefik.http.routers.frontend.priority=1"
-      - "traefik.http.services.frontend.loadbalancer.server.port=80"
     networks:
       - hotel_network
     deploy:
       replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.frontend.rule=Host(`${DOMAIN:-allstay.rest}`) || Host(`www.${DOMAIN:-allstay.rest}`)"
+        - "traefik.http.routers.frontend.entrypoints=websecure"
+        - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.frontend.middlewares=www-redirect"
+        - "traefik.http.routers.frontend.priority=1"
+        - "traefik.http.services.frontend.loadbalancer.server.port=80"
       restart_policy:
         condition: any
       resources:
@@ -154,4 +154,3 @@ networks:
   hotel_network:
     driver: overlay
     attachable: true
- 
