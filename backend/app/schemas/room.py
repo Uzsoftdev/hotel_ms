@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.schemas.room_type import RoomTypeResponse
 
@@ -34,5 +34,4 @@ class RoomResponse(RoomBase):
     id: int
     room_type: Optional[RoomTypeResponse] = None
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

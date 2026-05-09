@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class RoomTypeBase(BaseModel):
@@ -22,5 +22,4 @@ class RoomTypeUpdate(BaseModel):
 class RoomTypeResponse(RoomTypeBase):
     id: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

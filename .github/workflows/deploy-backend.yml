@@ -118,4 +118,5 @@ jobs:
             "cd /opt/hotel && \
              echo '${{ secrets.GITHUB_TOKEN }}' | ${{ env.DOCKER_BIN }} login ghcr.io -u ${{ github.actor }} --password-stdin && \
              IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.IMAGE_REGISTRY }} \
+             DOMAIN=allstay.rest ACME_EMAIL=sunnatakhmad@gmail.com \
              ${{ env.DOCKER_BIN }} stack deploy --with-registry-auth --prune -c docker-stack.yml hotel"

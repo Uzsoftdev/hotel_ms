@@ -13,9 +13,9 @@ http:
         attempts: 3
         initialInterval: 100ms
 
-    # Redirect www → non-www (optional, enable when domain is configured)
-    # www-redirect:
-    #   redirectRegex:
-    #     regex: "^https://www\\.(.*)"
-    #     replacement: "https://${1}"
-    #     permanent: true
+    # Redirect www → non-www
+    www-redirect:
+      redirectRegex:
+        regex: "^https://www\\.allstay\\.rest/(.*)"
+        replacement: "https://allstay.rest/${1}"
+        permanent: true
