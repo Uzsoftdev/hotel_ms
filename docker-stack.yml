@@ -15,6 +15,8 @@ version: "3.9"
 x-backend-common: &backend-common
   image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-backend:${IMAGE_TAG:-latest}
   env_file: .env
+  environment:
+    DATABASE_URL: ${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}
   networks:
     - hotel_network
   depends_on:
@@ -144,6 +146,8 @@ services:
     image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-celery:${IMAGE_TAG:-latest}
     command: celery -A app.celery_app worker --loglevel=info --concurrency=8
     env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}
     networks:
       - hotel_network
     deploy:
@@ -161,6 +165,8 @@ services:
     image: ${REGISTRY:-ghcr.io/sunnakh}/hotel-celery:${IMAGE_TAG:-latest}
     command: celery -A app.celery_app beat --loglevel=info
     env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}
     networks:
       - hotel_network
     deploy:
