@@ -100,9 +100,11 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"
     environment:
       ACME_EMAIL: ${ACME_EMAIL:-sunnatakhmad@gmail.com}
       DOCKER_API_VERSION: "1.47"
+      TRAEFIK_CONFIG_HASH: "swarm-provider-v1"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker/traefik.yml:/etc/traefik/traefik.yml:ro

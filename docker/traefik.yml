@@ -44,7 +44,7 @@ certificatesResolvers:
 
 api:
   dashboard: true
-  insecure: false   # protect dashboard behind auth middleware in production
+  insecure: true    # temporary — for debugging service discovery
 
 log:
   level: WARN
