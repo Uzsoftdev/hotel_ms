@@ -39,7 +39,7 @@ ENVEOF
 fi
 
 # Ensure frontend dist dir exists so nginx_static can mount it
-mkdir -p /opt/hotel/frontend/react-app/dist
+mkdir -p /opt/hms/frontend
 
 # Export all vars docker stack deploy needs for variable substitution
 export DATABASE_URL="${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}"
