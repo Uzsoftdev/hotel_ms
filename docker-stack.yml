@@ -102,6 +102,7 @@ services:
       - "443:443"
     environment:
       ACME_EMAIL: ${ACME_EMAIL:-sunnatakhmad@gmail.com}
+      DOCKER_API_VERSION: "1.47"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./docker/traefik.yml:/etc/traefik/traefik.yml:ro
