@@ -106,11 +106,9 @@ jobs:
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} bash -s << 'ENDSSH'
-          source /etc/profile 2>/dev/null || true
-          source ~/.bashrc 2>/dev/null || true
           cd /opt/hotel
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
           IMAGE_TAG=${{ github.sha }} REGISTRY=${{ env.IMAGE_REGISTRY }} \
           DOMAIN=allstay.rest ACME_EMAIL=sunnatakhmad@gmail.com \
-          docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel
+          sudo --preserve-env docker stack deploy --with-registry-auth --prune -c docker-stack.yml hotel
           ENDSSH
