@@ -42,6 +42,12 @@ jobs:
           chmod 600 ~/.ssh/hms_prod
           ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
+      - name: Prepare frontend dir on server
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "sudo mkdir -p /opt/hms/frontend && sudo chown \$(id -u):\$(id -g) /opt/hms/frontend"
+
       - name: Sync build to server
         run: |
           rsync -az --delete \
