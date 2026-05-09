@@ -3,7 +3,7 @@ from typing import Optional, Self
 from decimal import Decimal
 from datetime import datetime
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class BookingCreate(BaseModel):
