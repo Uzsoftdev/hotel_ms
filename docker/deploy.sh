@@ -54,6 +54,7 @@ echo "$DEPLOY_TOKEN" | $DOCKER login ghcr.io -u "$DEPLOY_ACTOR" --password-stdin
 
 $DOCKER stack deploy \
   --with-registry-auth \
+  --detach=true \
   --prune \
   -c "$STACK_FILE" \
   hotel
