@@ -1,7 +1,13 @@
 #!/bin/bash
 set -e
 
-DOCKER=/usr/bin/docker
+export PATH="/usr/local/bin:/usr/bin:/bin:/snap/bin:$PATH"
+
+DOCKER=$(command -v docker 2>/dev/null)
+if [ -z "$DOCKER" ]; then
+  echo "ERROR: docker binary not found in PATH ($PATH)" && exit 1
+fi
+
 STACK_FILE=/opt/hotel/docker-stack.yml
 ENV_FILE=/opt/hotel/.env
 
