@@ -96,7 +96,7 @@ services:
 
   # ── Traefik ──────────────────────────────────────────────────────────────────
   traefik:
-    image: traefik:v3.3
+    image: traefik:v3.1
     ports:
       - "80:80"
       - "443:443"
