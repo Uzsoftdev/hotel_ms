@@ -46,7 +46,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "mkdir -p /opt/hms/frontend && chmod 777 /opt/hms/frontend"
+            "mkdir -p /opt/hms/frontend"
 
       - name: Sync build to server
         run: |
