@@ -8,6 +8,11 @@ if [ -z "$DOCKER" ]; then
   echo "ERROR: docker binary not found in PATH ($PATH)" && exit 1
 fi
 
+# Use sudo if not already root
+if [ "$(id -u)" != "0" ]; then
+  DOCKER="sudo $DOCKER"
+fi
+
 STACK_FILE=/opt/hotel/docker-stack.yml
 ENV_FILE=/opt/hotel/.env
 
