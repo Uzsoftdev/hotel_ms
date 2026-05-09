@@ -11,10 +11,11 @@ entryPoints:
     address: ":443"
 
 providers:
-  docker:
+  swarm:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
     network: hotel_network
+    refreshSeconds: 15
   file:
     filename: /etc/traefik/dynamic.yml
     watch: true
