@@ -78,7 +78,7 @@ services:
 
   # ── PgBouncer ────────────────────────────────────────────────────────────────
   pgbouncer:
-    image: bitnami/pgbouncer:1.22.1
+    image: bitnami/pgbouncer:latest
     environment:
       POSTGRESQL_HOST: db
       POSTGRESQL_PORT: 5432

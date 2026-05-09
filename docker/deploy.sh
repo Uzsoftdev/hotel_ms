@@ -8,15 +8,15 @@ if [ -z "$DOCKER" ]; then
   echo "ERROR: docker binary not found in PATH ($PATH)" && exit 1
 fi
 
-# Use sudo if not already root
+# Use sudo -E if not already root (-E preserves env vars like REGISTRY, IMAGE_TAG)
 if [ "$(id -u)" != "0" ]; then
-  DOCKER="sudo $DOCKER"
+  DOCKER="sudo -E $DOCKER"
 fi
 
 STACK_FILE=/opt/hotel/docker-stack.yml
 ENV_FILE=/opt/hotel/.env
 
-# Create a minimal .env if it doesn't exist (docker stack deploy needs it for env_file)
+# Create a minimal .env if it doesn't exist
 if [ ! -f "$ENV_FILE" ]; then
   cat > "$ENV_FILE" <<'ENVEOF'
 APP_NAME="Azure Horizon Hotel API"
@@ -34,11 +34,21 @@ POSTGRES_USER=hotel_user
 POSTGRES_PASSWORD=hotelpass123
 POSTGRES_DB=hotel_system
 REDIS_PASSWORD=changeme
+MEILISEARCH_KEY=masterkey123
 ENVEOF
 fi
 
-# Always ensure DATABASE_URL points to the external DB server
+# Ensure frontend dist dir exists so nginx_static can mount it
+mkdir -p /opt/hotel/frontend/react-app/dist
+
+# Export all vars docker stack deploy needs for variable substitution
 export DATABASE_URL="${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}"
+export REGISTRY="${REGISTRY:-ghcr.io/uzsoftdev}"
+export IMAGE_TAG="${IMAGE_TAG:-latest}"
+export DOMAIN="${DOMAIN:-allstay.rest}"
+export ACME_EMAIL="${ACME_EMAIL:-sunnatakhmad@gmail.com}"
+
+echo "Deploying with REGISTRY=$REGISTRY IMAGE_TAG=$IMAGE_TAG"
 
 echo "$DEPLOY_TOKEN" | $DOCKER login ghcr.io -u "$DEPLOY_ACTOR" --password-stdin
 
