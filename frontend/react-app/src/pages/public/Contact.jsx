@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import Navbar from "../../components/common/Navbar";
 import background from "../../assets/images/contact_us.png";
 
 export default function Contact() {
@@ -29,21 +30,7 @@ export default function Contact() {
 
   return (
     <div className="bg-surface text-on-surface min-h-screen">
-      <nav className="sticky top-0 z-50 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Link to="/" className="text-xl font-extrabold tracking-tighter text-slate-900 dark:text-white">{t("navigation.azure_horizon")}</Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/">{t("navigation.home")}</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/rooms">{t("navigation.rooms")}</Link>
-            <Link className="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" to="/about">{t("navigation.about")}</Link>
-            <Link className="text-sm font-semibold text-primary transition-colors" to="/contact">{t("navigation.contact")}</Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link className="bg-transparent border border-primary text-primary hover:bg-primary/5 px-5 py-2 rounded-lg text-sm font-bold transition-all" to="/register">{t("navigation.register")}</Link>
-            <Link className="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/20" to="/login">{t("navigation.login")}</Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <section className="relative h-80 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
