@@ -6,16 +6,31 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Supabase automatically picks up the OAuth tokens from the URL hash.
-    // Just wait for the session to be confirmed, then redirect.
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        // Redirect regular users to dashboard; staff/admin need email-based login.
+    // Listen for auth state changes — Supabase fires SIGNED_IN
+    // after it processes the OAuth tokens from the URL hash/code.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) {
         navigate("/dashboard", { replace: true });
-      } else {
-        navigate("/login", { replace: true });
       }
     });
+
+    // Also handle the case where the session is already present
+    // (e.g. user refreshes the callback page)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/dashboard", { replace: true });
+      }
+    });
+
+    // If nothing happens after 8 seconds, send back to login
+    const timeout = setTimeout(() => {
+      navigate("/login", { replace: true });
+    }, 8000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, [navigate]);
 
   return (
