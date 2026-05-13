@@ -1,0 +1,59 @@
+name: Issue / Renew SSL Certificate (Certbot)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 1 * *"   # Auto-renew on 1st of every month at 3 AM UTC
+
+jobs:
+  certbot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/hms_prod
+          chmod 600 ~/.ssh/hms_prod
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Issue / renew certificate on server
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'ENDSSH'
+            set -e
+
+            # ── 1. Install certbot if missing ─────────────────────────────
+            if ! command -v certbot &>/dev/null; then
+              sudo apt-get update -qq
+              sudo apt-get install -y certbot
+            fi
+
+            # ── 2. Pause Traefik so port 80 is free for the challenge ─────
+            echo "Scaling Traefik to 0..."
+            sudo docker service scale hotel_traefik=0 || true
+            sleep 8
+
+            # ── 3. Run certbot standalone ─────────────────────────────────
+            sudo certbot certonly \
+              --standalone \
+              --non-interactive \
+              --agree-tos \
+              --keep-until-expiring \
+              --email sunnatakhmad@gmail.com \
+              -d allstay.rest \
+              -d www.allstay.rest
+
+            # ── 4. Copy certs to shared host path ─────────────────────────
+            sudo mkdir -p /opt/hms/certs
+            sudo cp /etc/letsencrypt/live/allstay.rest/fullchain.pem /opt/hms/certs/cert.pem
+            sudo cp /etc/letsencrypt/live/allstay.rest/privkey.pem   /opt/hms/certs/key.pem
+            sudo chmod 644 /opt/hms/certs/cert.pem /opt/hms/certs/key.pem
+
+            echo "✅ Certificates copied to /opt/hms/certs/"
+
+            # ── 5. Restart Traefik ────────────────────────────────────────
+            sudo docker service scale hotel_traefik=1
+            echo "✅ Traefik restarted"
+
+          ENDSSH
