@@ -102,6 +102,7 @@ export default function Hotels() {
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [rooms, setRooms]             = useState([]);
   const [roomsLoading, setRoomsLoading] = useState(false);
+  const [roomsError, setRoomsError]   = useState(false);
   const [roomCategory, setRoomCategory] = useState("All");
   const [roomSort, setRoomSort]       = useState("default");
   const [roomView, setRoomView]       = useState("grid");
@@ -180,15 +181,22 @@ export default function Hotels() {
   }, [rooms, roomCategory, roomSort]);
 
   /* ── actions ── */
+  function fetchRooms(hotel) {
+    setRoomsLoading(true);
+    setRoomsError(false);
+    api.get(`/public/search/rooms?hotel_id=${hotel.id}`)
+      .then((res) => setRooms(Array.isArray(res.data) ? res.data.map(normalizeRoom) : []))
+      .catch(() => setRoomsError(true))
+      .finally(() => setRoomsLoading(false));
+  }
+
   function enterRoomMode(hotel) {
     setSelectedHotel(hotel);
     setMode("rooms");
+    setRooms([]);
     setRoomCategory("All");
-    setRoomsLoading(true);
-    api.get(`/public/search/rooms?hotel_id=${hotel.id}`)
-      .then((res) => setRooms(res.data.map(normalizeRoom)))
-      .catch(() => setRooms([]))
-      .finally(() => setRoomsLoading(false));
+    setRoomsError(false);
+    fetchRooms(hotel);
     setSearchParams({ hotel_id: hotel.id });
     setMobileOpen(false);
   }
@@ -197,6 +205,7 @@ export default function Hotels() {
     setMode("hotels");
     setSelectedHotel(null);
     setRooms([]);
+    setRoomsError(false);
     setRoomCategory("All");
     setSearchParams({});
   }
@@ -680,17 +689,36 @@ export default function Hotels() {
                       </div>
                     ))}
                   </div>
+                ) : roomsError ? (
+                  <div className="py-20 text-center bg-white rounded-2xl border border-slate-100">
+                    <span className="material-symbols-outlined text-5xl text-slate-200 block mb-4">wifi_off</span>
+                    <p className="font-extrabold text-slate-700 text-lg mb-1">Couldn't load rooms</p>
+                    <p className="text-sm text-slate-400 mb-6">The server didn't respond. Try again.</p>
+                    <button onClick={() => fetchRooms(selectedHotel)}
+                      className="inline-flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">
+                      <span className="material-symbols-outlined text-sm">refresh</span>Retry
+                    </button>
+                  </div>
                 ) : filteredRooms.length === 0 ? (
                   <div className="py-20 text-center bg-white rounded-2xl border border-slate-100">
                     <span className="material-symbols-outlined text-5xl text-slate-200 block mb-4">bed</span>
-                    <p className="font-extrabold text-slate-700 text-lg mb-1">No rooms available</p>
-                    <p className="text-sm text-slate-400 mb-6">
-                      {roomCategory !== "All" ? `No ${roomCategory} rooms in this hotel.` : "This hotel has no rooms listed yet."}
+                    <p className="font-extrabold text-slate-700 text-lg mb-1">
+                      {roomCategory !== "All" ? `No ${roomCategory} rooms` : "No rooms listed yet"}
                     </p>
-                    {roomCategory !== "All" && (
+                    <p className="text-sm text-slate-400 mb-6">
+                      {roomCategory !== "All"
+                        ? "Try a different room type."
+                        : "This hotel hasn't added any rooms yet."}
+                    </p>
+                    {roomCategory !== "All" ? (
                       <button onClick={() => setRoomCategory("All")}
                         className="inline-flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">
                         Show all rooms
+                      </button>
+                    ) : (
+                      <button onClick={backToHotels}
+                        className="inline-flex items-center gap-2 border border-slate-200 text-slate-700 px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all">
+                        <span className="material-symbols-outlined text-sm">arrow_back</span>Back to Hotels
                       </button>
                     )}
                   </div>
