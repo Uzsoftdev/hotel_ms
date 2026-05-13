@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 
 const YELLOW = "#FFB700";
 const BLUE   = "#0071C2";
@@ -48,6 +49,61 @@ export default function BookingSearchBar() {
   const [pickingEnd, setPickingEnd]      = useState(false);
   const [hoverDay,   setHoverDay]        = useState(null);
 
+  // ── Autocomplete state ─────────────────────────────────────────────────────
+  const [suggestions,    setSuggestions]    = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [sugLoading,     setSugLoading]     = useState(false);
+  const [activeSug,      setActiveSug]      = useState(-1);
+  const debounceRef = useRef(null);
+  const destWrapRef = useRef(null);
+
+  const fetchSuggestions = useCallback(async (q) => {
+    if (!q || q.trim().length < 1) { setSuggestions([]); setShowSuggestions(false); return; }
+    setSugLoading(true);
+    try {
+      const res = await api.get(`/public/search/hotels?q=${encodeURIComponent(q)}&per_page=8`);
+      const hotels = Array.isArray(res.data) ? res.data : res.data?.items || [];
+      setSuggestions(hotels);
+      setShowSuggestions(true);
+      setActiveSug(-1);
+    } catch {
+      setSuggestions([]);
+    } finally {
+      setSugLoading(false);
+    }
+  }, []);
+
+  // Debounced input handler
+  function handleDestChange(e) {
+    const val = e.target.value;
+    setDestination(val);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => fetchSuggestions(val), 300);
+  }
+
+  function selectSuggestion(hotel) {
+    setDestination(`${hotel.city}, ${hotel.country}`);
+    setShowSuggestions(false);
+    setSuggestions([]);
+    setActiveSug(-1);
+  }
+
+  function handleDestKeyDown(e) {
+    if (!showSuggestions || suggestions.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveSug(i => Math.min(i + 1, suggestions.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveSug(i => Math.max(i - 1, -1));
+    } else if (e.key === "Enter" && activeSug >= 0) {
+      e.preventDefault();
+      selectSuggestion(suggestions[activeSug]);
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+    }
+  }
+
   const [viewYear,  setViewYear]  = useState(todayD.getFullYear());
   const [viewMonth, setViewMonth] = useState(todayD.getMonth());
 
@@ -60,6 +116,7 @@ export default function BookingSearchBar() {
     function h(e) {
       if (calRef.current   && !calRef.current.contains(e.target))   setShowCal(false);
       if (guestRef.current && !guestRef.current.contains(e.target)) setShowGuests(false);
+      if (destWrapRef.current && !destWrapRef.current.contains(e.target)) setShowSuggestions(false);
     }
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
@@ -196,16 +253,95 @@ export default function BookingSearchBar() {
       <form onSubmit={handleSearch}>
         <div className="search-bar-row">
 
-          {/* Destination */}
-          <label style={{ ...fieldStyle, flex: "0 0 38%", border: `2px solid ${YELLOW}`, borderRadius: 4, cursor: "text", background: "#fff" }}>
-            <span style={iconStyle}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                <path d="M3 9l2-2m0 0l7-7 7 7M5 7v12a1 1 0 001 1h4m4 0h4a1 1 0 001-1V7m-9 5h4"/>
-              </svg>
-            </span>
-            <input ref={destRef} value={destination} onChange={e => setDestination(e.target.value)}
-              placeholder="Where are you going?" style={inputStyle} autoComplete="off" />
-          </label>
+          {/* Destination — with live autocomplete */}
+          <div ref={destWrapRef} style={{ flex: "0 0 38%", position: "relative" }}>
+            <label style={{ ...fieldStyle, border: `2px solid ${YELLOW}`, borderRadius: 4, cursor: "text", background: "#fff", display: "flex" }}>
+              <span style={iconStyle}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M3 9l2-2m0 0l7-7 7 7M5 7v12a1 1 0 001 1h4m4 0h4a1 1 0 001-1V7m-9 5h4"/>
+                </svg>
+              </span>
+              <input
+                ref={destRef}
+                value={destination}
+                onChange={handleDestChange}
+                onKeyDown={handleDestKeyDown}
+                onFocus={() => destination.trim().length >= 1 && setShowSuggestions(true)}
+                placeholder="Where are you going?"
+                style={inputStyle}
+                autoComplete="off"
+              />
+              {sugLoading && (
+                <span style={{ color: "#aaa", fontSize: 12, flexShrink: 0, display: "flex", alignItems: "center" }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                    style={{ animation: "spin 0.8s linear infinite" }}>
+                    <circle cx="12" cy="12" r="10" strokeOpacity="0.25"/>
+                    <path d="M12 2a10 10 0 0110 10" strokeLinecap="round"/>
+                  </svg>
+                </span>
+              )}
+            </label>
+
+            {/* Autocomplete dropdown */}
+            {showSuggestions && (
+              <div style={{
+                position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
+                background: "#fff", border: "1px solid #e0e0e0", borderRadius: 8,
+                boxShadow: "0 8px 32px rgba(0,0,0,.12)", zIndex: 300,
+                overflow: "hidden",
+                animation: "slideDown 0.18s ease",
+              }}>
+                {suggestions.length === 0 && !sugLoading ? (
+                  <div style={{ padding: "14px 16px", fontSize: 13, color: "#888" }}>
+                    No destinations found for "{destination}"
+                  </div>
+                ) : (
+                  suggestions.map((hotel, i) => (
+                    <div
+                      key={hotel.id}
+                      onMouseDown={() => selectSuggestion(hotel)}
+                      onMouseEnter={() => setActiveSug(i)}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 12,
+                        padding: "10px 16px", cursor: "pointer",
+                        background: i === activeSug ? "#f0f6ff" : "#fff",
+                        borderBottom: i < suggestions.length - 1 ? "1px solid #f5f5f5" : "none",
+                        transition: "background .1s",
+                      }}
+                    >
+                      <span style={{
+                        width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
+                        background: i === activeSug ? "#dbeafe" : "#f3f4f6",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        transition: "background .1s",
+                      }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                          stroke={i === activeSug ? BLUE : "#888"} strokeWidth="2">
+                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                          <circle cx="12" cy="9" r="2.5"/>
+                        </svg>
+                      </span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: "#1a1a1a",
+                          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {hotel.name}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#888", marginTop: 1 }}>
+                          {hotel.city}{hotel.country ? `, ${hotel.country}` : ""}
+                        </div>
+                      </div>
+                      {hotel.rating > 0 && (
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "#f59e0b", flexShrink: 0 }}>
+                          ★ {Number(hotel.rating).toFixed(1)}
+                        </span>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+
 
           {/* Date range */}
           <div ref={calRef}
