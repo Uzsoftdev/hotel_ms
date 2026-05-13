@@ -16,58 +16,12 @@ jobs:
 
       - name: Run credential reset inside backend container
         run: |
-          SCRIPT=$(cat <<'PYEOF'
-from app.core.database import SessionLocal
-from app.core.security import hash_password
-from app.models.user import User
-
-db = SessionLocal()
-try:
-    admin = db.query(User).filter(User.role == "super_admin").first()
-    if admin:
-        admin.email = "admin@allstay.rest"
-        admin.hashed_password = hash_password("Admin@2024")
-        admin.is_email_verified = True
-        admin.full_name = "Admin"
-        print("Updated admin: admin@allstay.rest")
-    else:
-        admin = User(full_name="Admin", email="admin@allstay.rest",
-                     hashed_password=hash_password("Admin@2024"),
-                     role="super_admin", is_email_verified=True)
-        db.add(admin)
-        print("Created admin: admin@allstay.rest")
-
-    staff = db.query(User).filter(User.role == "staff").first()
-    if staff:
-        staff.email = "staff@allstay.rest"
-        staff.hashed_password = hash_password("Staff@2024")
-        staff.is_email_verified = True
-        staff.full_name = "Staff"
-        print("Updated staff: staff@allstay.rest")
-    else:
-        staff = User(full_name="Staff", email="staff@allstay.rest",
-                     hashed_password=hash_password("Staff@2024"),
-                     role="staff", is_email_verified=True)
-        db.add(staff)
-        print("Created staff: staff@allstay.rest")
-
-    db.commit()
-    print("Done.")
-except Exception as e:
-    db.rollback()
-    print(f"Error: {e}")
-    raise
-finally:
-    db.close()
-PYEOF
-          )
-          ENCODED=$(echo "$SCRIPT" | base64 -w 0)
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
             "CONTAINER=\$(sudo docker ps --filter 'name=hotel_backend' --format '{{.ID}}' | head -1)
              if [ -z \"\$CONTAINER\" ]; then echo 'Backend container not found'; exit 1; fi
              echo \"Using container: \$CONTAINER\"
-             echo '$ENCODED' | base64 -d | sudo docker exec -i \"\$CONTAINER\" python3 -"
+             echo 'ZnJvbSBhcHAuY29yZS5kYXRhYmFzZSBpbXBvcnQgU2Vzc2lvbkxvY2FsCmZyb20gYXBwLmNvcmUuc2VjdXJpdHkgaW1wb3J0IGhhc2hfcGFzc3dvcmQKZnJvbSBhcHAubW9kZWxzLnVzZXIgaW1wb3J0IFVzZXIKCmRiID0gU2Vzc2lvbkxvY2FsKCkKdHJ5OgogICAgYWRtaW4gPSBkYi5xdWVyeShVc2VyKS5maWx0ZXIoVXNlci5yb2xlID09ICJzdXBlcl9hZG1pbiIpLmZpcnN0KCkKICAgIGlmIGFkbWluOgogICAgICAgIGFkbWluLmVtYWlsID0gImFkbWluQGFsbHN0YXkucmVzdCIKICAgICAgICBhZG1pbi5oYXNoZWRfcGFzc3dvcmQgPSBoYXNoX3Bhc3N3b3JkKCJBZG1pbkAyMDI0IikKICAgICAgICBhZG1pbi5pc19lbWFpbF92ZXJpZmllZCA9IFRydWUKICAgICAgICBhZG1pbi5mdWxsX25hbWUgPSAiQWRtaW4iCiAgICAgICAgcHJpbnQoIlVwZGF0ZWQgYWRtaW46IGFkbWluQGFsbHN0YXkucmVzdCIpCiAgICBlbHNlOgogICAgICAgIGFkbWluID0gVXNlcihmdWxsX25hbWU9IkFkbWluIiwgZW1haWw9ImFkbWluQGFsbHN0YXkucmVzdCIsCiAgICAgICAgICAgICAgICAgICAgIGhhc2hlZF9wYXNzd29yZD1oYXNoX3Bhc3N3b3JkKCJBZG1pbkAyMDI0IiksCiAgICAgICAgICAgICAgICAgICAgIHJvbGU9InN1cGVyX2FkbWluIiwgaXNfZW1haWxfdmVyaWZpZWQ9VHJ1ZSkKICAgICAgICBkYi5hZGQoYWRtaW4pCiAgICAgICAgcHJpbnQoIkNyZWF0ZWQgYWRtaW46IGFkbWluQGFsbHN0YXkucmVzdCIpCiAgICBzdGFmZiA9IGRiLnF1ZXJ5KFVzZXIpLmZpbHRlcihVc2VyLnJvbGUgPT0gInN0YWZmIikuZmlyc3QoKQogICAgaWYgc3RhZmY6CiAgICAgICAgc3RhZmYuZW1haWwgPSAic3RhZmZAYWxsc3RheS5yZXN0IgogICAgICAgIHN0YWZmLmhhc2hlZF9wYXNzd29yZCA9IGhhc2hfcGFzc3dvcmQoIlN0YWZmQDIwMjQiKQogICAgICAgIHN0YWZmLmlzX2VtYWlsX3ZlcmlmaWVkID0gVHJ1ZQogICAgICAgIHN0YWZmLmZ1bGxfbmFtZSA9ICJTdGFmZiIKICAgICAgICBwcmludCgiVXBkYXRlZCBzdGFmZjogc3RhZmZAYWxsc3RheS5yZXN0IikKICAgIGVsc2U6CiAgICAgICAgc3RhZmYgPSBVc2VyKGZ1bGxfbmFtZT0iU3RhZmYiLCBlbWFpbD0ic3RhZmZAYWxsc3RheS5yZXN0IiwKICAgICAgICAgICAgICAgICAgICAgaGFzaGVkX3Bhc3N3b3JkPWhhc2hfcGFzc3dvcmQoIlN0YWZmQDIwMjQiKSwKICAgICAgICAgICAgICAgICAgICAgcm9sZT0ic3RhZmYiLCBpc19lbWFpbF92ZXJpZmllZD1UcnVlKQogICAgICAgIGRiLmFkZChzdGFmZikKICAgICAgICBwcmludCgiQ3JlYXRlZCBzdGFmZjogc3RhZmZAYWxsc3RheS5yZXN0IikKICAgIGRiLmNvbW1pdCgpCiAgICBwcmludCgiRG9uZS4iKQpleGNlcHQgRXhjZXB0aW9uIGFzIGU6CiAgICBkYi5yb2xsYmFjaygpCiAgICBwcmludChmIkVycm9yOiB7ZX0iKQogICAgcmFpc2UKZmluYWxseToKICAgIGRiLmNsb3NlKCkK' | base64 -d | sudo docker exec -i \"\$CONTAINER\" python3 -"
 
       - name: Print credentials
         run: |
