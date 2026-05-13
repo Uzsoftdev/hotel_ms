@@ -1,13 +1,11 @@
 http:
   middlewares:
     # Open the circuit when >30% of requests are network errors or >25% return 5xx.
-    # Traefik will stop forwarding requests to the backend until it recovers.
     circuit-breaker:
       circuitBreaker:
         expression: "NetworkErrorRatio() > 0.30 || ResponseCodeRatio(500, 600, 0, 600) > 0.25"
 
     # Retry failed requests up to 3 times with exponential backoff.
-    # Only retries on network errors — not on 4xx/5xx to avoid duplicate side-effects.
     retry:
       retry:
         attempts: 3
@@ -19,3 +17,38 @@ http:
         regex: "^https://www\\.allstay\\.rest/(.*)"
         replacement: "https://allstay.rest/${1}"
         permanent: true
+
+  # Static routes — bypasses the Traefik Swarm provider which fails on this server
+  # due to Docker API version mismatch (Traefik sends 1.24, daemon requires >=1.40).
+  # Docker Swarm DNS names (hotel_backend, hotel_nginx_static) are stable service VIPs.
+  routers:
+    backend:
+      rule: "Host(`allstay.rest`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
+      entryPoints: ["websecure"]
+      tls:
+        certResolver: letsencrypt
+      service: backend-svc
+      middlewares: ["www-redirect", "circuit-breaker", "retry"]
+      priority: 10
+
+    frontend:
+      rule: "Host(`allstay.rest`) || Host(`www.allstay.rest`)"
+      entryPoints: ["websecure"]
+      tls:
+        certResolver: letsencrypt
+      service: frontend-svc
+      middlewares: ["www-redirect"]
+      priority: 1
+
+  services:
+    backend-svc:
+      loadBalancer:
+        servers:
+          - url: "http://hotel_backend:8000"
+        passHostHeader: true
+
+    frontend-svc:
+      loadBalancer:
+        servers:
+          - url: "http://hotel_nginx_static:80"
+        passHostHeader: true
