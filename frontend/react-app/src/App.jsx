@@ -8,6 +8,7 @@ import Register from "./pages/public/Register";
 import About from "./pages/public/About";
 import Contact from "./pages/public/Contact";
 import Rooms from "./pages/public/Rooms";
+import Hotels from "./pages/public/Hotels";
 import Booking from "./pages/public/Booking";
 import SearchResults from "./pages/public/SearchResults";
 import FAQ from "./pages/public/FAQ";
@@ -69,6 +70,7 @@ export default function App() {
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/rooms" element={<Rooms />} />
+      <Route path="/hotels" element={<Hotels />} />
       <Route path="/booking" element={<Booking />} />
       <Route path="/search" element={<SearchResults />} />
       <Route path="/faq" element={<FAQ />} />

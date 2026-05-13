@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ROOMS } from "../../data/rooms";
 import Navbar from "../../components/common/Navbar";
@@ -81,11 +81,14 @@ export default function Rooms() {
   const { isAuthenticated } = useAuth();
   const { isSaved, toggle } = useWishlist();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const hotelScrollRef = useRef(null);
 
   const [hotels, setHotels] = useState([]);
   const [rooms, setRooms] = useState(ROOMS);
-  const [selectedHotelId, setSelectedHotelId] = useState(null);
+  const [selectedHotelId, setSelectedHotelId] = useState(
+    searchParams.get("hotel_id") ? Number(searchParams.get("hotel_id")) : null,
+  );
   const [hotelSearch, setHotelSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState("default");
