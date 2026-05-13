@@ -38,38 +38,32 @@ jobs:
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'ENDSSH'
             set -e
 
-            echo "=== Installing postgres client ==="
-            apt-get install -y postgresql-client -qq 2>&1 | tail -3
-
             DB_URL=$(grep "^DATABASE_URL" /opt/hotel/.env | cut -d= -f2-)
-
-            # Parse: postgresql://user:pass@host:port/dbname
             DB_USER=$(echo "$DB_URL" | sed 's|postgresql://||' | cut -d: -f1)
             DB_PASS=$(echo "$DB_URL" | sed 's|postgresql://[^:]*:||' | cut -d@ -f1)
             DB_HOST=$(echo "$DB_URL" | sed 's|.*@||' | cut -d: -f1)
             DB_PORT=$(echo "$DB_URL" | sed 's|.*@[^:]*:||' | cut -d/ -f1)
             DB_NAME=$(echo "$DB_URL" | sed 's|.*/||')
-
             echo "Host=$DB_HOST Port=$DB_PORT DB=$DB_NAME User=$DB_USER"
 
             echo "=== Decompressing dump ==="
             gunzip -f /tmp/hms_dump.sql.gz
 
-            echo "=== Restoring to $DB_HOST:$DB_PORT/$DB_NAME ==="
-            PGPASSWORD="$DB_PASS" psql \
-              -h "$DB_HOST" \
-              -p "$DB_PORT" \
-              -U "$DB_USER" \
-              -d "$DB_NAME" \
-              -f /tmp/hms_dump.sql \
+            echo "=== Restoring via Docker postgres client ==="
+            cat /tmp/hms_dump.sql | docker run --rm -i \
+              -e PGPASSWORD="$DB_PASS" \
+              postgres:15-alpine \
+              psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
               -v ON_ERROR_STOP=0 2>&1 | tail -20
 
             echo "=== Verifying row counts ==="
-            PGPASSWORD="$DB_PASS" psql \
-              -h "$DB_HOST" -p "$DB_PORT" \
-              -U "$DB_USER" -d "$DB_NAME" \
+            docker run --rm \
+              -e PGPASSWORD="$DB_PASS" \
+              postgres:15-alpine \
+              psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
               -c "SELECT relname AS table, n_live_tup AS rows FROM pg_stat_user_tables WHERE n_live_tup > 0 ORDER BY n_live_tup DESC;"
 
             rm -f /tmp/hms_dump.sql
             echo "=== Done! ==="
           ENDSSH
+
