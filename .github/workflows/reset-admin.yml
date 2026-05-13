@@ -1,0 +1,43 @@
+name: Reset Admin User
+
+on:
+  workflow_dispatch:
+
+jobs:
+  reset-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/hms_prod
+          chmod 600 ~/.ssh/hms_prod
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Reset admin user inside Docker
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "docker exec \$(docker ps -q -f name=hotel_backend | head -n 1) python -c \"
+          import asyncio
+          from sqlalchemy.future import select
+          from sqlalchemy import update
+          from app.core.database import SessionLocal
+          from app.core.security import hash_password
+          from app.models.user import User
+
+          def reset():
+              db = SessionLocal()
+              try:
+                  admin = db.query(User).filter(User.role == 'super_admin').first()
+                  if admin:
+                      admin.email = 'admin@allstay.com'
+                      admin.hashed_password = hash_password('Admin@12345')
+                      db.commit()
+                      print('✅ Super admin email reset to admin@allstay.com and password to Admin@12345')
+                  else:
+                      print('❌ No super_admin found in DB to reset!')
+              finally:
+                  db.close()
+          reset()
+          \""

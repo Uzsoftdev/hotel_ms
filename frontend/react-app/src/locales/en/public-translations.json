@@ -117,16 +117,20 @@
       "title": "Team",
       "members": [
         {
+          "name": "Sunnat Ahmad",
+          "role": "Co-founder & CTO",
+          "image": "https://github.com/sunnakh.png",
+          "linkedin": "https://www.linkedin.com/in/sunnakh/"
+        },
+        {
+          "name": "Mirshod Hamroyev",
+          "role": "Co-founder & PM",
+          "image": "https://ui-avatars.com/api/?name=Mirshod+Hamroyev&background=1e293b&color=fff&size=128",
+          "linkedin": "https://www.linkedin.com/in/mirshod-hamroyev-97246b367/"
+        },
+        {
           "name": "Sofia Laurent",
           "role": "Chief Executive Officer"
-        },
-        {
-          "name": "Marcus Chen",
-          "role": "Head of Hospitality"
-        },
-        {
-          "name": "Amara Osei",
-          "role": "Director of Partnerships"
         }
       ]
     },
