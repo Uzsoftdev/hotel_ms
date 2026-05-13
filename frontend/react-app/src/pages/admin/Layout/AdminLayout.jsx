@@ -3,7 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import UserProfileMenu from "../../../components/common/UserProfileMenu";
 
 const sections = [
-  { label: "Overview", items: [{ to: "/admin", icon: "dashboard", label: "Dashboard" }] },
+  { label: "Overview", items: [{ to: "/admin/dashboard", icon: "dashboard", label: "Dashboard" }] },
   {
     label: "Bookings",
     items: [

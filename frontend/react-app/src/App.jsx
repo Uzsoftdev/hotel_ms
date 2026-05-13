@@ -81,6 +81,7 @@ export default function App() {
 
       {/* User (authenticated guests) */}
       <Route path="/dashboard" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><UserDashboard /></PrivateRoute>} />
+      <Route path="/user/dashboard" element={<Navigate to="/dashboard" replace />} />
       <Route path="/my-bookings" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><MyBookings /></PrivateRoute>} />
       <Route path="/my-bookings/:id" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><BookingDetails /></PrivateRoute>} />
       <Route path="/profile" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><ProfileManagement /></PrivateRoute>} />
@@ -91,7 +92,8 @@ export default function App() {
       <Route path="/saved" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><SavedRooms /></PrivateRoute>} />
 
       {/* Admin */}
-      <Route path="/admin" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AdminDashboard /></PrivateRoute>} />
+      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/admin/dashboard" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AdminDashboard /></PrivateRoute>} />
       <Route path="/admin/bookings" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AllBookings /></PrivateRoute>} />
       <Route path="/admin/checkinout" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AdminCheckInOut /></PrivateRoute>} />
       <Route path="/admin/rooms" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><RoomsList /></PrivateRoute>} />

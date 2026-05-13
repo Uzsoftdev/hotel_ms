@@ -26,8 +26,16 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('access_token');
-      // Only redirect if we're not already on the login page
-      if (!window.location.pathname.includes('/login')) {
+      localStorage.removeItem('refresh_token');
+      // Only hard-redirect from protected pages — public pages (Hotels, Home, etc.)
+      // must remain accessible even when a stale token triggers a 401 on profile load.
+      const path = window.location.pathname;
+      const isProtected =
+        path.startsWith('/admin') ||
+        path.startsWith('/user/') ||
+        path.startsWith('/staff/') ||
+        path === '/dashboard';
+      if (isProtected) {
         window.location.href = '/login';
       }
     }
