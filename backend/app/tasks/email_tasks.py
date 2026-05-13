@@ -31,6 +31,7 @@ def send_welcome_email_task(self, to: str, full_name: str) -> None:
         html = _load_template("welcome_email.html", {"full_name": full_name})
         asyncio.run(_send(to, f"Welcome to {settings.APP_NAME}!", html))
     except Exception as exc:
+        logger.error("send_welcome_email_task failed to=%s: %s", to, exc)
         raise self.retry(exc=exc)
 
 
@@ -60,6 +61,7 @@ def send_booking_confirmation_task(
         )
         asyncio.run(_send(to, f"Booking #{booking_id} Confirmed", html))
     except Exception as exc:
+        logger.error("send_booking_confirmation_task failed to=%s booking_id=%s: %s", to, booking_id, exc)
         raise self.retry(exc=exc)
 
 
@@ -70,6 +72,7 @@ def send_booking_cancellation_task(self, to: str, full_name: str, booking_id: in
         html = _load_template("booking_cancellation.html", {"full_name": full_name, "booking_id": booking_id})
         asyncio.run(_send(to, f"Booking #{booking_id} Cancelled", html))
     except Exception as exc:
+        logger.error("send_booking_cancellation_task failed to=%s booking_id=%s: %s", to, booking_id, exc)
         raise self.retry(exc=exc)
 
 
@@ -83,6 +86,7 @@ def send_checkin_reminder_task(self, to: str, full_name: str, check_in: str, hot
         )
         asyncio.run(_send(to, f"Reminder: Your check-in at {hotel_name} is tomorrow", html))
     except Exception as exc:
+        logger.error("send_checkin_reminder_task failed to=%s: %s", to, exc)
         raise self.retry(exc=exc)
 
 
@@ -98,6 +102,7 @@ def send_verification_email_task(self, to: str, full_name: str, token: str) -> N
         )
         asyncio.run(_send(to, "Verify your email address", html))
     except Exception as exc:
+        logger.error("send_verification_email_task failed to=%s: %s", to, exc)
         raise self.retry(exc=exc)
 
 
@@ -113,4 +118,5 @@ def send_password_reset_task(self, to: str, full_name: str, token: str) -> None:
         )
         asyncio.run(_send(to, "Reset your password", html))
     except Exception as exc:
+        logger.error("send_password_reset_task failed to=%s: %s", to, exc)
         raise self.retry(exc=exc)

@@ -55,6 +55,7 @@ def get_available_rooms(
         db.query(Booking.room_id)
         .filter(
             Booking.hotel_id == hotel_id,
+            Booking.status.not_in(["cancelled"]),  # FIX: cancelled bookings must not block rooms
             ~((Booking.check_out <= check_in) | (Booking.check_in >= check_out)),
         )
         .subquery()

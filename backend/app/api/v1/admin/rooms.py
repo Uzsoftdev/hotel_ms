@@ -21,7 +21,7 @@ def create_room_endpoint(
     db: Session = Depends(get_db),
     hotel_id: int = Depends(get_current_hotel),
 ) -> RoomResponse:
-    payload = data.dict()
+    payload = data.model_dump()
     payload["hotel_id"] = hotel_id
     return create_room(db, payload)
 
@@ -53,7 +53,7 @@ def update_room_endpoint(
     db: Session = Depends(get_db),
     hotel_id: int = Depends(get_current_hotel),
 ) -> RoomResponse:
-    payload = data.dict(exclude_unset=True)
+    payload = data.model_dump(exclude_unset=True)
     payload["hotel_id"] = hotel_id
     room = update_room(db, room_id, payload)
     if not room:

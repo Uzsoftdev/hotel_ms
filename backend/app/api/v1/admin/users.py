@@ -20,6 +20,21 @@ class UserAdminCreate(BaseModel):
     role: str = "guest"
 
 
+class UserAdminUpdate(BaseModel):
+    """Allowlist of fields an admin may update. Excludes hashed_password, hotel_id, etc."""
+    full_name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    role: Optional[str] = None
+
+    @classmethod
+    def validate_role(cls, v: Optional[str]) -> Optional[str]:
+        allowed = {"guest", "staff", "hotel_admin", "super_admin"}
+        if v is not None and v not in allowed:
+            raise ValueError(f"role must be one of: {allowed}")
+        return v
+
+
 class UserAdminResponse(BaseModel):
     id: int
     full_name: Optional[str]
@@ -59,11 +74,14 @@ def add_user(
 @router.put("/{user_id}", response_model=UserAdminResponse)
 def edit_user(
     user_id: int,
-    data: dict,
+    data: UserAdminUpdate,
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ) -> Any:
-    updated = update_user(db, user_id, data)
+    payload = data.model_dump(exclude_none=True)
+    if "email" in payload:
+        payload["email"] = payload["email"].lower()
+    updated = update_user(db, user_id, payload)
     if not updated:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return updated

@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.dependencies import get_current_hotel, get_read_db
 from app.middleware.rbac import require_staff_or_admin
+from app.models.activity_log import ActivityLog
 from app.models.booking import Booking
 from app.models.payment import Payment
 from app.models.room import Room
@@ -147,22 +148,28 @@ def activity_logs(
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
-    from app.models.activity_log import ActivityLog
+    # Scope logs to users who belong to this hotel (staff + guests who have booked here)
+    hotel_user_ids = (
+        db.query(User.id)
+        .filter(User.hotel_id == hotel_id)
+        .subquery()
+    )
     logs = (
         db.query(ActivityLog)
+        .filter(ActivityLog.user_id.in_(hotel_user_ids) | ActivityLog.user_id.is_(None))
         .order_by(ActivityLog.created_at.desc())
         .limit(limit)
         .all()
     )
     return [
         {
-            "id": l.id,
-            "action": l.action,
-            "resource": l.resource,
-            "resource_id": l.resource_id,
-            "detail": l.detail,
-            "user_id": l.user_id,
-            "created_at": str(l.created_at),
+            "id": log.id,
+            "action": log.action,
+            "resource": log.resource,
+            "resource_id": log.resource_id,
+            "detail": log.detail,
+            "user_id": log.user_id,
+            "created_at": str(log.created_at),
         }
-        for l in logs
+        for log in logs
     ]

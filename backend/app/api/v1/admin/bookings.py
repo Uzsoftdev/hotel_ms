@@ -41,9 +41,17 @@ def list_all_bookings(
     if status_filter:
         q = q.filter(Booking.status == status_filter)
     bookings = q.order_by(Booking.created_at.desc()).all()
+
+    # Batch-fetch all users in one query instead of N+1 individual lookups
+    user_ids = {b.user_id for b in bookings}
+    users_by_id = {
+        u.id: u
+        for u in db.query(User).filter(User.id.in_(user_ids)).all()
+    }
+
     result = []
     for b in bookings:
-        user = db.query(User).filter(User.id == b.user_id).first()
+        user = users_by_id.get(b.user_id)
         result.append({
             **{c.name: getattr(b, c.name) for c in b.__table__.columns},
             "guest_name": getattr(user, "full_name", None),
@@ -79,10 +87,21 @@ def check_out_booking(
     booking = db.query(Booking).filter(Booking.id == booking_id, Booking.hotel_id == hotel_id).first()
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
+    # Status flow: pending → confirmed (payment) → completed (checked-in/checked-out)
+    # "completed" is the terminal state — check-in records arrival, check-out records departure.
+    # Both share the same terminal status; checkout is distinguished by the notification type.
     if booking.status != "completed":
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Cannot check-out booking with status '{booking.status}'")
-    create_notification(db, booking.user_id, "Checked Out", "Thank you for staying with us! We hope to see you again.", "info")
-    return {"message": "Guest checked out successfully"}
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot check-out booking with status '{booking.status}'. Guest must be checked in first.",
+        )
+    create_notification(
+        db, booking.user_id,
+        "Checked Out",
+        "Thank you for staying with us! We hope to see you again.",
+        "info",
+    )
+    return {"message": "Guest checked out successfully", "booking_id": booking_id}
 
 
 @router.put("/{booking_id}/status", status_code=status.HTTP_200_OK)

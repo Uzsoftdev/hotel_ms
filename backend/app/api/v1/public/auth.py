@@ -2,7 +2,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 from jose import JWTError
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
@@ -200,7 +200,10 @@ def reset_password(payload: ResetPasswordRequest, db: Session = Depends(get_db))
 
 
 @router.post("/refresh", response_model=TokenResponse)
-def refresh_endpoint(refresh_token: str, db: Session = Depends(get_db)) -> TokenResponse:
+def refresh_endpoint(
+    refresh_token: str = Body(..., embed=True),
+    db: Session = Depends(get_db),
+) -> TokenResponse:
     credentials_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid or expired refresh token",
