@@ -96,6 +96,7 @@ export default function Hotels() {
   const [expandCity, setExpandCity]   = useState(true);
   const [expandCountry, setExpandCountry] = useState(true);
   const [expandRating, setExpandRating]   = useState(true);
+  const [hasImages, setHasImages]     = useState(false);
 
   /* ── room list state ── */
   const [selectedHotel, setSelectedHotel] = useState(null);
@@ -105,14 +106,25 @@ export default function Hotels() {
   const [roomSort, setRoomSort]       = useState("default");
   const [roomView, setRoomView]       = useState("grid");
 
-  /* ── fetch hotels ── */
+  /* ── fetch hotels (2 pages in parallel, max 100 each) ── */
   const fetchHotels = useCallback(() => {
     setHotelsLoading(true);
     setHotelsError(false);
-    api.get("/public/search/hotels/browse?per_page=200")
-      .then((res) => setHotels(Array.isArray(res.data) ? res.data : []))
-      .catch(() => setHotelsError(true))
-      .finally(() => setHotelsLoading(false));
+    Promise.allSettled([
+      api.get("/public/search/hotels/browse?per_page=100&page=1"),
+      api.get("/public/search/hotels/browse?per_page=100&page=2"),
+    ]).then((results) => {
+      const all = [];
+      let anyOk = false;
+      for (const r of results) {
+        if (r.status === "fulfilled" && Array.isArray(r.value.data)) {
+          all.push(...r.value.data);
+          anyOk = true;
+        }
+      }
+      if (anyOk) setHotels(all);
+      else setHotelsError(true);
+    }).finally(() => setHotelsLoading(false));
   }, []);
   useEffect(() => { fetchHotels(); }, [fetchHotels]);
 
@@ -143,17 +155,19 @@ export default function Hotels() {
     if (cities.length)    list = list.filter((h) => cities.includes(h.city));
     if (countries.length) list = list.filter((h) => countries.includes(h.country));
     if (minRating > 0)    list = list.filter((h) => Number(h.rating) >= minRating);
+    if (hasImages)        list = list.filter((h) => h.images?.length > 0);
     if (hotelSort === "rating")    return [...list].sort((a, b) => Number(b.rating) - Number(a.rating));
     if (hotelSort === "name-asc")  return [...list].sort((a, b) => a.name.localeCompare(b.name));
     if (hotelSort === "name-desc") return [...list].sort((a, b) => b.name.localeCompare(a.name));
     return list;
-  }, [hotels, hotelSearch, cities, countries, minRating, hotelSort]);
+  }, [hotels, hotelSearch, cities, countries, minRating, hotelSort, hasImages]);
 
   const hotelActiveFilters = [
     ...cities.map((c) => ({ label: c, clear: () => setCities((p) => p.filter((x) => x !== c)) })),
     ...countries.map((c) => ({ label: c, clear: () => setCountries((p) => p.filter((x) => x !== c)) })),
     ...(minRating > 0 ? [{ label: `${minRating}★ & up`, clear: () => setMinRating(0) }] : []),
     ...(hotelSearch.trim() ? [{ label: `"${hotelSearch}"`, clear: () => setHotelSearch("") }] : []),
+    ...(hasImages ? [{ label: "Has photos", clear: () => setHasImages(false) }] : []),
   ];
 
   /* ── room derived values ── */
@@ -194,7 +208,7 @@ export default function Hotels() {
   }
 
   function clearHotelFilters() {
-    setHotelSearch(""); setCities([]); setCountries([]); setMinRating(0);
+    setHotelSearch(""); setCities([]); setCountries([]); setMinRating(0); setHasImages(false);
   }
 
   /* ══════════════════════════════════════════════════════════════════════════
@@ -299,6 +313,23 @@ export default function Hotels() {
                 </span>
               </label>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* Has Photos */}
+      <div className="border border-slate-100 rounded-xl overflow-hidden">
+        <button
+          onClick={() => setHasImages((v) => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100 transition-colors">
+          <span className="text-sm font-bold text-slate-800">Has Photos</span>
+          <div className={`w-10 h-5 rounded-full transition-colors relative ${hasImages ? "bg-primary" : "bg-slate-200"}`}>
+            <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${hasImages ? "left-5" : "left-0.5"}`} />
+          </div>
+        </button>
+        {hasImages && (
+          <div className="px-4 py-2 text-xs text-slate-500 font-medium">
+            Showing {hotels.filter((h) => h.images?.length > 0).length} hotels with photos
           </div>
         )}
       </div>
