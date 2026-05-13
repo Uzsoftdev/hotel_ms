@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../services/auth";
 import { useAuth } from "../../contexts/AuthContext";
-import { supabase } from "../../lib/supabase";
 import loginBack from "../../assets/images/background.png";
 
 function EyeButton({ show, onToggle }) {
@@ -42,14 +41,19 @@ export default function Login() {
 
   useEffect(() => { setTimeout(() => setMounted(true), 40); }, []);
 
-  async function handleGoogleSignIn() {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) setError(error.message);
+  function handleGoogleSignIn() {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
+    const scope = encodeURIComponent("openid email profile");
+    const url =
+      `https://accounts.google.com/o/oauth2/v2/auth` +
+      `?client_id=${clientId}` +
+      `&redirect_uri=${redirectUri}` +
+      `&response_type=code` +
+      `&scope=${scope}` +
+      `&access_type=offline` +
+      `&prompt=select_account`;
+    window.location.href = url;
   }
 
   async function handleSubmit(e) {

@@ -101,6 +101,20 @@ jobs:
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
           echo "IMAGE_REGISTRY=ghcr.io/${OWNER}" >> $GITHUB_ENV
 
+      - name: Inject Google OAuth credentials into server .env
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "grep -q '^GOOGLE_CLIENT_ID=' /opt/hotel/.env && \
+              sed -i 's|^GOOGLE_CLIENT_ID=.*|GOOGLE_CLIENT_ID=964778505369-hfsqu7rrbicfibc5ks6hs6umh63v1u9v.apps.googleusercontent.com|' /opt/hotel/.env || \
+              echo 'GOOGLE_CLIENT_ID=964778505369-hfsqu7rrbicfibc5ks6hs6umh63v1u9v.apps.googleusercontent.com' >> /opt/hotel/.env; \
+             grep -q '^GOOGLE_CLIENT_SECRET=' /opt/hotel/.env && \
+              sed -i 's|^GOOGLE_CLIENT_SECRET=.*|GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}|' /opt/hotel/.env || \
+              echo 'GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}' >> /opt/hotel/.env; \
+             grep -q '^GOOGLE_REDIRECT_URI=' /opt/hotel/.env && \
+              sed -i 's|^GOOGLE_REDIRECT_URI=.*|GOOGLE_REDIRECT_URI=https://allstay.rest/auth/callback|' /opt/hotel/.env || \
+              echo 'GOOGLE_REDIRECT_URI=https://allstay.rest/auth/callback' >> /opt/hotel/.env"
+
       - name: Deploy stack (rolling update)
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \

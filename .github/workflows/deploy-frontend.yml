@@ -35,6 +35,7 @@ jobs:
           VITE_API_URL: "https://allstay.rest"
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_GOOGLE_CLIENT_ID: "964778505369-hfsqu7rrbicfibc5ks6hs6umh63v1u9v.apps.googleusercontent.com"
         run: npm run build
 
       - name: Set up SSH

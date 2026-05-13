@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../services/api";
 
@@ -14,42 +13,26 @@ export default function AuthCallback() {
 
     async function handleCallback() {
       try {
-        // 1. Wait for Supabase to process the OAuth code and establish session
-        const session = await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error("timeout")), 10000);
+        // Read ?code= from the URL (direct Google OAuth redirect)
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get("code");
 
-          const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            (event, sess) => {
-              if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
-                clearTimeout(timeout);
-                subscription.unsubscribe();
-                resolve(sess);
-              }
-            }
-          );
+        if (!code) {
+          navigate("/login?error=no_code", { replace: true });
+          return;
+        }
 
-          // Also try immediately in case session is already available
-          supabase.auth.getSession().then(({ data: { session: s } }) => {
-            if (s) {
-              clearTimeout(timeout);
-              subscription.unsubscribe();
-              resolve(s);
-            }
-          });
-        });
-
-        if (!session || cancelled) return;
-
-        // 2. Exchange Supabase token for the app's own JWT via backend
         setStatusMsg("Verifying your account…");
-        const { data } = await api.post("/public/auth/social", {
-          supabase_access_token: session.access_token,
-        });
 
-        // 3. Store the app's JWT — same flow as email/password login
+        // Exchange Google code for the app's own JWT via backend
+        const { data } = await api.post("/public/auth/google", { code });
+
+        if (cancelled) return;
+
+        // Store the app's JWT — same flow as email/password login
         await loginUser(data.access_token);
 
-        // 4. Redirect based on role
+        // Redirect based on role
         const payload = JSON.parse(atob(data.access_token.split(".")[1]));
         const role = payload?.role ?? "guest";
         if (role === "super_admin" || role === "hotel_admin") {

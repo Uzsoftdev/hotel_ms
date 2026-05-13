@@ -106,6 +106,88 @@ def social_login(
     )
 
 
+class GoogleCodeRequest(BaseModel):
+    code: str
+
+
+@router.post("/google", response_model=TokenResponse)
+@limiter.limit("20/minute")
+def google_login(
+    request: Request,
+    payload: GoogleCodeRequest,
+    db: Session = Depends(get_db),
+) -> TokenResponse:
+    """Exchange a Google OAuth authorization code for the app's own JWT.
+
+    Uses direct Google OAuth (no Supabase), so the consent screen shows
+    allstay.rest instead of the Supabase domain.
+    """
+    from app.core.config import settings
+    from app.models.user import User
+
+    # 1. Exchange the authorization code for Google tokens
+    try:
+        token_resp = httpx.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "code": payload.code,
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+                "grant_type": "authorization_code",
+            },
+            timeout=10,
+        )
+        token_resp.raise_for_status()
+        google_tokens = token_resp.json()
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Failed to exchange Google authorization code",
+        )
+
+    # 2. Get user info from Google
+    try:
+        user_resp = httpx.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {google_tokens['access_token']}"},
+            timeout=8,
+        )
+        user_resp.raise_for_status()
+        google_user = user_resp.json()
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Failed to fetch Google user info",
+        )
+
+    email: str = (google_user.get("email") or "").lower().strip()
+    full_name: str = google_user.get("name") or email.split("@")[0]
+
+    if not email:
+        raise HTTPException(status_code=400, detail="No email returned from Google")
+
+    # 3. Find or auto-create user in local DB
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        user = User(
+            email=email,
+            full_name=full_name,
+            hashed_password=hash_password(secrets.token_urlsafe(32)),
+            role="guest",
+            is_email_verified=True,
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    data = _token_payload(user)
+    return TokenResponse(
+        access_token=create_access_token(data),
+        refresh_token=create_refresh_token(data),
+    )
+
+
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 @limiter.limit("10/minute")
 def register_endpoint(

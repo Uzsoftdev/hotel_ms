@@ -73,6 +73,11 @@ class Settings(BaseSettings):
     EMAIL_FROM_NAME: str = "allStay"
     EMAILS_ENABLED: bool = False
 
+    # Google OAuth (direct — no Supabase)
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = "https://allstay.rest/auth/callback"
+
 
 @lru_cache
 def get_settings() -> Settings:
