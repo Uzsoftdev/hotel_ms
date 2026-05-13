@@ -591,7 +591,7 @@
         "feedback": "Feedback"
       },
       "message": "Your Message",
-      "full_name_placeholder": "John Doe",
+      "full_name_placeholder": "Your full name",
       "email_placeholder": "john@example.com",
       "message_placeholder": "How can we elevate your journey?",
       "send_message": "Send Message"
