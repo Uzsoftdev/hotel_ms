@@ -15,6 +15,9 @@ jobs:
     if: github.event.inputs.confirm == 'CONFIRM'
 
     steps:
+      - name: Checkout repo (includes the dump file)
+        uses: actions/checkout@v4
+
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
@@ -22,71 +25,49 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
 
-      - name: Download dump from GitHub release
-        run: |
-          curl -L -o /tmp/hms_dump.sql.gz \
-            -H "Authorization: Bearer ${{ github.token }}" \
-            -H "Accept: application/octet-stream" \
-            "https://api.github.com/repos/Uzsoftdev/hotel_ms/releases/assets/419132826"
-          echo "Downloaded: $(du -sh /tmp/hms_dump.sql.gz | cut -f1)"
-
       - name: Copy dump to server
         run: |
           scp -o StrictHostKeyChecking=no \
-            /tmp/hms_dump.sql.gz \
+            .github/db_seed/dump.sql.gz \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/tmp/hms_dump.sql.gz
+          echo "Transfer complete"
 
-      - name: Detect DB and restore
+      - name: Restore database on server
         run: |
           ssh -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'ENDSSH'
             set -e
 
-            echo "=== Production DATABASE_URL ==="
+            echo "=== Reading production DATABASE_URL ==="
             DB_URL=$(grep "^DATABASE_URL" /opt/hotel/.env | cut -d= -f2-)
-            echo "URL: $DB_URL"
 
-            # Decompress
+            # Parse: postgresql://user:pass@host:port/dbname
+            DB_USER=$(echo "$DB_URL" | sed 's|postgresql://||' | cut -d: -f1)
+            DB_PASS=$(echo "$DB_URL" | sed 's|postgresql://[^:]*:||' | cut -d@ -f1)
+            DB_HOST=$(echo "$DB_URL" | sed 's|.*@||' | cut -d: -f1)
+            DB_PORT=$(echo "$DB_URL" | sed 's|.*@[^:]*:||' | cut -d/ -f1)
+            DB_NAME=$(echo "$DB_URL" | sed 's|.*/||')
+
+            echo "Host=$DB_HOST Port=$DB_PORT DB=$DB_NAME User=$DB_USER"
+
+            echo "=== Decompressing dump ==="
             gunzip -f /tmp/hms_dump.sql.gz
 
-            # Parse the DATABASE_URL: postgresql://user:pass@host:port/dbname
-            DB_USER=$(echo $DB_URL | sed 's|postgresql://||' | cut -d: -f1)
-            DB_PASS=$(echo $DB_URL | sed 's|postgresql://[^:]*:||' | cut -d@ -f1)
-            DB_HOST=$(echo $DB_URL | sed 's|.*@||' | cut -d: -f1)
-            DB_PORT=$(echo $DB_URL | sed 's|.*@[^:]*:||' | cut -d/ -f1)
-            DB_NAME=$(echo $DB_URL | sed 's|.*/||')
+            echo "=== Restoring to $DB_HOST:$DB_PORT/$DB_NAME ==="
+            PGPASSWORD="$DB_PASS" psql \
+              -h "$DB_HOST" \
+              -p "$DB_PORT" \
+              -U "$DB_USER" \
+              -d "$DB_NAME" \
+              -f /tmp/hms_dump.sql \
+              -v ON_ERROR_STOP=0 2>&1 | tail -20
 
-            echo "Host: $DB_HOST | Port: $DB_PORT | DB: $DB_NAME | User: $DB_USER"
+            echo "=== Verifying row counts ==="
+            PGPASSWORD="$DB_PASS" psql \
+              -h "$DB_HOST" -p "$DB_PORT" \
+              -U "$DB_USER" -d "$DB_NAME" \
+              -c "SELECT relname AS table, n_live_tup AS rows FROM pg_stat_user_tables WHERE n_live_tup > 0 ORDER BY n_live_tup DESC;"
 
-            # If host is hotel_postgres, we restore via docker exec
-            if [ "$DB_HOST" = "hotel_postgres" ]; then
-              echo "=== Restoring via Docker (hotel_postgres service) ==="
-              PG_CTR=$(docker ps -q -f name=hotel_postgres | head -1)
-              if [ -z "$PG_CTR" ]; then
-                echo "ERROR: hotel_postgres container not found!"
-                exit 1
-              fi
-              cat /tmp/hms_dump.sql | docker exec -i $PG_CTR \
-                psql -U $DB_USER -d $DB_NAME
-            else
-              echo "=== Restoring via direct connection to $DB_HOST:$DB_PORT ==="
-              PGPASSWORD=$DB_PASS psql \
-                -h $DB_HOST -p $DB_PORT \
-                -U $DB_USER -d $DB_NAME \
-                -f /tmp/hms_dump.sql
-            fi
-
-            echo "=== Restore complete! Verifying row counts ==="
-            if [ "$DB_HOST" = "hotel_postgres" ]; then
-              PG_CTR=$(docker ps -q -f name=hotel_postgres | head -1)
-              docker exec $PG_CTR psql -U $DB_USER -d $DB_NAME -c \
-                "SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE n_live_tup > 0 ORDER BY n_live_tup DESC;"
-            else
-              PGPASSWORD=$DB_PASS psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c \
-                "SELECT relname, n_live_tup FROM pg_stat_user_tables WHERE n_live_tup > 0 ORDER BY n_live_tup DESC;"
-            fi
-
-            # Cleanup
             rm -f /tmp/hms_dump.sql
-            echo "Done!"
+            echo "=== Done! ==="
           ENDSSH
