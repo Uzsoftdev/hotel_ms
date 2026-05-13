@@ -7,53 +7,64 @@ jobs:
   reset:
     runs-on: ubuntu-latest
     steps:
-      - name: Install psql
-        run: sudo apt-get install -y postgresql-client
-
-      - name: Reset admin and staff passwords
-        env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+      - name: Set up SSH
         run: |
-          ADMIN_HASH='$2b$12$7KbWgKyj0McY6rGHr7HC1ujqycEPaOMuOQvk9bA8Qfbg/2y3DZhaK'
-          STAFF_HASH='$2b$12$LKK6u5ZYzJUXg5u2MMiuQ.RDBS.xtn9XsHrZcuhzTzB.SpJUWJbVa'
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/hms_prod
+          chmod 600 ~/.ssh/hms_prod
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
 
-          psql -h "${{ secrets.DB_HOST }}" -p "${{ secrets.DB_PORT }}" \
-               -U "${{ secrets.DB_USER }}" -d "${{ secrets.DB_NAME }}" <<SQL
+      - name: Run credential reset inside backend container
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            'CONTAINER=$(docker ps --filter "name=hotel_backend" --format "{{.ID}}" | head -1)
+             if [ -z "$CONTAINER" ]; then echo "Backend container not found"; exit 1; fi
+             echo "Using container: $CONTAINER"
+             docker exec "$CONTAINER" python3 - <<EOF
+from app.core.database import SessionLocal
+from app.core.security import hash_password
+from app.models.user import User
 
-          -- Update or insert super_admin
-          DO \$\$
-          BEGIN
-            IF EXISTS (SELECT 1 FROM users WHERE role = 'super_admin') THEN
-              UPDATE users
-                SET email = 'admin@allstay.rest',
-                    hashed_password = '${ADMIN_HASH}',
-                    is_email_verified = true,
-                    full_name = 'Admin'
-                WHERE role = 'super_admin';
-            ELSE
-              INSERT INTO users (full_name, email, hashed_password, role, is_email_verified)
-              VALUES ('Admin', 'admin@allstay.rest', '${ADMIN_HASH}', 'super_admin', true);
-            END IF;
+db = SessionLocal()
+try:
+    admin = db.query(User).filter(User.role == "super_admin").first()
+    if admin:
+        admin.email = "admin@allstay.rest"
+        admin.hashed_password = hash_password("Admin@2024")
+        admin.is_email_verified = True
+        admin.full_name = "Admin"
+        print(f"Updated admin: {admin.email}")
+    else:
+        admin = User(full_name="Admin", email="admin@allstay.rest",
+                     hashed_password=hash_password("Admin@2024"),
+                     role="super_admin", is_email_verified=True)
+        db.add(admin)
+        print("Created admin: admin@allstay.rest")
 
-            -- Update or insert staff
-            IF EXISTS (SELECT 1 FROM users WHERE role = 'staff') THEN
-              UPDATE users
-                SET email = 'staff@allstay.rest',
-                    hashed_password = '${STAFF_HASH}',
-                    is_email_verified = true,
-                    full_name = 'Staff'
-                WHERE role = 'staff';
-            ELSE
-              INSERT INTO users (full_name, email, hashed_password, role, is_email_verified)
-              VALUES ('Staff', 'staff@allstay.rest', '${STAFF_HASH}', 'staff', true);
-            END IF;
-          END
-          \$\$;
+    staff = db.query(User).filter(User.role == "staff").first()
+    if staff:
+        staff.email = "staff@allstay.rest"
+        staff.hashed_password = hash_password("Staff@2024")
+        staff.is_email_verified = True
+        staff.full_name = "Staff"
+        print(f"Updated staff: {staff.email}")
+    else:
+        staff = User(full_name="Staff", email="staff@allstay.rest",
+                     hashed_password=hash_password("Staff@2024"),
+                     role="staff", is_email_verified=True)
+        db.add(staff)
+        print("Created staff: staff@allstay.rest")
 
-          SELECT id, email, full_name, role, is_email_verified FROM users
-          WHERE role IN ('super_admin', 'staff', 'hotel_admin') ORDER BY role;
-
-          SQL
+    db.commit()
+    print("Done.")
+except Exception as e:
+    db.rollback()
+    print(f"Error: {e}")
+    raise
+finally:
+    db.close()
+EOF'
 
       - name: Print credentials
         run: |
