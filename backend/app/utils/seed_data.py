@@ -28,7 +28,7 @@ def seed() -> None:
         # ── Users ─────────────────────────────────────────────────────────
         admin = User(
             full_name="Admin User",
-            email="admin@allstay.com",
+            email="admin@allstay.rest",
             hashed_password=hash_password("Admin@12345"),
             role="super_admin",
         )
@@ -111,8 +111,8 @@ def seed() -> None:
 
         db.commit()
         print("✓ Seed complete.")
-        print("  admin@allstay.com / Admin@12345")
-        print("  staff@allstay.com / Staff@12345")
+        print("  admin@allstay.rest / Admin@12345")
+        print("  staff@allstay.com  / Staff@12345")
         print("  guest@example.com      / Guest@12345")
     except Exception as exc:
         db.rollback()
