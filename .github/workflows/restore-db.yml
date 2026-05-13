@@ -50,14 +50,14 @@ jobs:
             gunzip -f /tmp/hms_dump.sql.gz
 
             echo "=== Restoring via Docker postgres client ==="
-            cat /tmp/hms_dump.sql | docker run --rm -i \
+            cat /tmp/hms_dump.sql | sudo docker run --rm -i \
               -e PGPASSWORD="$DB_PASS" \
               postgres:15-alpine \
               psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
               -v ON_ERROR_STOP=0 2>&1 | tail -20
 
             echo "=== Verifying row counts ==="
-            docker run --rm \
+            sudo docker run --rm \
               -e PGPASSWORD="$DB_PASS" \
               postgres:15-alpine \
               psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" \
