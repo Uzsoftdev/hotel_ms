@@ -18,10 +18,10 @@ jobs:
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            'CONTAINER=$(docker ps --filter "name=hotel_backend" --format "{{.ID}}" | head -1)
+            'CONTAINER=$(sudo docker ps --filter "name=hotel_backend" --format "{{.ID}}" | head -1)
              if [ -z "$CONTAINER" ]; then echo "Backend container not found"; exit 1; fi
              echo "Using container: $CONTAINER"
-             docker exec "$CONTAINER" python3 - <<EOF
+             sudo docker exec "$CONTAINER" python3 - <<EOF
 from app.core.database import SessionLocal
 from app.core.security import hash_password
 from app.models.user import User
