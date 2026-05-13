@@ -41,9 +41,20 @@ echo "Deploying with REGISTRY=$REGISTRY IMAGE_TAG=$IMAGE_TAG"
 
 echo "$DEPLOY_TOKEN" | $DOCKER login ghcr.io -u "$DEPLOY_ACTOR" --password-stdin
 
-$DOCKER stack deploy \
-  --with-registry-auth \
-  --detach=true \
-  --prune \
-  -c "$STACK_FILE" \
-  hotel
+# Retry on "update out of sequence" race condition (Swarm concurrent update lock)
+for attempt in 1 2 3; do
+  if $DOCKER stack deploy \
+      --with-registry-auth \
+      --detach=true \
+      --prune \
+      -c "$STACK_FILE" \
+      hotel; then
+    break
+  fi
+  if [ "$attempt" -lt 3 ]; then
+    echo "Deploy attempt $attempt failed, retrying in 10s…"
+    sleep 10
+  else
+    echo "Deploy failed after 3 attempts." && exit 1
+  fi
+done
