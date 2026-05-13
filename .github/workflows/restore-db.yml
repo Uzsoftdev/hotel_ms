@@ -38,7 +38,9 @@ jobs:
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'ENDSSH'
             set -e
 
-            echo "=== Reading production DATABASE_URL ==="
+            echo "=== Installing postgres client ==="
+            apt-get install -y postgresql-client -qq 2>&1 | tail -3
+
             DB_URL=$(grep "^DATABASE_URL" /opt/hotel/.env | cut -d= -f2-)
 
             # Parse: postgresql://user:pass@host:port/dbname
