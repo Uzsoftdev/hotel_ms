@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../services/auth";
 import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../lib/supabase";
 import loginBack from "../../assets/images/background.png";
 
 function EyeButton({ show, onToggle }) {
@@ -40,6 +41,16 @@ export default function Login() {
   const [mounted, setMounted]   = useState(false);
 
   useEffect(() => { setTimeout(() => setMounted(true), 40); }, []);
+
+  async function handleGoogleSignIn() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) setError(error.message);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -239,7 +250,7 @@ export default function Login() {
                 type="button"
                 className="ah-btn ah-btn-secondary ah-btn-block"
                 style={{ justifyContent: "flex-start", paddingLeft: 14 }}
-                onClick={() => alert("Social login coming soon.")}
+                onClick={handleGoogleSignIn}
               >
                 <span style={{ width: 22, height: 22, borderRadius: 5, background: color, color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 13, flexShrink: 0 }}>{glyph}</span>
                 <span style={{ flex: 1, textAlign: "center" }}>Continue with {label}</span>

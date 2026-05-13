@@ -14,6 +14,7 @@ import FAQ from "../pages/public/FAQ";
 import RoomDetails from "../pages/public/RoomDetails";
 import ForgotPassword from "../pages/public/ForgotPassword";
 import BookingConfirmation from "../pages/public/BookingConfirmation";
+import AuthCallback from "../pages/auth/AuthCallback";
 
 // User pages
 import UserDashboard from "../pages/user/Dashboard";
@@ -52,6 +53,7 @@ export default function AppRoutes() {
       <Route path="/room-details" element={<RoomDetails />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
 
       {/* ── Protected: User routes ── */}
       <Route path="/user/dashboard" element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
