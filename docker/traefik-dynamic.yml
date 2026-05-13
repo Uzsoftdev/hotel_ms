@@ -31,8 +31,7 @@ http:
     backend:
       rule: "Host(`allstay.rest`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
       entryPoints: ["websecure"]
-      tls:
-        certResolver: letsencrypt
+      tls: {}
       service: backend-svc
       middlewares: ["www-redirect", "circuit-breaker", "retry"]
       priority: 10
@@ -40,8 +39,7 @@ http:
     minio:
       rule: "Host(`allstay.rest`) && PathPrefix(`/storage`)"
       entryPoints: ["websecure"]
-      tls:
-        certResolver: letsencrypt
+      tls: {}
       service: minio-svc
       middlewares: ["minio-strip"]
       priority: 20
@@ -49,8 +47,7 @@ http:
     frontend:
       rule: "Host(`allstay.rest`) || Host(`www.allstay.rest`)"
       entryPoints: ["websecure"]
-      tls:
-        certResolver: letsencrypt
+      tls: {}
       service: frontend-svc
       middlewares: ["www-redirect"]
       priority: 1
@@ -73,3 +70,14 @@ http:
         servers:
           - url: "http://hotel_minio:9000"
         passHostHeader: false
+
+# TLS — certbot certs mounted at /certs (renewed monthly by the GitHub Actions workflow)
+tls:
+  certificates:
+    - certFile: /certs/cert.pem
+      keyFile: /certs/key.pem
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/cert.pem
+        keyFile: /certs/key.pem

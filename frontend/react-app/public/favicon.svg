@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect width="32" height="32" rx="7" fill="#2563EB"/>
+  <!-- Roof / triangle -->
+  <path d="M16 5L6 12.5h20z" fill="white"/>
+  <!-- Building body -->
+  <rect x="8" y="12" width="16" height="15" rx="1" fill="white"/>
+  <!-- Left window -->
+  <rect x="10.5" y="15" width="4" height="4" rx="0.8" fill="#2563EB" opacity="0.75"/>
+  <!-- Right window -->
+  <rect x="17.5" y="15" width="4" height="4" rx="0.8" fill="#2563EB" opacity="0.75"/>
+  <!-- Door -->
+  <rect x="13.5" y="21" width="5" height="6" rx="1" fill="#2563EB" opacity="0.6"/>
+</svg>

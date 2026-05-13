@@ -32,7 +32,7 @@ jobs:
             # ── 2. Pause Traefik so port 80 is free for the challenge ─────
             echo "Scaling Traefik to 0..."
             sudo docker service scale hotel_traefik=0 || true
-            sleep 8
+            sleep 10
 
             # ── 3. Run certbot standalone ─────────────────────────────────
             sudo certbot certonly \
@@ -50,10 +50,16 @@ jobs:
             sudo cp /etc/letsencrypt/live/allstay.rest/privkey.pem   /opt/hms/certs/key.pem
             sudo chmod 644 /opt/hms/certs/cert.pem /opt/hms/certs/key.pem
 
-            echo "✅ Certificates copied to /opt/hms/certs/"
+            echo "Certificates copied to /opt/hms/certs/"
 
-            # ── 5. Restart Traefik ────────────────────────────────────────
+            # ── 5. Restart Traefik (it will load the new certs on start) ──
             sudo docker service scale hotel_traefik=1
-            echo "✅ Traefik restarted"
+            echo "Traefik restarted — waiting for it to come up..."
+            sleep 15
+
+            # ── 6. Verify ─────────────────────────────────────────────────
+            echo "TLS check:"
+            curl -sI --max-time 10 https://allstay.rest/ | grep -E "^HTTP|^server|^location" || echo "(curl check skipped)"
+            echo "Done"
 
           ENDSSH
