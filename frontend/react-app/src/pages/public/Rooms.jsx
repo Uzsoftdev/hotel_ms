@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ROOMS } from "../../data/rooms";
@@ -7,6 +7,48 @@ import Footer from "../../components/common/Footer";
 import { useAuth } from "../../contexts/AuthContext";
 import { useWishlist } from "../../contexts/WishlistContext";
 import background from "../../assets/images/room_back.png";
+import room1 from "../../assets/images/room1.png";
+import room2 from "../../assets/images/room2.png";
+import hotel3 from "../../assets/images/hotel3.png";
+import bali from "../../assets/images/bali_1.png";
+import api from "../../services/api";
+
+const FALLBACK_IMAGES = { Standard: room1, Economy: room2, Deluxe: bali, Suite: hotel3, Presidential: bali };
+const AMENITY_DEFAULTS = {
+  Standard:     { amenities: ["WiFi", "A/C", "TV"],           icons: ["wifi", "ac_unit", "tv"] },
+  Economy:      { amenities: ["WiFi", "TV"],                  icons: ["wifi", "tv"] },
+  Deluxe:       { amenities: ["WiFi", "Balcony", "Breakfast"],icons: ["wifi", "balcony", "flatware"] },
+  Suite:        { amenities: ["Pool", "Spa", "Butler"],       icons: ["pool", "spa", "room_service"] },
+  Presidential: { amenities: ["Concierge", "Pool", "Dining"], icons: ["concierge", "pool", "dinner_dining"] },
+};
+
+function deriveCategory(typeName = "") {
+  if (/presidential/i.test(typeName)) return "Presidential";
+  if (/suite/i.test(typeName))        return "Suite";
+  if (/deluxe/i.test(typeName))       return "Deluxe";
+  if (/economy/i.test(typeName))      return "Economy";
+  return "Standard";
+}
+
+function normalizeApiRoom(r) {
+  const category = deriveCategory(r.room_type?.name);
+  const { amenities, icons } = AMENITY_DEFAULTS[category];
+  const primaryImg = r.images?.find((i) => i.is_primary) ?? r.images?.[0];
+  return {
+    id: r.id,
+    name: r.room_type?.name || `Room ${r.room_number || r.id}`,
+    category,
+    description: r.description || `A ${category.toLowerCase()} room with premium amenities.`,
+    price_per_night: Number(r.base_price) || 0,
+    capacity: r.capacity || 2,
+    rating: 4.5,
+    reviews: 0,
+    amenities,
+    amenityIcons: icons,
+    tags: [category === "Economy" ? "Best Value" : "Free WiFi"],
+    image: primaryImg?.image_url || FALLBACK_IMAGES[category],
+  };
+}
 
 const CATEGORIES = ["All", "Standard", "Economy", "Deluxe", "Suite", "Presidential"];
 
@@ -39,10 +81,20 @@ export default function Rooms() {
   const [activeTab, setActiveTab] = useState("All");
   const [view, setView] = useState("grid"); // grid | list
   const [authModal, setAuthModal] = useState(false);
+  const [rooms, setRooms] = useState(ROOMS);
+
+  useEffect(() => {
+    api.get("/public/search/rooms")
+      .then((res) => {
+        const normalized = res.data.map(normalizeApiRoom);
+        if (normalized.length > 0) setRooms(normalized);
+      })
+      .catch(() => {}); // silently fall back to static ROOMS on any error
+  }, []);
 
   const filtered = useMemo(() =>
-    activeTab === "All" ? ROOMS : ROOMS.filter((r) => r.category === activeTab),
-    [activeTab]
+    activeTab === "All" ? rooms : rooms.filter((r) => r.category === activeTab),
+    [activeTab, rooms]
   );
 
   function toggleWishlist(e, id) {
@@ -89,7 +141,7 @@ export default function Rooms() {
                 {cat}
                 {cat !== "All" && (
                   <span className={`text-[9px] px-1 py-0.5 rounded-full ${activeTab === cat ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"}`}>
-                    {ROOMS.filter((r) => r.category === cat).length}
+                    {rooms.filter((r) => r.category === cat).length}
                   </span>
                 )}
               </button>

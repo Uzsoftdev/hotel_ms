@@ -19,6 +19,7 @@ class Room(Base):
 
     hotel = relationship("Hotel")
     room_type = relationship("RoomType")
+    images = relationship("RoomImage", back_populates="room", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return (

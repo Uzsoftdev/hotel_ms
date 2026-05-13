@@ -346,44 +346,89 @@ export default function Home() {
       </section>
 
       {/* ── REVIEWS ── */}
-      <section ref={reviewsRef} className="bg-white py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className={`text-center mb-14 ${reviewsVisible ? "animate-fade-up" : "opacity-0"}`}>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-primary mb-3">What guests say</p>
-            <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Stories from our guests</h2>
-            <div className="flex items-center justify-center gap-1 mt-4">
-              {[...Array(5)].map((_, i) => (
-                <span key={i} className="material-symbols-outlined text-amber-400 text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-              ))}
-              <span className="ml-2 text-sm font-bold text-slate-700">4.9 out of 5</span>
-              <span className="ml-1 text-sm text-slate-400">· 2,400+ reviews</span>
+      <section ref={reviewsRef} className="relative py-28 overflow-hidden" style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%)" }}>
+        {/* Decorative blobs */}
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full opacity-10 pointer-events-none" style={{ background: "radial-gradient(circle, #6366f1, transparent)", filter: "blur(80px)" }} />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full opacity-10 pointer-events-none" style={{ background: "radial-gradient(circle, #2563eb, transparent)", filter: "blur(80px)" }} />
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          {/* Header */}
+          <div className={`text-center mb-16 ${reviewsVisible ? "animate-fade-up" : "opacity-0"}`}>
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-6">
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i} className="material-symbols-outlined text-amber-400 text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                ))}
+              </div>
+              <span className="text-white/80 text-xs font-bold">4.9 · 2,400+ verified reviews</span>
             </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
+              What guests are saying
+            </h2>
+            <p className="text-white/50 font-medium text-base max-w-md mx-auto">
+              Thousands of travellers have made unforgettable memories. Here are a few of their stories.
+            </p>
           </div>
 
+          {/* Review cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {REVIEWS.map(({ name, location, rating, text, avatar, stay }, i) => (
               <div key={name}
-                className={`bg-slate-50 rounded-2xl p-7 border border-slate-100 hover:border-primary/20 hover:shadow-xl transition-all duration-300 card-hover ${reviewsVisible ? "animate-fade-up" : "opacity-0"}`}
-                style={{ animationDelay: `${i * 100}ms` }}>
+                className={`relative group rounded-3xl p-8 border border-white/10 hover:border-white/25 transition-all duration-500 ${reviewsVisible ? "animate-fade-up" : "opacity-0"}`}
+                style={{
+                  animationDelay: `${i * 120}ms`,
+                  background: "linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%)",
+                  backdropFilter: "blur(12px)",
+                }}>
+
+                {/* Giant quote mark */}
+                <div className="absolute top-5 right-6 text-7xl font-serif text-white/8 leading-none select-none pointer-events-none">&ldquo;</div>
+
                 {/* Stars */}
-                <div className="flex gap-0.5 mb-4">
+                <div className="flex gap-0.5 mb-5">
                   {[...Array(rating)].map((_, j) => (
-                    <span key={j} className="material-symbols-outlined text-amber-400 text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                    <span key={j} className="material-symbols-outlined text-amber-400 text-base" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
                   ))}
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed mb-6 italic">&ldquo;{text}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <span className="text-xs font-extrabold text-primary">{avatar}</span>
+
+                {/* Quote text */}
+                <p className="text-white/80 text-[15px] leading-relaxed mb-8 font-medium">&ldquo;{text}&rdquo;</p>
+
+                {/* Divider */}
+                <div className="h-px bg-white/10 mb-6" />
+
+                {/* Author */}
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 font-extrabold text-sm text-white shadow-lg"
+                    style={{ background: `linear-gradient(135deg, hsl(${(i * 80 + 220) % 360},70%,55%), hsl(${(i * 80 + 260) % 360},80%,45%))` }}>
+                    {avatar}
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">{name}</p>
-                    <p className="text-[10px] text-slate-400 font-medium">{location} · {stay}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white font-bold text-sm truncate">{name}</p>
+                    <p className="text-white/45 text-[11px] font-medium truncate">{location}</p>
                   </div>
-                  <div className="ml-auto">
-                    <span className="material-symbols-outlined text-primary text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                  <div className="shrink-0 text-right">
+                    <div className="flex items-center gap-1 justify-end mb-0.5">
+                      <span className="material-symbols-outlined text-emerald-400 text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
+                      <span className="text-emerald-400 text-[10px] font-bold">Verified</span>
+                    </div>
+                    <p className="text-white/35 text-[10px]">{stay}</p>
                   </div>
                 </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom trust bar */}
+          <div className={`mt-14 flex flex-wrap items-center justify-center gap-8 ${reviewsVisible ? "animate-fade-up" : "opacity-0"}`} style={{ animationDelay: "360ms" }}>
+            {[
+              { icon: "shield_check", label: "Verified reviews only" },
+              { icon: "public", label: "Guests from 80+ countries" },
+              { icon: "hotel", label: "500+ properties worldwide" },
+            ].map(({ icon, label }) => (
+              <div key={label} className="flex items-center gap-2 text-white/50">
+                <span className="material-symbols-outlined text-white/30 text-lg">{icon}</span>
+                <span className="text-xs font-semibold">{label}</span>
               </div>
             ))}
           </div>

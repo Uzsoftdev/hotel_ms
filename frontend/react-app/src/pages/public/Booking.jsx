@@ -74,9 +74,7 @@ export default function Booking() {
     dates.checkIn && dates.checkOut
       ? Math.max(1, Math.round((new Date(dates.checkOut) - new Date(dates.checkIn)) / 86400000))
       : 1;
-  const subtotal = pricePerNight * nights;
-  const resortFee = 50;
-  const total = subtotal + resortFee;
+  const total = pricePerNight * nights;
   const progressPercent = ((step - 1) / (steps.length - 1)) * 100;
 
   function validatePayment() {
@@ -262,8 +260,7 @@ export default function Booking() {
                   <div className="flex justify-between text-sm"><span className="text-on-surface-variant">Guests</span><span className="font-bold">{dates.adults + dates.children}</span></div>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex justify-between text-sm"><span className="text-on-surface-variant">${pricePerNight} × {nights} nights</span><span className="font-semibold">${subtotal.toLocaleString()}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-on-surface-variant">Resort fee</span><span className="font-semibold">${resortFee}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-on-surface-variant">${pricePerNight} × {nights} night{nights !== 1 ? "s" : ""}</span><span className="font-semibold">${total.toLocaleString()}</span></div>
                 </div>
                 <div className="pt-4 border-t border-outline-variant/30 flex justify-between items-end">
                   <div>

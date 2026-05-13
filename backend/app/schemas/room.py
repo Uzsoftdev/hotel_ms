@@ -1,9 +1,17 @@
 from decimal import Decimal
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict
 
 from app.schemas.room_type import RoomTypeResponse
+
+
+class RoomImageResponse(BaseModel):
+    id: int
+    image_url: Optional[str] = None
+    is_primary: bool = False
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RoomBase(BaseModel):
@@ -33,5 +41,6 @@ class RoomUpdate(BaseModel):
 class RoomResponse(RoomBase):
     id: int
     room_type: Optional[RoomTypeResponse] = None
+    images: List[RoomImageResponse] = []
 
     model_config = ConfigDict(from_attributes=True)

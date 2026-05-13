@@ -12,7 +12,7 @@ class RoomImage(Base):
     image_url = Column(Text)
     is_primary = Column(Boolean, nullable=False, default=False)
 
-    room = relationship("Room")
+    room = relationship("Room", back_populates="images")
 
     def __repr__(self) -> str:
         return (

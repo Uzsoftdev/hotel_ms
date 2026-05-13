@@ -16,6 +16,25 @@ from app.services.search import search_hotels
 router = APIRouter(prefix="/search", tags=["Public Search"])
 
 
+@router.get("/rooms", response_model=List[RoomResponse])
+def browse_rooms(
+    hotel_id: Optional[int] = Query(None, description="Filter by hotel"),
+    db: Session = Depends(get_read_db),
+) -> List[RoomResponse]:
+    """Return all active rooms with their type and images. No auth required."""
+    from app.models.room import Room
+    from app.models.room_image import RoomImage  # ensure model registered
+    from sqlalchemy.orm import joinedload as jl
+    query = (
+        db.query(Room)
+        .options(jl(Room.room_type), jl(Room.images))
+        .filter(Room.is_active == True)
+    )
+    if hotel_id:
+        query = query.filter(Room.hotel_id == hotel_id)
+    return query.order_by(Room.id).all()
+
+
 @router.get("/hotels/browse", response_model=List[HotelResponse])
 def browse_hotels(
     country: Optional[str] = Query(None, description="Filter by country"),
