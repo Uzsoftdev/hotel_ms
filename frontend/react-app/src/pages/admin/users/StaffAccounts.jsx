@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import AdminLayout from "../Layout/AdminLayout";
 import { getUsers, updateUser, deleteUser } from "../../../services/admin";
 
-const ROLE_COLOR = { admin: "bg-purple-100 text-purple-700", staff: "bg-blue-100 text-blue-700", super_admin: "bg-red-100 text-red-700" };
+const ROLE_COLOR = { hotel_admin: "bg-purple-100 text-purple-700", staff: "bg-blue-100 text-blue-700", super_admin: "bg-red-100 text-red-700" };
 
 export default function StaffAccounts() {
   const [staff, setStaff] = useState([]);
@@ -11,7 +11,7 @@ export default function StaffAccounts() {
   const [acting, setActing] = useState(null);
 
   useEffect(() => {
-    Promise.all([getUsers("admin"), getUsers("staff")])
+    Promise.all([getUsers("hotel_admin"), getUsers("staff")])
       .then(([admins, staffRes]) => setStaff([...admins.data, ...staffRes.data]))
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -67,7 +67,7 @@ export default function StaffAccounts() {
                     <td className="px-4 py-3">
                       <select value={s.role} disabled={acting === s.id} onChange={(e) => handleRoleChange(s.id, e.target.value)}
                         className={`text-xs font-bold px-2 py-1 rounded-full border-0 focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer ${ROLE_COLOR[s.role] || "bg-gray-100 text-gray-600"}`}>
-                        {["staff", "admin", "super_admin"].map((r) => <option key={r} value={r}>{r}</option>)}
+                        {["staff", "hotel_admin", "super_admin"].map((r) => <option key={r} value={r}>{r}</option>)}
                       </select>
                     </td>
                     <td className="px-4 py-3 text-on-surface-variant">{s.created_at ? new Date(s.created_at).toLocaleDateString() : "—"}</td>

@@ -65,9 +65,9 @@ export default function Login() {
       await loginUser(res.data.access_token);
       const payload = JSON.parse(atob(res.data.access_token.split(".")[1]));
       const role = payload?.role ?? "";
-      if (role === "super_admin" || role === "hotel_admin") navigate("/admin", { replace: true });
+      if (role === "super_admin" || role === "hotel_admin") navigate("/admin/dashboard", { replace: true });
       else if (role === "staff") navigate("/staff/bookings", { replace: true });
-      else navigate("/dashboard", { replace: true });
+      else navigate("/user/dashboard", { replace: true });
     } catch (err) {
       const data = err.response?.data;
       const msg = data?.detail || data?.details?.[0]?.message?.replace(/^Value error,\s*/i, "") || data?.error;

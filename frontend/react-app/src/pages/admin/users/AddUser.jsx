@@ -50,7 +50,7 @@ export default function AddUser() {
               className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary bg-white">
               <option value="guest">Guest</option>
               <option value="staff">Staff</option>
-              <option value="admin">Admin</option>
+              <option value="hotel_admin">Hotel Admin</option>
             </select>
           </div>
 

@@ -36,11 +36,11 @@ export default function AuthCallback() {
         const payload = JSON.parse(atob(data.access_token.split(".")[1]));
         const role = payload?.role ?? "guest";
         if (role === "super_admin" || role === "hotel_admin") {
-          navigate("/admin", { replace: true });
+          navigate("/admin/dashboard", { replace: true });
         } else if (role === "staff") {
           navigate("/staff/bookings", { replace: true });
         } else {
-          navigate("/dashboard", { replace: true });
+          navigate("/user/dashboard", { replace: true });
         }
       } catch (err) {
         if (!cancelled) {

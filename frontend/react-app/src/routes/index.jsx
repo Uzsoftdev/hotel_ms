@@ -28,6 +28,23 @@ import Reviews from "../pages/user/Reviews";
 
 // Admin pages
 import AdminDashboard from "../pages/admin/Dashboard";
+import AdminProfile from "../pages/admin/AdminProfile";
+import AllBookings from "../pages/admin/bookings/AllBookings";
+import AdminCheckInOut from "../pages/admin/bookings/CheckInOut";
+import RoomsList from "../pages/admin/rooms/RoomsList";
+import AddRoom from "../pages/admin/rooms/AddRoom";
+import EditRoom from "../pages/admin/rooms/EditRoom";
+import RoomTypes from "../pages/admin/rooms/RoomTypes";
+import DynamicPricing from "../pages/admin/pricing/DynamicPricing";
+import BlackoutDates from "../pages/admin/pricing/BlackoutDates";
+import AllGuests from "../pages/admin/users/AllGuests";
+import StaffAccounts from "../pages/admin/users/StaffAccounts";
+import AddUser from "../pages/admin/users/AddUser";
+import OccupancyReport from "../pages/admin/reports/OccupancyReport";
+import RevenueReport from "../pages/admin/reports/RevenueReport";
+import GuestAnalytics from "../pages/admin/reports/GuestAnalytics";
+import ActivityLogs from "../pages/admin/system/ActivityLogs";
+import Settings from "../pages/admin/system/Settings";
 
 // Staff pages
 import AssignedBookings from "../pages/staff/AssignedBookings";
@@ -66,7 +83,25 @@ export default function AppRoutes() {
       <Route path="/user/reviews" element={<PrivateRoute><Reviews /></PrivateRoute>} />
 
       {/* ── Protected: Admin routes ── */}
+      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="/admin/dashboard" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+      <Route path="/admin/profile" element={<PrivateRoute><AdminProfile /></PrivateRoute>} />
+      <Route path="/admin/bookings" element={<PrivateRoute><AllBookings /></PrivateRoute>} />
+      <Route path="/admin/checkinout" element={<PrivateRoute><AdminCheckInOut /></PrivateRoute>} />
+      <Route path="/admin/rooms" element={<PrivateRoute><RoomsList /></PrivateRoute>} />
+      <Route path="/admin/rooms/add" element={<PrivateRoute><AddRoom /></PrivateRoute>} />
+      <Route path="/admin/rooms/:id/edit" element={<PrivateRoute><EditRoom /></PrivateRoute>} />
+      <Route path="/admin/room-types" element={<PrivateRoute><RoomTypes /></PrivateRoute>} />
+      <Route path="/admin/pricing" element={<PrivateRoute><DynamicPricing /></PrivateRoute>} />
+      <Route path="/admin/blackout-dates" element={<PrivateRoute><BlackoutDates /></PrivateRoute>} />
+      <Route path="/admin/guests" element={<PrivateRoute><AllGuests /></PrivateRoute>} />
+      <Route path="/admin/staff" element={<PrivateRoute><StaffAccounts /></PrivateRoute>} />
+      <Route path="/admin/users/add" element={<PrivateRoute><AddUser /></PrivateRoute>} />
+      <Route path="/admin/reports/occupancy" element={<PrivateRoute><OccupancyReport /></PrivateRoute>} />
+      <Route path="/admin/reports/revenue" element={<PrivateRoute><RevenueReport /></PrivateRoute>} />
+      <Route path="/admin/reports/guests" element={<PrivateRoute><GuestAnalytics /></PrivateRoute>} />
+      <Route path="/admin/activity-logs" element={<PrivateRoute><ActivityLogs /></PrivateRoute>} />
+      <Route path="/admin/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
 
       {/* ── Protected: Staff routes ── */}
       <Route path="/staff/bookings" element={<PrivateRoute><AssignedBookings /></PrivateRoute>} />

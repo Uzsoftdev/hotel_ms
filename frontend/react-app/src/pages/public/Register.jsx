@@ -111,7 +111,7 @@ export default function Register() {
 
       const loginRes = await login({ username: form.email, password: form.password });
       await loginUser(loginRes.data.access_token);
-      navigate("/dashboard", { replace: true });
+      navigate("/user/dashboard", { replace: true });
     } catch (err) {
       setError(parseBackendError(err, "Registration failed. Please try again."));
     } finally {
