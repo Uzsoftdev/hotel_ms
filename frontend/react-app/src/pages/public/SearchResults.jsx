@@ -1,46 +1,44 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { ROOMS } from "../../data/rooms";
 import { useAuth } from "../../contexts/AuthContext";
 import { useWishlist } from "../../contexts/WishlistContext";
 import Navbar from "../../components/common/Navbar";
 import Footer from "../../components/common/Footer";
-import DateRangePicker from "../../components/common/DateRangePicker";
-import GuestsPicker from "../../components/common/GuestsPicker";
+import api from "../../services/api";
 
-const today = new Date().toISOString().split("T")[0];
-
-const CATEGORIES = ["Standard", "Economy", "Deluxe", "Suite", "Presidential"];
-const ALL_AMENITIES = ["WiFi", "Pool", "Spa", "Parking", "Breakfast", "Bathtub", "Balcony", "A/C", "TV"];
 const SORT_OPTIONS = [
   { value: "recommended", label: "Recommended" },
-  { value: "price_asc", label: "Price: Low → High" },
-  { value: "price_desc", label: "Price: High → Low" },
-  { value: "rating_desc", label: "Top Rated" },
-  { value: "name_asc", label: "Name A–Z" },
+  { value: "rating_desc",  label: "Top Rated" },
+  { value: "name_asc",     label: "Name A–Z" },
 ];
 
-const TAG_COLORS = {
-  "Free Breakfast": "bg-emerald-50 text-emerald-700 border-emerald-100",
-  "Free Cancellation": "bg-teal-50 text-teal-700 border-teal-100",
-  "Free Parking": "bg-sky-50 text-sky-700 border-sky-100",
-  "Best Value": "bg-amber-50 text-amber-700 border-amber-100",
-  "Butler Service": "bg-purple-50 text-purple-700 border-purple-100",
-  "Ocean View": "bg-cyan-50 text-cyan-700 border-cyan-100",
-  "City View": "bg-indigo-50 text-indigo-700 border-indigo-100",
-  "Panoramic View": "bg-blue-50 text-blue-700 border-blue-100",
-  "Beachfront": "bg-green-50 text-green-700 border-green-100",
-  "Private Terrace": "bg-violet-50 text-violet-700 border-violet-100",
-};
-
-function StarRating({ rating, showNum = true }) {
+function StarRating({ rating }) {
+  const r = parseFloat(rating) || 0;
   return (
     <div className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <span key={i} className={`material-symbols-outlined text-xs ${i <= Math.round(rating) ? "text-amber-400" : "text-slate-200"}`}
-          style={{ fontVariationSettings: i <= Math.round(rating) ? "'FILL' 1" : "'FILL' 0" }}>star</span>
+      {[1,2,3,4,5].map(i => (
+        <svg key={i} width="12" height="12" viewBox="0 0 24 24"
+          fill={i <= Math.round(r) ? "#f59e0b" : "none"}
+          stroke="#f59e0b" strokeWidth="1.5">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
       ))}
-      {showNum && <span className="text-xs font-bold text-slate-700 ml-1">{rating.toFixed(1)}</span>}
+      <span className="text-xs font-bold text-slate-700 ml-1">{r.toFixed(1)}</span>
+    </div>
+  );
+}
+
+function HotelCardSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden flex flex-col sm:flex-row animate-pulse">
+      <div className="sm:w-60 h-48 sm:h-auto bg-slate-200 shrink-0" />
+      <div className="flex-1 p-5 space-y-3">
+        <div className="h-5 bg-slate-200 rounded w-2/3" />
+        <div className="h-4 bg-slate-200 rounded w-1/3" />
+        <div className="h-3 bg-slate-200 rounded w-full" />
+        <div className="h-3 bg-slate-200 rounded w-3/4" />
+        <div className="h-10 bg-slate-200 rounded w-1/4 mt-4" />
+      </div>
     </div>
   );
 }
@@ -51,245 +49,242 @@ export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const initLocation = searchParams.get("location") || "";
-  const initCheckIn = searchParams.get("checkIn") || "";
+  const initCheckIn  = searchParams.get("checkIn")  || "";
   const initCheckOut = searchParams.get("checkOut") || "";
-  const initAdults = Number(searchParams.get("adults")) || Number(searchParams.get("guests")) || 1;
+  const initAdults   = Number(searchParams.get("adults"))   || 2;
   const initChildren = Number(searchParams.get("children")) || 0;
-  const initRooms = Number(searchParams.get("rooms")) || 1;
+  const initRooms    = Number(searchParams.get("rooms"))    || 1;
 
-  const [sb, setSb] = useState({ location: initLocation, checkIn: initCheckIn, checkOut: initCheckOut, adults: initAdults, children: initChildren, rooms: initRooms, pets: false });
-  const [priceRange, setPriceRange] = useState(1500);
-  const [selectedCats, setSelectedCats] = useState([]);
-  const [selectedAmenities, setSelectedAmenities] = useState([]);
+  const [sb, setSb] = useState({
+    location: initLocation, checkIn: initCheckIn, checkOut: initCheckOut,
+    adults: initAdults, children: initChildren, rooms: initRooms,
+  });
+
+  const [hotels,   setHotels]   = useState([]);
+  const [loading,  setLoading]  = useState(false);
+  const [error,    setError]    = useState(null);
+  const [page,     setPage]     = useState(1);
+  const [hasMore,  setHasMore]  = useState(false);
+
+  // Filter / sort state (client-side on fetched data)
   const [minRating, setMinRating] = useState(0);
-  const [sort, setSort] = useState("recommended");
+  const [sort,      setSort]      = useState("recommended");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [authModal, setAuthModal] = useState(null);
-  const [view, setView] = useState("list");
+
   const { isSaved, toggle: wishlistToggle } = useWishlist();
 
-  const hasFilters = selectedCats.length > 0 || selectedAmenities.length > 0 || minRating > 0 || priceRange < 1500;
+  const fetchHotels = useCallback(async (location, pg = 1, append = false) => {
+    if (!location.trim()) {
+      setHotels([]);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await api.get("/public/search/hotels", {
+        params: { q: location, per_page: 20, page: pg },
+      });
+      const data = Array.isArray(res.data) ? res.data : res.data?.items || [];
+      setHotels(prev => append ? [...prev, ...data] : data);
+      setHasMore(data.length === 20);
+      setPage(pg);
+    } catch (err) {
+      setError("Failed to load results. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  function toggleCat(cat) { setSelectedCats((p) => p.includes(cat) ? p.filter((c) => c !== cat) : [...p, cat]); }
-  function toggleAmenity(a) { setSelectedAmenities((p) => p.includes(a) ? p.filter((x) => x !== a) : [...p, a]); }
-  function toggleWishlist(room) { if (!isAuthenticated) { setAuthModal(room); return; } wishlistToggle(room.id); }
-  function clearFilters() { setSelectedCats([]); setSelectedAmenities([]); setMinRating(0); setPriceRange(1500); }
+  // Initial fetch + refetch when URL params change
+  useEffect(() => {
+    fetchHotels(initLocation, 1, false);
+  }, [initLocation, fetchHotels]);
 
   function handleSearch(e) {
     e.preventDefault();
-    setSearchParams({ location: sb.location, checkIn: sb.checkIn, checkOut: sb.checkOut, adults: sb.adults, children: sb.children, rooms: sb.rooms });
-  }
-
-  function handleBook(room) {
-    if (!isAuthenticated) { setAuthModal(room); return; }
-    navigate(`/booking?room_id=${room.id}&price=${room.price_per_night}&room_name=${encodeURIComponent(room.name)}&check_in=${initCheckIn}&check_out=${initCheckOut}`, { state: { room } });
-  }
-
-  const filtered = useMemo(() => {
-    let list = ROOMS.filter((r) => {
-      if (r.price_per_night > priceRange) return false;
-      if (selectedCats.length > 0 && !selectedCats.includes(r.category)) return false;
-      if (selectedAmenities.length > 0 && !selectedAmenities.every((a) => r.amenities.includes(a))) return false;
-      if (r.rating < minRating) return false;
-      if (initAdults + initChildren > 0 && r.capacity < initAdults + initChildren) return false;
-      return true;
+    setSearchParams({
+      location: sb.location,
+      checkIn:  sb.checkIn,
+      checkOut: sb.checkOut,
+      adults:   sb.adults,
+      children: sb.children,
+      rooms:    sb.rooms,
     });
-    if (sort === "price_asc") list = [...list].sort((a, b) => a.price_per_night - b.price_per_night);
-    else if (sort === "price_desc") list = [...list].sort((a, b) => b.price_per_night - a.price_per_night);
-    else if (sort === "rating_desc") list = [...list].sort((a, b) => b.rating - a.rating);
-    else if (sort === "name_asc") list = [...list].sort((a, b) => a.name.localeCompare(b.name));
-    return list;
-  }, [priceRange, selectedCats, selectedAmenities, minRating, sort, initGuests]);
+  }
 
-  const Sidebar = () => (
-    <aside className="w-72 shrink-0">
-      <div className="sticky top-24 bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
-        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="font-extrabold text-sm text-slate-900">Filters</h3>
-          {hasFilters && (
-            <button onClick={clearFilters} className="text-xs font-bold text-rose-500 hover:text-rose-700 transition-colors">Clear all</button>
-          )}
-        </div>
+  function handleBook(hotel) {
+    if (!isAuthenticated) {
+      navigate("/login", { state: { from: `/search?${searchParams.toString()}` } });
+      return;
+    }
+    navigate(`/booking?hotel_id=${hotel.id}&check_in=${initCheckIn}&check_out=${initCheckOut}&adults=${initAdults}&children=${initChildren}&rooms=${initRooms}`);
+  }
 
-        {/* Price */}
-        <div className="px-5 py-5 border-b border-slate-100">
-          <div className="flex justify-between mb-3">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">Max price / night</h4>
-            <span className="text-sm font-extrabold text-primary">${priceRange.toLocaleString()}</span>
-          </div>
-          <input type="range" min={80} max={1500} step={20} value={priceRange}
-            onChange={(e) => setPriceRange(Number(e.target.value))}
-            className="w-full accent-primary cursor-pointer" />
-          <div className="flex justify-between mt-1 text-[10px] font-semibold text-slate-400">
-            <span>$80</span><span>$1,500+</span>
-          </div>
-        </div>
-
-        {/* Room type */}
-        <div className="px-5 py-5 border-b border-slate-100">
-          <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Room type</h4>
-          <div className="space-y-2.5">
-            {CATEGORIES.map((cat) => (
-              <label key={cat} className="flex items-center justify-between cursor-pointer group">
-                <div className="flex items-center gap-2.5">
-                  <input type="checkbox" checked={selectedCats.includes(cat)} onChange={() => toggleCat(cat)} className="w-4 h-4 rounded accent-primary cursor-pointer" />
-                  <span className={`text-sm font-medium transition-colors ${selectedCats.includes(cat) ? "text-primary font-semibold" : "text-slate-600 group-hover:text-slate-900"}`}>{cat}</span>
-                </div>
-                <span className="text-[10px] font-bold bg-slate-50 text-slate-400 px-1.5 py-0.5 rounded-full">{ROOMS.filter((r) => r.category === cat).length}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Rating */}
-        <div className="px-5 py-5 border-b border-slate-100">
-          <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Guest rating</h4>
-          <div className="space-y-2.5">
-            {[{ label: "Exceptional 4.5+", value: 4.5 }, { label: "Very good 4.0+", value: 4.0 }, { label: "Good 3.5+", value: 3.5 }, { label: "Any", value: 0 }].map(({ label, value }) => (
-              <label key={label} className="flex items-center gap-2.5 cursor-pointer group">
-                <input type="radio" name="rating" checked={minRating === value} onChange={() => setMinRating(value)} className="accent-primary cursor-pointer" />
-                <span className={`text-sm font-medium transition-colors ${minRating === value ? "text-primary font-semibold" : "text-slate-600 group-hover:text-slate-900"}`}>{label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Amenities */}
-        <div className="px-5 py-5">
-          <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Amenities</h4>
-          <div className="flex flex-wrap gap-2">
-            {ALL_AMENITIES.map((a) => (
-              <button key={a} type="button" onClick={() => toggleAmenity(a)}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${
-                  selectedAmenities.includes(a) ? "bg-primary border-primary text-white" : "border-slate-200 text-slate-600 hover:border-primary/40 hover:text-primary"
-                }`}>{a}</button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </aside>
-  );
+  // Client-side sort (data already fetched from API)
+  const displayed = [...hotels]
+    .filter(h => (parseFloat(h.rating) || 0) >= minRating)
+    .sort((a, b) => {
+      if (sort === "rating_desc") return (parseFloat(b.rating) || 0) - (parseFloat(a.rating) || 0);
+      if (sort === "name_asc")   return a.name.localeCompare(b.name);
+      return 0;
+    });
 
   return (
     <div className="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
       <Navbar />
 
-      {/* Refined search bar */}
-      <div className="bg-white border-b border-slate-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      {/* Sticky search bar */}
+      <div className="bg-white border-b border-slate-100 shadow-sm sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <form onSubmit={handleSearch} className="flex flex-wrap gap-2 items-end">
             <div className="flex flex-col gap-1 flex-1 min-w-36">
               <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Destination</label>
-              <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-primary transition-colors">
-                <span className="material-symbols-outlined text-slate-400 text-sm">location_on</span>
-                <input value={sb.location} onChange={(e) => setSb({ ...sb, location: e.target.value })} placeholder="Where to?"
+              <div className="flex items-center gap-2 border border-slate-200 rounded-xl px-3 py-2.5 focus-within:border-blue-500 transition-colors">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/>
+                </svg>
+                <input value={sb.location} onChange={e => setSb({...sb, location: e.target.value})}
+                  placeholder="Where to?"
                   className="text-sm font-semibold bg-transparent outline-none text-slate-900 placeholder:text-slate-400 flex-1 min-w-0" />
               </div>
             </div>
-            <div className="flex flex-col gap-1 min-w-64">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Dates</label>
-              <DateRangePicker
-                checkIn={sb.checkIn}
-                checkOut={sb.checkOut}
-                onChange={({ checkIn, checkOut }) => setSb({ ...sb, checkIn, checkOut })}
-                compact
-              />
+            <div className="flex flex-col gap-1 min-w-48">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Check-in</label>
+              <input type="date" value={sb.checkIn} min={new Date().toISOString().split("T")[0]}
+                onChange={e => setSb({...sb, checkIn: e.target.value})}
+                className="border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 transition-colors bg-white" />
             </div>
-            <div className="flex flex-col gap-1 min-w-52">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Guests</label>
-              <GuestsPicker
-                adults={sb.adults}
-                children={sb.children}
-                rooms={sb.rooms}
-                pets={sb.pets}
-                onChange={({ adults, children, rooms, pets }) => setSb({ ...sb, adults, children, rooms, pets })}
-              />
+            <div className="flex flex-col gap-1 min-w-48">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Check-out</label>
+              <input type="date" value={sb.checkOut} min={sb.checkIn || new Date().toISOString().split("T")[0]}
+                onChange={e => setSb({...sb, checkOut: e.target.value})}
+                className="border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 outline-none focus:border-blue-500 transition-colors bg-white" />
             </div>
-            <button type="submit" className="bg-primary text-white px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary/90 active:scale-95 transition-all shadow-md shadow-primary/20">
-              <span className="material-symbols-outlined text-sm">search</span>Update
+            <button type="submit"
+              className="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-blue-700 active:scale-95 transition-all shadow-md shadow-blue-200">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <circle cx="11" cy="11" r="7"/><line x1="17" y1="17" x2="22" y2="22"/>
+              </svg>
+              Search
             </button>
           </form>
         </div>
       </div>
 
-      <main className="flex-grow max-w-7xl mx-auto px-6 py-8 w-full">
-        {/* Mobile filter button */}
-        <div className="flex items-center justify-between mb-5 md:hidden">
-          <div>
-            <h1 className="font-extrabold text-slate-900">{initLocation ? `Rooms in ${initLocation}` : "All Rooms"}</h1>
-            <p className="text-sm text-slate-400">{filtered.length} found</p>
-          </div>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="flex items-center gap-2 border border-slate-200 bg-white px-4 py-2 rounded-xl text-sm font-bold text-slate-700 shadow-sm">
-            <span className="material-symbols-outlined text-sm">tune</span>
-            Filters {hasFilters && <span className="bg-primary text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">{selectedCats.length + selectedAmenities.length}</span>}
-          </button>
-        </div>
-
+      <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
         <div className="flex gap-8">
-          {/* Sidebar — desktop always, mobile toggle */}
-          <div className={`${sidebarOpen ? "block" : "hidden"} md:block`}>
-            <Sidebar />
-          </div>
 
-          {/* Results */}
-          <div className="flex-1 min-w-0">
-            {/* Results header */}
-            <div className="hidden md:flex items-center justify-between mb-5">
-              <div>
-                <h1 className="text-xl font-extrabold text-slate-900">
-                  {initLocation ? `Rooms in ${initLocation}` : "All Available Rooms"}
-                </h1>
-                <p className="text-sm text-slate-400 mt-0.5">
-                  {filtered.length} room{filtered.length !== 1 ? "s" : ""} found
-                  {initCheckIn && initCheckOut ? ` · ${initCheckIn} → ${initCheckOut}` : ""}
-                  {initAdults > 0 ? ` · ${initAdults + initChildren} guest${initAdults + initChildren !== 1 ? "s" : ""}` : ""}
-                </p>
+          {/* Sidebar */}
+          <aside className={`w-64 shrink-0 ${sidebarOpen ? "block" : "hidden"} md:block`}>
+            <div className="sticky top-28 bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+              <div className="px-5 py-4 border-b border-slate-100">
+                <h3 className="font-extrabold text-sm text-slate-900">Filters</h3>
               </div>
-              <div className="flex items-center gap-3">
-                {/* View toggle */}
-                <div className="flex items-center gap-1 border border-slate-200 rounded-lg p-1 bg-white">
-                  <button onClick={() => setView("list")} className={`p-1.5 rounded-md transition-all ${view === "list" ? "bg-primary text-white" : "text-slate-400 hover:text-slate-700"}`}>
-                    <span className="material-symbols-outlined text-sm">view_list</span>
-                  </button>
-                  <button onClick={() => setView("grid")} className={`p-1.5 rounded-md transition-all ${view === "grid" ? "bg-primary text-white" : "text-slate-400 hover:text-slate-700"}`}>
-                    <span className="material-symbols-outlined text-sm">grid_view</span>
-                  </button>
-                </div>
-                {/* Sort */}
-                <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2">
-                  <span className="material-symbols-outlined text-slate-400 text-sm">sort</span>
-                  <select value={sort} onChange={(e) => setSort(e.target.value)}
-                    className="text-sm font-bold bg-transparent outline-none cursor-pointer text-slate-700">
-                    {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-                  </select>
+              <div className="px-5 py-5">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Guest rating</h4>
+                <div className="space-y-2.5">
+                  {[{label: "Exceptional 4.5+", value: 4.5}, {label: "Very good 4.0+", value: 4.0}, {label: "Good 3.5+", value: 3.5}, {label: "Any", value: 0}].map(({label, value}) => (
+                    <label key={label} className="flex items-center gap-2.5 cursor-pointer group">
+                      <input type="radio" name="rating" checked={minRating === value}
+                        onChange={() => setMinRating(value)} className="accent-blue-600 cursor-pointer" />
+                      <span className={`text-sm font-medium ${minRating === value ? "text-blue-600 font-semibold" : "text-slate-600 group-hover:text-slate-900"}`}>{label}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
+          </aside>
 
-            {filtered.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-slate-100 py-24 text-center">
-                <span className="material-symbols-outlined text-5xl text-slate-200 block mb-4">search_off</span>
-                <p className="font-bold text-slate-500 mb-2">No rooms match your filters</p>
-                <button onClick={clearFilters} className="text-primary text-sm font-semibold hover:underline">Clear all filters</button>
+          {/* Results */}
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h1 className="text-xl font-extrabold text-slate-900">
+                  {initLocation ? `Hotels in ${initLocation}` : "Search for a destination"}
+                </h1>
+                <p className="text-sm text-slate-400 mt-0.5">
+                  {loading ? "Searching…" : `${displayed.length} hotel${displayed.length !== 1 ? "s" : ""} found`}
+                  {initCheckIn && initCheckOut ? ` · ${initCheckIn} → ${initCheckOut}` : ""}
+                </p>
               </div>
-            ) : view === "list" ? (
+              <div className="flex items-center gap-2">
+                <button onClick={() => setSidebarOpen(v => !v)} className="md:hidden border border-slate-200 bg-white px-3 py-2 rounded-xl text-sm font-bold text-slate-700">
+                  Filters
+                </button>
+                <select value={sort} onChange={e => setSort(e.target.value)}
+                  className="border border-slate-200 bg-white rounded-xl px-3 py-2 text-sm font-bold text-slate-700 outline-none cursor-pointer">
+                  {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {/* Empty state — no destination typed */}
+            {!initLocation && !loading && (
+              <div className="bg-white rounded-2xl border border-slate-100 py-24 text-center">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" className="mx-auto mb-4">
+                  <circle cx="11" cy="11" r="7"/><line x1="17" y1="17" x2="22" y2="22"/>
+                </svg>
+                <p className="font-bold text-slate-500 mb-1">Start your search</p>
+                <p className="text-sm text-slate-400">Enter a destination above to find available hotels</p>
+              </div>
+            )}
+
+            {/* Error */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+                <p className="text-red-600 font-semibold">{error}</p>
+                <button onClick={() => fetchHotels(initLocation)} className="mt-3 text-sm text-red-500 hover:underline">Try again</button>
+              </div>
+            )}
+
+            {/* Skeleton loaders */}
+            {loading && hotels.length === 0 && (
               <div className="space-y-4">
-                {filtered.map((room, i) => (
-                  <article key={room.id}
-                    className="bg-white rounded-2xl border border-slate-100 hover:border-primary/20 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col sm:flex-row group animate-fade-up"
+                {[1,2,3,4].map(i => <HotelCardSkeleton key={i} />)}
+              </div>
+            )}
+
+            {/* No results */}
+            {!loading && !error && initLocation && displayed.length === 0 && (
+              <div className="bg-white rounded-2xl border border-slate-100 py-24 text-center">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" className="mx-auto mb-4">
+                  <circle cx="11" cy="11" r="7"/><line x1="17" y1="17" x2="22" y2="22"/>
+                  <line x1="8" y1="8" x2="14" y2="14" stroke="#fca5a5"/>
+                </svg>
+                <p className="font-bold text-slate-500 mb-2">No hotels found for "{initLocation}"</p>
+                <p className="text-sm text-slate-400">Try a different city or country name</p>
+              </div>
+            )}
+
+            {/* Hotel cards */}
+            {displayed.length > 0 && (
+              <div className="space-y-4">
+                {displayed.map((hotel, i) => (
+                  <article key={hotel.id}
+                    className="bg-white rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col sm:flex-row group"
                     style={{ animationDelay: `${Math.min(i, 6) * 50}ms` }}>
+
                     {/* Image */}
-                    <div className="sm:w-60 h-52 sm:h-auto relative overflow-hidden shrink-0 img-zoom">
-                      <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
-                      <button type="button" onClick={() => toggleWishlist(room)}
+                    <div className="sm:w-64 h-52 sm:h-auto relative overflow-hidden shrink-0 bg-slate-100">
+                      {hotel.images?.[0]?.image_url ? (
+                        <img src={hotel.images[0].image_url} alt={hotel.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.2">
+                            <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
+                          </svg>
+                        </div>
+                      )}
+                      <button type="button" onClick={() => wishlistToggle(hotel.id)}
                         className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow hover:scale-110 transition-transform">
-                        <span className={`material-symbols-outlined text-sm ${isSaved(room.id) ? "text-rose-500" : "text-slate-300"}`}
-                          style={{ fontVariationSettings: isSaved(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24"
+                          fill={isSaved(hotel.id) ? "#f43f5e" : "none"}
+                          stroke={isSaved(hotel.id) ? "#f43f5e" : "#94a3b8"} strokeWidth="2">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
                       </button>
-                      <div className="absolute bottom-3 left-3">
-                        <span className="bg-white/95 text-primary text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">{room.category}</span>
-                      </div>
                     </div>
 
                     {/* Content */}
@@ -297,130 +292,56 @@ export default function SearchResults() {
                       <div>
                         <div className="flex items-start justify-between gap-3 mb-2">
                           <div>
-                            <h2 className="text-base font-extrabold text-slate-900 group-hover:text-primary transition-colors leading-tight mb-1">{room.name}</h2>
-                            <StarRating rating={room.rating} />
-                            <p className="text-[10px] text-slate-400 font-medium mt-0.5">{room.reviews} reviews</p>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <span className="text-[10px] text-slate-400 block">From</span>
-                            <span className="text-2xl font-extrabold text-primary">${room.price_per_night}</span>
-                            <span className="text-[10px] text-slate-400 block">/night</span>
-                          </div>
-                        </div>
-
-                        <p className="text-sm text-slate-500 mt-2 line-clamp-2 leading-relaxed">{room.description}</p>
-
-                        <div className="flex flex-wrap gap-1.5 mt-3">
-                          {room.tags.map((tag) => (
-                            <span key={tag} className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${TAG_COLORS[tag] || "bg-slate-50 border-slate-200 text-slate-600"}`}>{tag}</span>
-                          ))}
-                        </div>
-
-                        <div className="flex flex-wrap gap-4 mt-3 text-slate-400">
-                          {room.amenities.map((a, idx) => (
-                            <div key={a} className="flex items-center gap-1">
-                              <span className="material-symbols-outlined text-xs">{room.amenityIcons[idx]}</span>
-                              <span className="text-[10px] font-semibold">{a}</span>
-                            </div>
-                          ))}
-                          <div className="flex items-center gap-1">
-                            <span className="material-symbols-outlined text-xs">group</span>
-                            <span className="text-[10px] font-semibold">Up to {room.capacity}</span>
+                            <h2 className="text-base font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight mb-1">
+                              {hotel.name}
+                            </h2>
+                            <StarRating rating={hotel.rating} />
+                            <p className="text-xs text-slate-400 font-medium mt-1">
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="inline mr-1">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                              </svg>
+                              {[hotel.city, hotel.country].filter(Boolean).join(", ")}
+                            </p>
                           </div>
                         </div>
+                        {hotel.description && (
+                          <p className="text-sm text-slate-500 mt-2 line-clamp-2 leading-relaxed">{hotel.description}</p>
+                        )}
                       </div>
 
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
                         <div className="flex items-center gap-1.5 text-emerald-600">
-                          <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="#10b981" stroke="none">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                          </svg>
                           <span className="text-xs font-semibold">Free cancellation</span>
                         </div>
                         <div className="flex gap-2">
-                          <Link to={`/room-details/${room.id}`} state={{ room }}
-                            className="border border-slate-200 text-slate-700 hover:border-primary hover:text-primary px-4 py-2 rounded-xl text-sm font-bold transition-all">Details</Link>
-                          <button type="button" onClick={() => handleBook(room)}
-                            className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 active:scale-95 transition-all shadow-md shadow-primary/20">Reserve</button>
+                          <button type="button" onClick={() => handleBook(hotel)}
+                            className="bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 active:scale-95 transition-all shadow-md shadow-blue-200">
+                            See rooms
+                          </button>
                         </div>
                       </div>
                     </div>
                   </article>
                 ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {filtered.map((room, i) => (
-                  <div key={room.id} className="bg-white rounded-2xl border border-slate-100 hover:border-primary/20 hover:shadow-xl overflow-hidden transition-all duration-300 group card-hover animate-fade-up"
-                    style={{ animationDelay: `${Math.min(i, 6) * 50}ms` }}>
-                    <div className="aspect-[4/3] overflow-hidden relative img-zoom">
-                      <img src={room.image} alt={room.name} className="w-full h-full object-cover" />
-                      <button type="button" onClick={() => toggleWishlist(room)}
-                        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow hover:scale-110 transition-transform">
-                        <span className={`material-symbols-outlined text-sm ${isSaved(room.id) ? "text-rose-500" : "text-slate-300"}`}
-                          style={{ fontVariationSettings: isSaved(room.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
-                      </button>
-                      <div className="absolute bottom-3 left-3">
-                        <span className="bg-white/95 text-primary text-[10px] font-bold px-2.5 py-1 rounded-full">{room.category}</span>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <h3 className="font-extrabold text-slate-900 text-sm group-hover:text-primary transition-colors leading-tight">{room.name}</h3>
-                        <div className="text-right shrink-0">
-                          <span className="text-lg font-extrabold text-primary">${room.price_per_night}</span>
-                          <span className="text-[10px] text-slate-400 block">/night</span>
-                        </div>
-                      </div>
-                      <StarRating rating={room.rating} />
-                      <div className="flex flex-wrap gap-1.5 mt-3 mb-4">
-                        {room.tags.slice(0,2).map((tag) => (
-                          <span key={tag} className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${TAG_COLORS[tag] || "bg-slate-50 border-slate-200 text-slate-600"}`}>{tag}</span>
-                        ))}
-                      </div>
-                      <div className="flex gap-2 pt-3 border-t border-slate-100">
-                        <Link to={`/room-details/${room.id}`} state={{ room }} className="flex-1 border border-slate-200 text-center text-slate-700 hover:border-primary hover:text-primary py-2 rounded-xl text-xs font-bold transition-all">Details</Link>
-                        <button type="button" onClick={() => handleBook(room)} className="flex-1 bg-primary text-white py-2 rounded-xl text-xs font-bold hover:bg-primary/90 transition-all">Reserve</button>
-                      </div>
-                    </div>
+
+                {/* Load more */}
+                {hasMore && (
+                  <div className="text-center pt-4">
+                    <button onClick={() => fetchHotels(initLocation, page + 1, true)}
+                      disabled={loading}
+                      className="bg-white border border-slate-200 text-slate-700 px-8 py-3 rounded-xl font-bold text-sm hover:border-blue-400 hover:text-blue-600 transition-all disabled:opacity-50">
+                      {loading ? "Loading…" : "Load more hotels"}
+                    </button>
                   </div>
-                ))}
+                )}
               </div>
             )}
           </div>
         </div>
       </main>
-
-      {/* Auth Modal */}
-      {authModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setAuthModal(null)} />
-          <div className="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden animate-scale-in">
-            <div className="h-36 overflow-hidden relative">
-              <img src={authModal.image} alt={authModal.name} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              <button onClick={() => setAuthModal(null)} className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-slate-600 text-sm">close</span>
-              </button>
-              <div className="absolute bottom-3 left-3">
-                <span className="text-[10px] font-bold bg-primary text-white px-2 py-0.5 rounded-full uppercase">{authModal.category}</span>
-              </div>
-            </div>
-            <div className="p-6">
-              <h3 className="text-lg font-extrabold text-slate-900 mb-1">{authModal.name}</h3>
-              <p className="text-sm text-slate-500 mb-5">Sign in to reserve this room and manage your bookings.</p>
-              <div className="space-y-2.5">
-                <Link to="/login" state={{ from: `/search?${searchParams.toString()}` }}
-                  className="block w-full bg-primary text-white py-3 rounded-xl font-bold text-sm text-center hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
-                  Sign in to continue
-                </Link>
-                <Link to="/register" className="block w-full border border-slate-200 text-slate-700 py-3 rounded-xl font-bold text-sm text-center hover:bg-slate-50 transition-all">
-                  Create a free account
-                </Link>
-              </div>
-              <button onClick={() => setAuthModal(null)} className="mt-3 w-full text-center text-xs text-slate-400 hover:text-slate-600 transition-colors">Continue browsing</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>
