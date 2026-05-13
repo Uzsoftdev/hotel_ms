@@ -233,8 +233,6 @@ export default function Login() {
           <div style={{ ...fadeUp(.26), display: "flex", flexDirection: "column", gap: 8 }}>
             {[
               { label: "Google", glyph: "G", color: "#EA4335" },
-              { label: "Apple",  glyph: "",  color: "#1a1a1a" },
-              { label: "Meta",   glyph: "f", color: "#1877F2" },
             ].map(({ label, glyph, color }) => (
               <button
                 key={label}
