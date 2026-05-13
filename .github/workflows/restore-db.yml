@@ -25,7 +25,7 @@ jobs:
       - name: Download dump from GitHub release
         run: |
           curl -L -o /tmp/hms_dump.sql.gz \
-            -H "Authorization: Bearer ${{ secrets.DEPLOY_TOKEN || github.token }}" \
+            -H "Authorization: Bearer ${{ github.token }}" \
             -H "Accept: application/octet-stream" \
             "https://api.github.com/repos/Uzsoftdev/hotel_ms/releases/assets/419132826"
           echo "Downloaded: $(du -sh /tmp/hms_dump.sql.gz | cut -f1)"
