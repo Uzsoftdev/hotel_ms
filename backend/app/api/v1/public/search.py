@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.dependencies import get_read_db
 from app.models.hotel import Hotel
@@ -26,7 +26,8 @@ def browse_hotels(
     db: Session = Depends(get_read_db),
 ) -> List[HotelResponse]:
     """Browse all hotels with optional filters. No search query required."""
-    query = db.query(Hotel)
+    from app.models.hotel_image import HotelImage  # ensure model registered
+    query = db.query(Hotel).options(joinedload(Hotel.images))
     if country:
         query = query.filter(Hotel.country.ilike(f"%{country}%"))
     if city:
@@ -34,7 +35,8 @@ def browse_hotels(
     if min_rating is not None:
         query = query.filter(Hotel.rating >= min_rating)
     offset = (page - 1) * per_page
-    return query.order_by(Hotel.rating.desc()).offset(offset).limit(per_page).all()
+    hotels = query.order_by(Hotel.rating.desc()).offset(offset).limit(per_page).all()
+    return hotels
 
 
 
@@ -57,12 +59,13 @@ def search_hotels_endpoint(
     Full-text hotel search. Tries Meilisearch first; falls back to
     Postgres ILIKE when Meilisearch is unreachable (e.g. not deployed).
     """
+    from app.models.hotel_image import HotelImage  # ensure model registered
     hits = search_hotels(q, city=city)
 
     if hits:
         # Meilisearch path
         hotel_ids = [h["id"] for h in hits]
-        query = db.query(Hotel).filter(Hotel.id.in_(hotel_ids))
+        query = db.query(Hotel).options(joinedload(Hotel.images)).filter(Hotel.id.in_(hotel_ids))
     else:
         # Postgres fallback — handles both plain queries and "City, Country" format
         parts = [p.strip() for p in q.split(",") if p.strip()]
@@ -79,11 +82,11 @@ def search_hotels_endpoint(
                     Hotel.country.ilike(pat),
                     Hotel.description.ilike(pat),
                 ))
-            query = db.query(Hotel).filter(and_(*conditions))
+            query = db.query(Hotel).options(joinedload(Hotel.images)).filter(and_(*conditions))
         else:
             # Single term — match anywhere
             pattern = f"%{q}%"
-            query = db.query(Hotel).filter(
+            query = db.query(Hotel).options(joinedload(Hotel.images)).filter(
                 Hotel.name.ilike(pattern)
                 | Hotel.city.ilike(pattern)
                 | Hotel.country.ilike(pattern)
