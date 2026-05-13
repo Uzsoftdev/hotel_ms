@@ -74,16 +74,21 @@ export default function SearchResults() {
   const { isSaved, toggle: wishlistToggle } = useWishlist();
 
   const fetchHotels = useCallback(async (location, pg = 1, append = false) => {
-    if (!location.trim()) {
-      setHotels([]);
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
-      const res = await api.get("/public/search/hotels", {
-        params: { q: location, per_page: 20, page: pg },
-      });
+      let res;
+      if (location.trim()) {
+        // Search by destination
+        res = await api.get("/public/search/hotels", {
+          params: { q: location, per_page: 20, page: pg },
+        });
+      } else {
+        // No destination — browse all hotels (top rated first)
+        res = await api.get("/public/search/hotels/browse", {
+          params: { per_page: 20, page: pg },
+        });
+      }
       const data = Array.isArray(res.data) ? res.data : res.data?.items || [];
       setHotels(prev => append ? [...prev, ...data] : data);
       setHasMore(data.length === 20);
@@ -201,7 +206,7 @@ export default function SearchResults() {
             <div className="flex items-center justify-between mb-5">
               <div>
                 <h1 className="text-xl font-extrabold text-slate-900">
-                  {initLocation ? `Hotels in ${initLocation}` : "Search for a destination"}
+                  {initLocation ? `Hotels in ${initLocation}` : "Top-Rated Hotels"}
                 </h1>
                 <p className="text-sm text-slate-400 mt-0.5">
                   {loading ? "Searching…" : `${displayed.length} hotel${displayed.length !== 1 ? "s" : ""} found`}
@@ -219,16 +224,8 @@ export default function SearchResults() {
               </div>
             </div>
 
-            {/* Empty state — no destination typed */}
-            {!initLocation && !loading && (
-              <div className="bg-white rounded-2xl border border-slate-100 py-24 text-center">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" className="mx-auto mb-4">
-                  <circle cx="11" cy="11" r="7"/><line x1="17" y1="17" x2="22" y2="22"/>
-                </svg>
-                <p className="font-bold text-slate-500 mb-1">Start your search</p>
-                <p className="text-sm text-slate-400">Enter a destination above to find available hotels</p>
-              </div>
-            )}
+            {/* No longer shows 'start your search' - browse all if no destination */}
+
 
             {/* Error */}
             {error && (
@@ -267,16 +264,21 @@ export default function SearchResults() {
 
                     {/* Image */}
                     <div className="sm:w-64 h-52 sm:h-auto relative overflow-hidden shrink-0 bg-slate-100">
-                      {hotel.images?.[0]?.image_url ? (
-                        <img src={hotel.images[0].image_url} alt={hotel.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.2">
-                            <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
-                          </svg>
-                        </div>
-                      )}
+                      {(() => {
+                        const primaryImg = hotel.images?.find(img => img.is_primary) || hotel.images?.[0];
+                        return primaryImg ? (
+                          <img src={primaryImg.image_url} alt={hotel.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={e => { e.target.style.display='none'; }}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.2">
+                              <rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>
+                            </svg>
+                          </div>
+                        );
+                      })()}
                       <button type="button" onClick={() => wishlistToggle(hotel.id)}
                         className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow hover:scale-110 transition-transform">
                         <svg width="14" height="14" viewBox="0 0 24 24"

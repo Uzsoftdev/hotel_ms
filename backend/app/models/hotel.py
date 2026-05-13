@@ -25,6 +25,7 @@ class Hotel(Base):
     rating = Column(Numeric(3, 2), nullable=False, default=0.0)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
+    images = relationship("HotelImage", back_populates="hotel", lazy="selectin")
     hotel_facilities = relationship("HotelFacility", back_populates="hotel")
     facilities = relationship(
         "Facility",

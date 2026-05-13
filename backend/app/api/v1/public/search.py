@@ -16,6 +16,28 @@ from app.services.search import search_hotels
 router = APIRouter(prefix="/search", tags=["Public Search"])
 
 
+@router.get("/hotels/browse", response_model=List[HotelResponse])
+def browse_hotels(
+    country: Optional[str] = Query(None, description="Filter by country"),
+    city: Optional[str] = Query(None, description="Filter by city"),
+    min_rating: Optional[float] = Query(None, ge=0, le=5),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_read_db),
+) -> List[HotelResponse]:
+    """Browse all hotels with optional filters. No search query required."""
+    query = db.query(Hotel)
+    if country:
+        query = query.filter(Hotel.country.ilike(f"%{country}%"))
+    if city:
+        query = query.filter(Hotel.city.ilike(f"%{city}%"))
+    if min_rating is not None:
+        query = query.filter(Hotel.rating >= min_rating)
+    offset = (page - 1) * per_page
+    return query.order_by(Hotel.rating.desc()).offset(offset).limit(per_page).all()
+
+
+
 class RoomSearchResponse(RoomResponse):
     total_price: Decimal
 

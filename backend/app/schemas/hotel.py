@@ -1,8 +1,16 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict
+
+
+class HotelImageResponse(BaseModel):
+    id: int
+    image_url: str
+    is_primary: bool
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class HotelBase(BaseModel):
@@ -40,5 +48,6 @@ class HotelUpdate(BaseModel):
 class HotelResponse(HotelBase):
     id: int
     created_at: datetime
+    images: List[HotelImageResponse] = []
 
     model_config = ConfigDict(from_attributes=True)
