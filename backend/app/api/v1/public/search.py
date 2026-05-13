@@ -42,14 +42,31 @@ def search_hotels_endpoint(
         hotel_ids = [h["id"] for h in hits]
         query = db.query(Hotel).filter(Hotel.id.in_(hotel_ids))
     else:
-        # Postgres fallback — works without Meilisearch
-        pattern = f"%{q}%"
-        query = db.query(Hotel).filter(
-            Hotel.name.ilike(pattern)
-            | Hotel.city.ilike(pattern)
-            | Hotel.country.ilike(pattern)
-            | Hotel.description.ilike(pattern)
-        )
+        # Postgres fallback — handles both plain queries and "City, Country" format
+        parts = [p.strip() for p in q.split(",") if p.strip()]
+
+        if len(parts) > 1:
+            # "City, Country" style — each part must match somewhere
+            from sqlalchemy import and_, or_
+            conditions = []
+            for part in parts:
+                pat = f"%{part}%"
+                conditions.append(or_(
+                    Hotel.name.ilike(pat),
+                    Hotel.city.ilike(pat),
+                    Hotel.country.ilike(pat),
+                    Hotel.description.ilike(pat),
+                ))
+            query = db.query(Hotel).filter(and_(*conditions))
+        else:
+            # Single term — match anywhere
+            pattern = f"%{q}%"
+            query = db.query(Hotel).filter(
+                Hotel.name.ilike(pattern)
+                | Hotel.city.ilike(pattern)
+                | Hotel.country.ilike(pattern)
+                | Hotel.description.ilike(pattern)
+            )
 
     # Apply optional filters
     if city:

@@ -82,7 +82,8 @@ export default function BookingSearchBar() {
   }
 
   function selectSuggestion(hotel) {
-    setDestination(`${hotel.city}, ${hotel.country}`);
+    // Use just the city so the search ILIKE query matches the city column
+    setDestination(hotel.city || hotel.name);
     setShowSuggestions(false);
     setSuggestions([]);
     setActiveSug(-1);
