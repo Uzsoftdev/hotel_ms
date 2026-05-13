@@ -130,7 +130,9 @@
         },
         {
           "name": "Sofia Laurent",
-          "role": "Chief Executive Officer"
+          "role": "Chief Executive Officer",
+          "image": "https://ui-avatars.com/api/?name=Sofia+Laurent&background=2563eb&color=fff&size=128",
+          "linkedin": "https://linkedin.com"
         }
       ]
     },
