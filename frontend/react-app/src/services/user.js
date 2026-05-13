@@ -9,6 +9,8 @@ export const uploadProfilePhoto = (file) => {
   return api.post('/user/profile/photo', form, { headers: { 'Content-Type': 'multipart/form-data' } });
 };
 
+export const deleteProfilePhoto = () => api.delete('/user/profile/photo');
+
 export const getNotifications = () => api.get('/user/notifications/');
 export const markNotificationRead = (id) => api.put(`/user/notifications/${id}/read`);
 export const markAllRead = () => api.post('/user/notifications/read-all');

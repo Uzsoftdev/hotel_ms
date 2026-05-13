@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import UserLayout from "./Layout/UserLayout";
-import { getProfile, updateProfile, changePassword, uploadProfilePhoto } from "../../services/user";
+import { getProfile, updateProfile, changePassword, uploadProfilePhoto, deleteProfilePhoto } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
 
 const SECTIONS = [
@@ -49,6 +49,20 @@ export default function ProfileManagement() {
     } finally {
       setUploadingPhoto(false);
       e.target.value = "";
+    }
+  }
+
+  async function handleRemovePhoto() {
+    setUploadingPhoto(true);
+    try {
+      await deleteProfilePhoto();
+      setProfile((p) => ({ ...p, photo_url: "" }));
+      await refreshProfile();
+      flash("Profile photo removed.");
+    } catch (ex) {
+      flash(ex.response?.data?.detail || "Failed to remove photo.", true);
+    } finally {
+      setUploadingPhoto(false);
     }
   }
 
@@ -156,6 +170,16 @@ export default function ProfileManagement() {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 14 }}>Click to change</div>
                     <div className="ah-muted" style={{ fontSize: 13, marginTop: 2 }}>JPG, PNG or WebP · Max 5 MB</div>
+                    {profile.photo_url && !uploadingPhoto && (
+                      <button
+                        type="button"
+                        onClick={handleRemovePhoto}
+                        style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, color: "var(--error)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete</span>
+                        Remove photo
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

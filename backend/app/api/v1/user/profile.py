@@ -82,6 +82,22 @@ def change_password(
     update_user(db, user.id, {"hashed_password": hash_password(data.new_password)})
 
 
+@router.delete("/photo", response_model=ProfileResponse)
+def delete_photo(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+) -> Any:
+    from app.services.cache import cache_delete, user_profile_key
+    old_url = getattr(user, "photo_url", None)
+    if old_url:
+        delete_avatar(old_url)
+    updated = update_user(db, user.id, {"photo_url": None})
+    if not updated:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    cache_delete(user_profile_key(user.id))
+    return updated
+
+
 @router.post("/photo", response_model=ProfileResponse)
 async def upload_photo(
     file: UploadFile = File(...),
