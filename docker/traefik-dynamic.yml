@@ -1,38 +1,30 @@
 http:
   middlewares:
-    # Strip /storage prefix before forwarding to MinIO
     minio-strip:
       stripPrefix:
         prefixes:
           - "/storage"
 
-    # Open the circuit when >30% of requests are network errors or >25% return 5xx.
     circuit-breaker:
       circuitBreaker:
         expression: "NetworkErrorRatio() > 0.30 || ResponseCodeRatio(500, 600, 0, 600) > 0.25"
 
-    # Retry failed requests up to 3 times with exponential backoff.
     retry:
       retry:
         attempts: 3
         initialInterval: 100ms
 
-    # Redirect www → non-www
     www-redirect:
       redirectRegex:
         regex: "^https://www\\.allstay\\.rest/(.*)"
         replacement: "https://allstay.rest/${1}"
         permanent: true
 
-  # Static routes — bypasses the Traefik Swarm provider which fails on this server
-  # due to Docker API version mismatch (Traefik sends 1.24, daemon requires >=1.40).
-  # Docker Swarm DNS names (hotel_backend, hotel_nginx_static) are stable service VIPs.
   routers:
     backend:
       rule: "Host(`allstay.rest`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
       entryPoints: ["websecure"]
-      tls:
-        certResolver: letsencrypt
+      tls: {}
       service: backend-svc
       middlewares: ["www-redirect", "circuit-breaker", "retry"]
       priority: 10
@@ -40,8 +32,7 @@ http:
     minio:
       rule: "Host(`allstay.rest`) && PathPrefix(`/storage`)"
       entryPoints: ["websecure"]
-      tls:
-        certResolver: letsencrypt
+      tls: {}
       service: minio-svc
       middlewares: ["minio-strip"]
       priority: 20
@@ -49,8 +40,7 @@ http:
     frontend:
       rule: "Host(`allstay.rest`) || Host(`www.allstay.rest`)"
       entryPoints: ["websecure"]
-      tls:
-        certResolver: letsencrypt
+      tls: {}
       service: frontend-svc
       middlewares: ["www-redirect"]
       priority: 1
@@ -73,3 +63,14 @@ http:
         servers:
           - url: "http://hotel_minio:9000"
         passHostHeader: false
+
+# Certbot-issued certs (mounted at /certs, renewed monthly by certbot.yml)
+tls:
+  certificates:
+    - certFile: /certs/cert.pem
+      keyFile: /certs/key.pem
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /certs/cert.pem
+        keyFile: /certs/key.pem
