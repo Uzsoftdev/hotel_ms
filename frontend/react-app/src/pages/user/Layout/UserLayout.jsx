@@ -61,11 +61,11 @@ function Sidebar({ open, onClose }) {
 
         {/* Browse CTA */}
         <div style={{ padding: "12px 10px 20px" }}>
-          <Link to="/rooms" onClick={onClose}
+          <Link to="/hotels" onClick={onClose}
             style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 8, background: "var(--primary-light)", color: "var(--primary)", fontSize: 14, fontWeight: 700, textDecoration: "none" }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 18 }}>search</span>
-            Browse rooms
+            Browse hotels
           </Link>
         </div>
       </aside>
@@ -91,7 +91,7 @@ export default function UserLayout({ children }) {
           </button>
           <div className="hidden lg:block" />
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <Link to="/rooms"
+            <Link to="/hotels"
               style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 8, background: "var(--primary-light)", color: "var(--primary)", fontSize: 13, fontWeight: 700, textDecoration: "none" }}
               className="hidden sm:inline-flex"
             >

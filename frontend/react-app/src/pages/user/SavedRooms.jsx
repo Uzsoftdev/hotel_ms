@@ -86,7 +86,7 @@ export default function SavedRooms() {
             </p>
           </div>
           {savedRooms.length > 0 && (
-            <Link to="/rooms" className="ah-btn ah-btn-primary ah-btn-sm">
+            <Link to="/hotels" className="ah-btn ah-btn-primary ah-btn-sm">
               <span className="material-symbols-outlined text-sm">search</span>
               Browse more
             </Link>
@@ -103,9 +103,9 @@ export default function SavedRooms() {
               <p className="font-bold text-lg" style={{ color: "var(--text)" }}>No saved rooms yet</p>
               <p className="ah-muted text-sm mt-1">Tap the heart icon on any room to save it here.</p>
             </div>
-            <Link to="/rooms" className="ah-btn ah-btn-primary">
+            <Link to="/hotels" className="ah-btn ah-btn-primary">
               <span className="material-symbols-outlined text-sm">hotel</span>
-              Browse rooms
+              Browse hotels
             </Link>
           </div>
         )}

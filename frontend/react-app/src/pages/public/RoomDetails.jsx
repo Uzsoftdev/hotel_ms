@@ -63,7 +63,7 @@ export default function RoomDetails() {
       <div className="min-h-screen bg-surface flex flex-col items-center justify-center gap-4 text-on-surface">
         <span className="material-symbols-outlined text-5xl text-on-surface-variant">hotel</span>
         <p className="text-lg font-semibold">Room not found.</p>
-        <Link to="/rooms" className="text-primary font-bold hover:underline">Back to Rooms</Link>
+        <Link to="/hotels" className="text-primary font-bold hover:underline">Back to Hotels</Link>
       </div>
     );
   }
@@ -141,7 +141,7 @@ export default function RoomDetails() {
       <div className="max-w-7xl mx-auto px-6 py-10">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-10">
-          <Link className="hover:text-primary transition-colors" to="/rooms">Rooms</Link>
+          <Link className="hover:text-primary transition-colors" to="/hotels">Hotels</Link>
           <span className="material-symbols-outlined text-sm">chevron_right</span>
           <span className="text-on-surface">{room.name}</span>
         </nav>

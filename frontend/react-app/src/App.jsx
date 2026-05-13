@@ -69,7 +69,7 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
-      <Route path="/rooms" element={<Rooms />} />
+      <Route path="/rooms" element={<Navigate to="/hotels" replace />} />
       <Route path="/hotels" element={<Hotels />} />
       <Route path="/booking" element={<Booking />} />
       <Route path="/search" element={<SearchResults />} />

@@ -96,7 +96,7 @@ export default function Home() {
 
               {/* CTAs */}
               <div className="flex flex-wrap items-center gap-4 mb-10 md:mb-12">
-                <Link to="/rooms" className="inline-flex items-center justify-center px-6 py-3 rounded-lg font-bold text-sm text-white" style={{ background: "#1d4ed8", textDecoration: "none" }}>
+                <Link to="/hotels" className="inline-flex items-center justify-center px-6 py-3 rounded-lg font-bold text-sm text-white" style={{ background: "#1d4ed8", textDecoration: "none" }}>
                   Check availability
                 </Link>
                 <Link to="/about" className="inline-flex items-center gap-1.5 font-semibold text-sm text-slate-900" style={{ textDecoration: "none" }}>
@@ -184,7 +184,7 @@ export default function Home() {
               <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Featured stays</h2>
               <p className="text-slate-500 mt-2 font-medium">Our most-loved rooms, loved by thousands of guests</p>
             </div>
-            <Link to="/rooms" className="hidden md:flex items-center gap-2 text-sm font-bold text-primary hover:underline">
+            <Link to="/hotels" className="hidden md:flex items-center gap-2 text-sm font-bold text-primary hover:underline">
               View all rooms <span className="material-symbols-outlined text-base">arrow_forward</span>
             </Link>
           </div>
@@ -247,7 +247,7 @@ export default function Home() {
           </div>
 
           <div className="mt-8 text-center md:hidden">
-            <Link to="/rooms" className="inline-flex items-center gap-2 border border-primary text-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary/5 transition-all">
+            <Link to="/hotels" className="inline-flex items-center gap-2 border border-primary text-primary px-6 py-3 rounded-xl font-bold text-sm hover:bg-primary/5 transition-all">
               View all rooms <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
@@ -320,7 +320,7 @@ export default function Home() {
               <p className="text-white/50 font-medium leading-relaxed mb-8 max-w-md">
                 From the moment you arrive, you'll feel the difference. Our team anticipates your every need, so you can focus on what matters — enjoying your stay.
               </p>
-              <Link to="/rooms"
+              <Link to="/hotels"
                 className="inline-flex items-center gap-2 bg-primary text-white px-7 py-3.5 rounded-xl font-bold hover:bg-primary/90 active:scale-95 transition-all shadow-lg shadow-primary/30">
                 Explore our rooms
                 <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -450,7 +450,7 @@ export default function Home() {
             Join over 50,000 guests who've discovered the allStay difference. Your extraordinary experience awaits.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/rooms"
+            <Link to="/hotels"
               className="bg-white text-primary px-8 py-4 rounded-xl font-extrabold hover:bg-white/95 active:scale-95 transition-all shadow-2xl">
               Browse rooms
             </Link>

@@ -74,7 +74,7 @@ export default function Dashboard() {
                 : <p className="ah-muted" style={{ fontSize: 14, marginTop: 6 }}>No upcoming stays. Ready to plan your next getaway?</p>
             }
           </div>
-          <Link to="/rooms" className="ah-btn ah-btn-primary" style={{ flexShrink: 0 }}>
+          <Link to="/hotels" className="ah-btn ah-btn-primary" style={{ flexShrink: 0 }}>
             <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span> New booking
           </Link>
         </div>
@@ -128,7 +128,7 @@ export default function Dashboard() {
                 </div>
                 <p style={{ fontWeight: 700, fontSize: 15, color: "var(--text)" }}>No bookings yet</p>
                 <p className="ah-muted" style={{ fontSize: 13, marginTop: 4 }}>Your booking history will appear here.</p>
-                <Link to="/rooms" className="ah-btn ah-btn-primary ah-btn-sm" style={{ marginTop: 14, display: "inline-flex" }}>Browse rooms</Link>
+                <Link to="/hotels" className="ah-btn ah-btn-primary ah-btn-sm" style={{ marginTop: 14, display: "inline-flex" }}>Browse hotels</Link>
               </div>
             ) : (
               <div style={{ overflowX: "auto" }}><table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -185,7 +185,7 @@ export default function Dashboard() {
                   </div>
                   <p style={{ fontWeight: 700, fontSize: 14 }}>No upcoming stays</p>
                   <p className="ah-muted" style={{ fontSize: 12, marginTop: 4 }}>Plan your next getaway.</p>
-                  <Link to="/rooms" className="ah-btn ah-btn-primary ah-btn-block ah-btn-sm" style={{ marginTop: 12 }}>Browse rooms</Link>
+                  <Link to="/hotels" className="ah-btn ah-btn-primary ah-btn-block ah-btn-sm" style={{ marginTop: 12 }}>Browse hotels</Link>
                 </div>
               )}
             </div>

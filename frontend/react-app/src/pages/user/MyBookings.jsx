@@ -106,7 +106,7 @@ export default function MyBookings() {
             </div>
             <p style={{ fontWeight: 800, fontSize: 16, color: "var(--text)" }}>No {tab === "all" ? "" : BADGE_LABEL[tab]?.toLowerCase()} bookings</p>
             <p className="ah-muted" style={{ fontSize: 13, marginTop: 6, marginBottom: 16 }}>Your bookings will appear here.</p>
-            <Link to="/rooms" className="ah-btn ah-btn-primary ah-btn-sm">Browse rooms</Link>
+            <Link to="/hotels" className="ah-btn ah-btn-primary ah-btn-sm">Browse rooms</Link>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
