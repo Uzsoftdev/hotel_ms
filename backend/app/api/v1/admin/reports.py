@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.dependencies import get_current_hotel, get_read_db
+from app.dependencies import get_optional_hotel, get_read_db
 from app.middleware.rbac import require_staff_or_admin
 from app.models.activity_log import ActivityLog
 from app.models.booking import Booking
@@ -22,36 +22,47 @@ def _date_range(days: int) -> tuple[date, date]:
     return start, end
 
 
+def _apply_hotel(q, model, hotel_id):
+    if hotel_id is not None:
+        q = q.filter(model.hotel_id == hotel_id)
+    return q
+
+
 @router.get("/occupancy")
 def occupancy_report(
     days: int = Query(30, ge=1, le=365),
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, end = _date_range(days)
-    total_rooms = db.query(func.count(Room.id)).filter(Room.hotel_id == hotel_id, Room.is_active == True).scalar() or 1
 
-    booked = (
+    room_q = db.query(func.count(Room.id)).filter(Room.is_active == True)
+    if hotel_id is not None:
+        room_q = room_q.filter(Room.hotel_id == hotel_id)
+    total_rooms = room_q.scalar() or 1
+
+    booked_q = (
         db.query(func.count(Booking.id))
         .filter(
-            Booking.hotel_id == hotel_id,
             Booking.status.in_(["confirmed", "completed"]),
             Booking.check_in >= start,
             Booking.check_in <= end,
         )
-        .scalar()
-    ) or 0
+    )
+    if hotel_id is not None:
+        booked_q = booked_q.filter(Booking.hotel_id == hotel_id)
+    booked = booked_q.scalar() or 0
 
     occupancy_rate = round((booked / (total_rooms * days)) * 100, 2) if total_rooms else 0
 
-    daily = (
+    daily_q = (
         db.query(Booking.check_in, func.count(Booking.id).label("bookings"))
-        .filter(Booking.hotel_id == hotel_id, Booking.check_in >= start, Booking.check_in <= end)
-        .group_by(Booking.check_in)
-        .order_by(Booking.check_in)
-        .all()
+        .filter(Booking.check_in >= start, Booking.check_in <= end)
     )
+    if hotel_id is not None:
+        daily_q = daily_q.filter(Booking.hotel_id == hotel_id)
+    daily = daily_q.group_by(Booking.check_in).order_by(Booking.check_in).all()
 
     return {
         "period_days": days,
@@ -65,34 +76,32 @@ def occupancy_report(
 @router.get("/revenue")
 def revenue_report(
     days: int = Query(30, ge=1, le=365),
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, end = _date_range(days)
 
-    total = (
+    rev_q = (
         db.query(func.sum(Payment.amount))
         .join(Booking, Booking.id == Payment.booking_id)
-        .filter(
-            Booking.hotel_id == hotel_id,
-            Payment.status == "succeeded",
-            Payment.created_at >= start,
-        )
-        .scalar()
-    ) or 0
+        .filter(Payment.status == "succeeded", Payment.created_at >= start)
+    )
+    if hotel_id is not None:
+        rev_q = rev_q.filter(Booking.hotel_id == hotel_id)
+    total = rev_q.scalar() or 0
 
-    daily = (
+    daily_q = (
         db.query(
             func.date(Payment.created_at).label("day"),
             func.sum(Payment.amount).label("revenue"),
         )
         .join(Booking, Booking.id == Payment.booking_id)
-        .filter(Booking.hotel_id == hotel_id, Payment.status == "succeeded", Payment.created_at >= start)
-        .group_by(func.date(Payment.created_at))
-        .order_by(func.date(Payment.created_at))
-        .all()
+        .filter(Payment.status == "succeeded", Payment.created_at >= start)
     )
+    if hotel_id is not None:
+        daily_q = daily_q.filter(Booking.hotel_id == hotel_id)
+    daily = daily_q.group_by(func.date(Payment.created_at)).order_by(func.date(Payment.created_at)).all()
 
     return {
         "period_days": days,
@@ -105,33 +114,29 @@ def revenue_report(
 @router.get("/guests")
 def guest_analytics(
     days: int = Query(30, ge=1, le=365),
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
     start, _ = _date_range(days)
 
-    new_guests = (
-        db.query(func.count(func.distinct(Booking.user_id)))
-        .filter(Booking.hotel_id == hotel_id, Booking.created_at >= start)
-        .scalar()
-    ) or 0
+    new_q = db.query(func.count(func.distinct(Booking.user_id))).filter(Booking.created_at >= start)
+    if hotel_id is not None:
+        new_q = new_q.filter(Booking.hotel_id == hotel_id)
+    new_guests = new_q.scalar() or 0
 
-    returning = (
-        db.query(func.count(func.distinct(Booking.user_id)))
-        .filter(
-            Booking.hotel_id == hotel_id,
-            Booking.created_at < start,
-        )
-        .scalar()
-    ) or 0
+    ret_q = db.query(func.count(func.distinct(Booking.user_id))).filter(Booking.created_at < start)
+    if hotel_id is not None:
+        ret_q = ret_q.filter(Booking.hotel_id == hotel_id)
+    returning = ret_q.scalar() or 0
 
-    status_counts = (
+    status_q = (
         db.query(Booking.status, func.count(Booking.id).label("count"))
-        .filter(Booking.hotel_id == hotel_id, Booking.created_at >= start)
-        .group_by(Booking.status)
-        .all()
+        .filter(Booking.created_at >= start)
     )
+    if hotel_id is not None:
+        status_q = status_q.filter(Booking.hotel_id == hotel_id)
+    status_counts = status_q.group_by(Booking.status).all()
 
     return {
         "period_days": days,
@@ -144,23 +149,20 @@ def guest_analytics(
 @router.get("/activity-logs")
 def activity_logs(
     limit: int = Query(50, ge=1, le=200),
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
-    # Scope logs to users who belong to this hotel (staff + guests who have booked here)
-    hotel_user_ids = (
-        db.query(User.id)
-        .filter(User.hotel_id == hotel_id)
-        .subquery()
-    )
-    logs = (
-        db.query(ActivityLog)
-        .filter(ActivityLog.user_id.in_(hotel_user_ids) | ActivityLog.user_id.is_(None))
-        .order_by(ActivityLog.created_at.desc())
-        .limit(limit)
-        .all()
-    )
+    q = db.query(ActivityLog)
+    if hotel_id is not None:
+        hotel_user_ids = (
+            db.query(User.id)
+            .filter(User.hotel_id == hotel_id)
+            .subquery()
+        )
+        q = q.filter(ActivityLog.user_id.in_(hotel_user_ids) | ActivityLog.user_id.is_(None))
+    logs = q.order_by(ActivityLog.created_at.desc()).limit(limit).all()
+
     return [
         {
             "id": log.id,

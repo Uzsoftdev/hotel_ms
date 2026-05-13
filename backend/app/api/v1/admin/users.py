@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -5,7 +6,7 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password
-from app.dependencies import get_current_hotel, get_db
+from app.dependencies import get_optional_hotel, get_db
 from app.middleware.rbac import require_admin
 from app.models.user import User
 from app.repositories.user_repository import create_user, delete_user, get_all_users, update_user
@@ -21,7 +22,6 @@ class UserAdminCreate(BaseModel):
 
 
 class UserAdminUpdate(BaseModel):
-    """Allowlist of fields an admin may update. Excludes hashed_password, hotel_id, etc."""
     full_name: Optional[str] = None
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
@@ -41,6 +41,8 @@ class UserAdminResponse(BaseModel):
     email: str
     role: str
     hotel_id: Optional[int]
+    is_email_verified: Optional[bool] = None
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
@@ -49,7 +51,7 @@ class UserAdminResponse(BaseModel):
 @router.get("/", response_model=List[UserAdminResponse])
 def list_users(
     role: Optional[str] = Query(None),
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ) -> Any:
@@ -59,7 +61,7 @@ def list_users(
 @router.post("/", response_model=UserAdminResponse, status_code=status.HTTP_201_CREATED)
 def add_user(
     data: UserAdminCreate,
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ) -> Any:
@@ -67,7 +69,8 @@ def add_user(
     payload["email"] = payload["email"].lower()
     password = payload.pop("password")
     payload["hashed_password"] = hash_password(password)
-    payload["hotel_id"] = hotel_id
+    if hotel_id is not None:
+        payload["hotel_id"] = hotel_id
     return create_user(db, payload)
 
 

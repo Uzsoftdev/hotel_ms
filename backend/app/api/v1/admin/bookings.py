@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from app.dependencies import get_current_hotel, get_db
+from app.dependencies import get_optional_hotel, get_db
 from app.middleware.rbac import require_staff_or_admin
 from app.models.booking import Booking
 from app.models.user import User
@@ -32,17 +32,18 @@ class BookingAdminResponse(BaseModel):
 
 @router.get("/", response_model=List[BookingAdminResponse])
 def list_all_bookings(
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     status_filter: Optional[str] = Query(None, alias="status"),
     db: Session = Depends(get_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
-    q = db.query(Booking).filter(Booking.hotel_id == hotel_id)
+    q = db.query(Booking)
+    if hotel_id is not None:
+        q = q.filter(Booking.hotel_id == hotel_id)
     if status_filter:
         q = q.filter(Booking.status == status_filter)
     bookings = q.order_by(Booking.created_at.desc()).all()
 
-    # Batch-fetch all users in one query instead of N+1 individual lookups
     user_ids = {b.user_id for b in bookings}
     users_by_id = {
         u.id: u
@@ -63,11 +64,14 @@ def list_all_bookings(
 @router.put("/{booking_id}/checkin", status_code=status.HTTP_200_OK)
 def check_in_booking(
     booking_id: int,
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_db),
     _: User = Depends(require_staff_or_admin),
 ) -> dict:
-    booking = db.query(Booking).filter(Booking.id == booking_id, Booking.hotel_id == hotel_id).first()
+    q = db.query(Booking).filter(Booking.id == booking_id)
+    if hotel_id is not None:
+        q = q.filter(Booking.hotel_id == hotel_id)
+    booking = q.first()
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
     if booking.status != "confirmed":
@@ -80,16 +84,16 @@ def check_in_booking(
 @router.put("/{booking_id}/checkout", status_code=status.HTTP_200_OK)
 def check_out_booking(
     booking_id: int,
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_db),
     _: User = Depends(require_staff_or_admin),
 ) -> dict:
-    booking = db.query(Booking).filter(Booking.id == booking_id, Booking.hotel_id == hotel_id).first()
+    q = db.query(Booking).filter(Booking.id == booking_id)
+    if hotel_id is not None:
+        q = q.filter(Booking.hotel_id == hotel_id)
+    booking = q.first()
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
-    # Status flow: pending → confirmed (payment) → completed (checked-in/checked-out)
-    # "completed" is the terminal state — check-in records arrival, check-out records departure.
-    # Both share the same terminal status; checkout is distinguished by the notification type.
     if booking.status != "completed":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -108,7 +112,7 @@ def check_out_booking(
 def update_booking(
     booking_id: int,
     new_status: str,
-    hotel_id: int = Depends(get_current_hotel),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_db),
     _: User = Depends(require_staff_or_admin),
 ) -> dict:
