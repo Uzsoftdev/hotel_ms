@@ -24,19 +24,46 @@ class RoomSearchResponse(RoomResponse):
 def search_hotels_endpoint(
     q: str = Query(..., min_length=1, description="Text search query"),
     city: Optional[str] = Query(None, description="Filter by city"),
+    country: Optional[str] = Query(None, description="Filter by country"),
+    min_stars: Optional[int] = Query(None, ge=1, le=5),
+    max_stars: Optional[int] = Query(None, ge=1, le=5),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_read_db),
 ) -> List[HotelResponse]:
     """
-    Full-text hotel search via Meilisearch.
-    Results are typo-tolerant and ranked by relevance.
-    Availability filtering is not applied here — use GET /search/ for that.
-    Falls back to an empty list if Meilisearch is unreachable.
+    Full-text hotel search. Tries Meilisearch first; falls back to
+    Postgres ILIKE when Meilisearch is unreachable (e.g. not deployed).
     """
     hits = search_hotels(q, city=city)
-    if not hits:
-        return []
-    hotel_ids = [h["id"] for h in hits]
-    return db.query(Hotel).filter(Hotel.id.in_(hotel_ids)).all()
+
+    if hits:
+        # Meilisearch path
+        hotel_ids = [h["id"] for h in hits]
+        query = db.query(Hotel).filter(Hotel.id.in_(hotel_ids))
+    else:
+        # Postgres fallback — works without Meilisearch
+        pattern = f"%{q}%"
+        query = db.query(Hotel).filter(
+            Hotel.name.ilike(pattern)
+            | Hotel.city.ilike(pattern)
+            | Hotel.country.ilike(pattern)
+            | Hotel.description.ilike(pattern)
+        )
+
+    # Apply optional filters
+    if city:
+        query = query.filter(Hotel.city.ilike(f"%{city}%"))
+    if country:
+        query = query.filter(Hotel.country.ilike(f"%{country}%"))
+    if min_stars is not None:
+        query = query.filter(Hotel.star_rating >= min_stars)
+    if max_stars is not None:
+        query = query.filter(Hotel.star_rating <= max_stars)
+
+    offset = (page - 1) * per_page
+    return query.offset(offset).limit(per_page).all()
+
 
 
 @router.get("/", response_model=List[RoomSearchResponse])
