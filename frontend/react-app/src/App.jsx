@@ -14,6 +14,7 @@ import FAQ from "./pages/public/FAQ";
 import RoomDetails from "./pages/public/RoomDetails";
 import ForgotPassword from "./pages/public/ForgotPassword";
 import BookingConfirmation from "./pages/public/BookingConfirmation";
+import AuthCallback from "./pages/auth/AuthCallback";
 
 // User
 import UserDashboard from "./pages/user/Dashboard";
@@ -74,6 +75,7 @@ export default function App() {
       <Route path="/room-details/:id" element={<RoomDetails />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
 
       {/* User (authenticated guests) */}
       <Route path="/dashboard" element={<PrivateRoute roles={["guest","staff","hotel_admin","super_admin"]}><UserDashboard /></PrivateRoute>} />
