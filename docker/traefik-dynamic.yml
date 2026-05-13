@@ -1,5 +1,11 @@
 http:
   middlewares:
+    # Strip /storage prefix before forwarding to MinIO
+    minio-strip:
+      stripPrefix:
+        prefixes:
+          - "/storage"
+
     # Open the circuit when >30% of requests are network errors or >25% return 5xx.
     circuit-breaker:
       circuitBreaker:
@@ -31,6 +37,15 @@ http:
       middlewares: ["www-redirect", "circuit-breaker", "retry"]
       priority: 10
 
+    minio:
+      rule: "Host(`allstay.rest`) && PathPrefix(`/storage`)"
+      entryPoints: ["websecure"]
+      tls:
+        certResolver: letsencrypt
+      service: minio-svc
+      middlewares: ["minio-strip"]
+      priority: 20
+
     frontend:
       rule: "Host(`allstay.rest`) || Host(`www.allstay.rest`)"
       entryPoints: ["websecure"]
@@ -52,3 +67,9 @@ http:
         servers:
           - url: "http://hotel_nginx_static:80"
         passHostHeader: true
+
+    minio-svc:
+      loadBalancer:
+        servers:
+          - url: "http://hotel_minio:9000"
+        passHostHeader: false

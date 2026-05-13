@@ -1,0 +1,90 @@
+name: Migrate Hotel Images to MinIO
+
+# One-time operation: sets MINIO_PUBLIC_URL on the server, redeploys the stack
+# (which adds the MinIO service), then runs the image migration script.
+#
+# Safe to run multiple times — the migration script skips already-migrated rows.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    name: Migrate images to MinIO
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/hms_prod
+          chmod 600 ~/.ssh/hms_prod
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Sync updated stack + Traefik config to server
+        run: |
+          rsync -az --checksum \
+            -e "ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no" \
+            docker-stack.yml docker/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/hotel/
+
+      - name: Set MINIO_PUBLIC_URL in server .env
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "grep -q '^MINIO_PUBLIC_URL=' /opt/hotel/.env \
+               && sed -i 's|^MINIO_PUBLIC_URL=.*|MINIO_PUBLIC_URL=https://allstay.rest/storage|' /opt/hotel/.env \
+               || echo 'MINIO_PUBLIC_URL=https://allstay.rest/storage' >> /opt/hotel/.env
+             echo 'MINIO_PUBLIC_URL updated:' && grep MINIO_PUBLIC_URL /opt/hotel/.env"
+
+      - name: Redeploy stack (brings up MinIO service)
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "REGISTRY=ghcr.io/uzsoftdev \
+             IMAGE_TAG=latest \
+             DOMAIN=allstay.rest \
+             ACME_EMAIL=sunnatakhmad@gmail.com \
+             DEPLOY_TOKEN='${{ secrets.GITHUB_TOKEN }}' \
+             DEPLOY_ACTOR='${{ github.actor }}' \
+             /opt/hotel/docker/deploy.sh"
+
+      - name: Wait for MinIO to be healthy (up to 2 min)
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "for i in \$(seq 1 24); do
+               MINIO_ID=\$(sudo docker ps -q -f name=hotel_minio 2>/dev/null | head -1)
+               if [ -n \"\$MINIO_ID\" ] && sudo docker exec \"\$MINIO_ID\" curl -sf http://localhost:9000/minio/health/live 2>/dev/null; then
+                 echo 'MinIO is healthy'; exit 0
+               fi
+               echo \"Waiting for MinIO... attempt \$i/24\"; sleep 5
+             done
+             echo 'ERROR: MinIO did not become healthy in time' && exit 1"
+
+      - name: Copy migration script into backend container
+        run: |
+          scp -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            backend/scripts/migrate_hotel_images_to_minio.py \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/tmp/migrate_hotel_images_to_minio.py
+
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "CONTAINER=\$(sudo docker ps -q -f name=hotel_backend | head -1)
+             if [ -z \"\$CONTAINER\" ]; then echo 'No backend container found' && exit 1; fi
+             sudo docker cp /tmp/migrate_hotel_images_to_minio.py \"\$CONTAINER\":/app/scripts/
+             echo \"Copied script into container \$CONTAINER\""
+
+      - name: Run migration
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "CONTAINER=\$(sudo docker ps -q -f name=hotel_backend | head -1)
+             sudo docker exec \
+               -e MINIO_PUBLIC_URL=https://allstay.rest/storage \
+               \"\$CONTAINER\" \
+               python scripts/migrate_hotel_images_to_minio.py"

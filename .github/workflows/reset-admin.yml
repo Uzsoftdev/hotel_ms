@@ -22,5 +22,5 @@ jobs:
           UPDATE users SET email='admin@allstay.com', hashed_password='\$2b\$12\$wkWfPB1tR1h.d2k1G.Thz.yl0IBD/u98pRcH9KT2zb2HDVG9ROngC' WHERE role='super_admin';
           UPDATE users SET email='staff@allstay.com', hashed_password='\$2b\$12\$RLtdFCeksM8zA7it.SKJbeXn/JQ44jgEklKdXCH/bnqmsCnwEW5wu' WHERE role='staff';
           EOF
-          docker run --rm --network host -v /tmp/reset.sql:/reset.sql postgres:16 psql \"postgresql://hotel_user:hotelpass123@127.0.0.1:5432/hotel_system\" -f /reset.sql
+          sudo docker run --rm --network host -v /tmp/reset.sql:/reset.sql postgres:16 psql \"postgresql://hotel_user:hotelpass123@127.0.0.1:5432/hotel_system\" -f /reset.sql
           "

@@ -122,6 +122,27 @@ services:
         limits:
           memory: 128M
 
+  # ── MinIO object storage ─────────────────────────────────────────────────────
+  minio:
+    image: minio/minio:RELEASE.2024-06-13T22-53-53Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - minio_data:/data
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 256M
+
   # ── Frontend static ───────────────────────────────────────────────────────────
   nginx_static:
     image: nginx:1.25-alpine
@@ -148,6 +169,7 @@ services:
 
 volumes:
   redis_data:
+  minio_data:
   traefik_certs:
 
 networks:
