@@ -40,7 +40,7 @@ export default function Navbar({ transparent = false }) {
 
   const navLinks = [
     { to: "/", label: t("navigation.home") || "Home" },
-    { to: "/hotels", label: t("navigation.hotels") || "Hotels" },
+    { to: "/hotels", label: "Hotels" },
     { to: "/about", label: t("navigation.about") || "About" },
     { to: "/contact", label: t("navigation.contact") || "Contact" },
   ];

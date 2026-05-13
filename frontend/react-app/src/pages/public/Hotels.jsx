@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
 import { useAuth } from "../../contexts/AuthContext";
@@ -86,6 +86,7 @@ export default function Hotels() {
   /* ── hotel list state ── */
   const [hotels, setHotels]           = useState([]);
   const [hotelsLoading, setHotelsLoading] = useState(true);
+  const [hotelsError, setHotelsError] = useState(false);
   const [hotelSearch, setHotelSearch] = useState("");
   const [cities, setCities]           = useState([]);
   const [countries, setCountries]     = useState([]);
@@ -104,13 +105,16 @@ export default function Hotels() {
   const [roomSort, setRoomSort]       = useState("default");
   const [roomView, setRoomView]       = useState("grid");
 
-  /* ── fetch hotels on mount ── */
-  useEffect(() => {
-    api.get("/public/search/hotels/browse?per_page=100")
-      .then((res) => setHotels(res.data))
-      .catch(() => {})
+  /* ── fetch hotels ── */
+  const fetchHotels = useCallback(() => {
+    setHotelsLoading(true);
+    setHotelsError(false);
+    api.get("/public/search/hotels/browse?per_page=200")
+      .then((res) => setHotels(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setHotelsError(true))
       .finally(() => setHotelsLoading(false));
   }, []);
+  useEffect(() => { fetchHotels(); }, [fetchHotels]);
 
   /* ── auto-select hotel from URL param ── */
   useEffect(() => {
@@ -502,6 +506,16 @@ export default function Hotels() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                ) : hotelsError ? (
+                  <div className="py-24 text-center bg-white rounded-2xl border border-slate-100">
+                    <span className="material-symbols-outlined text-5xl text-slate-200 block mb-4">wifi_off</span>
+                    <p className="font-extrabold text-slate-700 text-lg mb-1">Couldn't load hotels</p>
+                    <p className="text-sm text-slate-400 mb-6">Check your connection and try again.</p>
+                    <button onClick={fetchHotels}
+                      className="inline-flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">
+                      <span className="material-symbols-outlined text-sm">refresh</span>Retry
+                    </button>
                   </div>
                 ) : filteredHotels.length === 0 ? (
                   <div className="py-24 text-center bg-white rounded-2xl border border-slate-100">
