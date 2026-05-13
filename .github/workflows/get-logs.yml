@@ -1,7 +1,16 @@
-name: Get Backend Logs
+name: Get Logs
 
 on:
   workflow_dispatch:
+    inputs:
+      service_name:
+        description: "Name of the Docker service"
+        required: true
+        default: "hotel_backend"
+      tail:
+        description: "Number of lines to tail"
+        required: false
+        default: "100"
 
 jobs:
   get-logs:
@@ -18,4 +27,4 @@ jobs:
         run: |
           ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "docker service logs hotel_backend --tail 100"
+            "docker service logs ${{ github.event.inputs.service_name }} --tail ${{ github.event.inputs.tail }}"
