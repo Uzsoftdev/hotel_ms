@@ -2,6 +2,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+import httpx
 from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 from jose import JWTError
 from pydantic import BaseModel, EmailStr
@@ -39,6 +40,70 @@ def _token_payload(user: Any) -> dict:
         "role": user.role,
         "hotel_id": user.hotel_id,
     }
+
+
+class SocialLoginRequest(BaseModel):
+    supabase_access_token: str
+
+
+@router.post("/social", response_model=TokenResponse)
+@limiter.limit("20/minute")
+def social_login(
+    request: Request,
+    payload: SocialLoginRequest,
+    db: Session = Depends(get_db),
+) -> TokenResponse:
+    """Exchange a Supabase OAuth access token for the app's own JWT.
+
+    Works for any Supabase-supported provider (Google, etc.).
+    Auto-creates a guest account on first sign-in.
+    """
+    from app.models.user import User
+
+    # Verify token with Supabase and get the Google user's profile
+    try:
+        resp = httpx.get(
+            "https://svjurtammmnogarbtwou.supabase.co/auth/v1/user",
+            headers={"Authorization": f"Bearer {payload.supabase_access_token}"},
+            timeout=8,
+        )
+        resp.raise_for_status()
+        supabase_user = resp.json()
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired Supabase token",
+        )
+
+    email: str = (supabase_user.get("email") or "").lower().strip()
+    full_name: str = (
+        supabase_user.get("user_metadata", {}).get("full_name")
+        or supabase_user.get("user_metadata", {}).get("name")
+        or email.split("@")[0]
+    )
+
+    if not email:
+        raise HTTPException(status_code=400, detail="No email returned from provider")
+
+    # Find existing user or auto-register as guest
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        user = User(
+            email=email,
+            full_name=full_name,
+            hashed_password=hash_password(secrets.token_urlsafe(32)),  # random unusable password
+            role="guest",
+            is_email_verified=True,   # trusted — already verified by Google
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    data = _token_payload(user)
+    return TokenResponse(
+        access_token=create_access_token(data),
+        refresh_token=create_refresh_token(data),
+    )
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)

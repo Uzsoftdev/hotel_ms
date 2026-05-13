@@ -110,7 +110,6 @@ services:
       - ./docker/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./docker/traefik-dynamic.yml:/etc/traefik/dynamic.yml:ro
       - traefik_certs:/letsencrypt
-      - /opt/hms/certs:/certs:ro
     networks:
       - hotel_network
     deploy:

@@ -25,7 +25,8 @@ http:
     backend:
       rule: "Host(`allstay.rest`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/docs`) || PathPrefix(`/redoc`) || PathPrefix(`/openapi.json`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
       entryPoints: ["websecure"]
-      tls: {}
+      tls:
+        certResolver: letsencrypt
       service: backend-svc
       middlewares: ["www-redirect", "circuit-breaker", "retry"]
       priority: 10
@@ -33,7 +34,8 @@ http:
     frontend:
       rule: "Host(`allstay.rest`) || Host(`www.allstay.rest`)"
       entryPoints: ["websecure"]
-      tls: {}
+      tls:
+        certResolver: letsencrypt
       service: frontend-svc
       middlewares: ["www-redirect"]
       priority: 1
@@ -50,15 +52,3 @@ http:
         servers:
           - url: "http://hotel_nginx_static:80"
         passHostHeader: true
-
-tls:
-  stores:
-    default:
-      defaultCertificate:
-        certFile: /certs/cert.pem
-        keyFile: /certs/key.pem
-  certificates:
-    - certFile: /certs/cert.pem
-      keyFile: /certs/key.pem
-      stores:
-        - default
