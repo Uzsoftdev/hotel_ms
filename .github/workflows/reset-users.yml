@@ -1,0 +1,63 @@
+name: Reset User Credentials
+
+on:
+  workflow_dispatch:
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install psql
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Reset admin and staff passwords
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          ADMIN_HASH='$2b$12$7KbWgKyj0McY6rGHr7HC1ujqycEPaOMuOQvk9bA8Qfbg/2y3DZhaK'
+          STAFF_HASH='$2b$12$LKK6u5ZYzJUXg5u2MMiuQ.RDBS.xtn9XsHrZcuhzTzB.SpJUWJbVa'
+
+          psql -h "${{ secrets.DB_HOST }}" -p "${{ secrets.DB_PORT }}" \
+               -U "${{ secrets.DB_USER }}" -d "${{ secrets.DB_NAME }}" <<SQL
+
+          -- Update or insert super_admin
+          DO \$\$
+          BEGIN
+            IF EXISTS (SELECT 1 FROM users WHERE role = 'super_admin') THEN
+              UPDATE users
+                SET email = 'admin@allstay.rest',
+                    hashed_password = '${ADMIN_HASH}',
+                    is_email_verified = true,
+                    full_name = 'Admin'
+                WHERE role = 'super_admin';
+            ELSE
+              INSERT INTO users (full_name, email, hashed_password, role, is_email_verified)
+              VALUES ('Admin', 'admin@allstay.rest', '${ADMIN_HASH}', 'super_admin', true);
+            END IF;
+
+            -- Update or insert staff
+            IF EXISTS (SELECT 1 FROM users WHERE role = 'staff') THEN
+              UPDATE users
+                SET email = 'staff@allstay.rest',
+                    hashed_password = '${STAFF_HASH}',
+                    is_email_verified = true,
+                    full_name = 'Staff'
+                WHERE role = 'staff';
+            ELSE
+              INSERT INTO users (full_name, email, hashed_password, role, is_email_verified)
+              VALUES ('Staff', 'staff@allstay.rest', '${STAFF_HASH}', 'staff', true);
+            END IF;
+          END
+          \$\$;
+
+          SELECT id, email, full_name, role, is_email_verified FROM users
+          WHERE role IN ('super_admin', 'staff', 'hotel_admin') ORDER BY role;
+
+          SQL
+
+      - name: Print credentials
+        run: |
+          echo "============================================"
+          echo "  Admin:  admin@allstay.rest  /  Admin@2024"
+          echo "  Staff:  staff@allstay.rest  /  Staff@2024"
+          echo "============================================"
