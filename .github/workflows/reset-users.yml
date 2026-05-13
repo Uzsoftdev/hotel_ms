@@ -16,12 +16,7 @@ jobs:
 
       - name: Run credential reset inside backend container
         run: |
-          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
-            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            'CONTAINER=$(sudo docker ps --filter "name=hotel_backend" --format "{{.ID}}" | head -1)
-             if [ -z "$CONTAINER" ]; then echo "Backend container not found"; exit 1; fi
-             echo "Using container: $CONTAINER"
-             sudo docker exec "$CONTAINER" python3 - <<EOF
+          SCRIPT=$(cat <<'PYEOF'
 from app.core.database import SessionLocal
 from app.core.security import hash_password
 from app.models.user import User
@@ -34,7 +29,7 @@ try:
         admin.hashed_password = hash_password("Admin@2024")
         admin.is_email_verified = True
         admin.full_name = "Admin"
-        print(f"Updated admin: {admin.email}")
+        print("Updated admin: admin@allstay.rest")
     else:
         admin = User(full_name="Admin", email="admin@allstay.rest",
                      hashed_password=hash_password("Admin@2024"),
@@ -48,7 +43,7 @@ try:
         staff.hashed_password = hash_password("Staff@2024")
         staff.is_email_verified = True
         staff.full_name = "Staff"
-        print(f"Updated staff: {staff.email}")
+        print("Updated staff: staff@allstay.rest")
     else:
         staff = User(full_name="Staff", email="staff@allstay.rest",
                      hashed_password=hash_password("Staff@2024"),
@@ -64,7 +59,15 @@ except Exception as e:
     raise
 finally:
     db.close()
-EOF'
+PYEOF
+          )
+          ENCODED=$(echo "$SCRIPT" | base64 -w 0)
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "CONTAINER=\$(sudo docker ps --filter 'name=hotel_backend' --format '{{.ID}}' | head -1)
+             if [ -z \"\$CONTAINER\" ]; then echo 'Backend container not found'; exit 1; fi
+             echo \"Using container: \$CONTAINER\"
+             echo '$ENCODED' | base64 -d | sudo docker exec -i \"\$CONTAINER\" python3 -"
 
       - name: Print credentials
         run: |
