@@ -124,13 +124,14 @@ export default function About() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {team.map((member, i) => (
-            <div key={member.name} className="rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-lg text-center hover:shadow-2xl transition-all overflow-hidden">
-              <div className="h-52 overflow-hidden relative">
-                <img src={member.image || TEAM_PORTRAITS[i % TEAM_PORTRAITS.length]} alt={member.name}
-                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            <div key={member.name} className="rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-lg text-center hover:shadow-2xl transition-all p-8">
+              <div className="flex justify-center mb-5">
+                <div className="w-28 h-28 rounded-full overflow-hidden ring-4 ring-white shadow-lg">
+                  <img src={member.image || TEAM_PORTRAITS[i % TEAM_PORTRAITS.length]} alt={member.name}
+                    className="w-full h-full object-cover object-top" />
+                </div>
               </div>
-              <div className="p-6">
+              <div>
               <h3 className="text-lg font-bold text-on-surface">{member.name}</h3>
               <p className="text-sm text-on-surface-variant font-medium mt-1 mb-4">{member.role}</p>
               {member.linkedin && (
@@ -143,6 +144,7 @@ export default function About() {
               </div>
             </div>
           ))}
+
         </div>
       </section>
 

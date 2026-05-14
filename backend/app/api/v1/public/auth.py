@@ -139,12 +139,19 @@ def google_login(
             },
             timeout=10,
         )
-        token_resp.raise_for_status()
         google_tokens = token_resp.json()
-    except Exception:
+        if not token_resp.is_success:
+            err = google_tokens.get("error_description") or google_tokens.get("error") or token_resp.text
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Google auth failed: {err}",
+            )
+    except HTTPException:
+        raise
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Failed to exchange Google authorization code",
+            detail=f"Google auth error: {exc}",
         )
 
     # 2. Get user info from Google

@@ -45,8 +45,12 @@ export default function Login() {
   // Show error message when redirected back from failed Google auth
   useEffect(() => {
     const errCode = searchParams.get("error");
-    if (errCode === "google_failed") setError("Google sign-in failed. Please try again or use email and password.");
-    else if (errCode === "no_code")  setError("Google sign-in was cancelled.");
+    if (errCode === "google_failed") {
+      const detail = searchParams.get("detail");
+      setError(detail ? `Google sign-in failed: ${detail}` : "Google sign-in failed. Please try again or use email and password.");
+    } else if (errCode === "no_code") {
+      setError("Google sign-in was cancelled.");
+    }
   }, [searchParams]);
 
   function getGoogleRedirectUri() {

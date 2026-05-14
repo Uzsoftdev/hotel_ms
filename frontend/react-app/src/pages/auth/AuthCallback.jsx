@@ -46,8 +46,9 @@ export default function AuthCallback() {
         }
       } catch (err) {
         if (!cancelled) {
-          console.error("Auth callback error:", err);
-          navigate("/login?error=google_failed", { replace: true });
+          const detail = err.response?.data?.detail || "";
+          const msg = detail ? encodeURIComponent(detail) : "";
+          navigate(`/login?error=google_failed${msg ? `&detail=${msg}` : ""}`, { replace: true });
         }
       }
     }
