@@ -47,11 +47,17 @@ export default function Navbar({ transparent = false }) {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isTransparent
-          ? "bg-transparent"
-          : "bg-surface-bright/95 backdrop-blur-xl shadow-sm border-b border-outline-variant/30"
-      }`}>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isTransparent
+            ? "backdrop-blur-md border-b border-white/10"
+            : "backdrop-blur-xl shadow-sm border-b border-slate-200/60"
+        }`}
+        style={isTransparent
+          ? { background: "rgba(8,14,38,0.52)" }
+          : { background: "rgba(255,255,255,0.97)" }
+        }
+      >
         <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between gap-6" style={{ height: "72px" }}>
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 shrink-0">
@@ -133,7 +139,7 @@ export default function Navbar({ transparent = false }) {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden bg-surface-bright border-t border-outline-variant/30 px-6 py-4 space-y-1 animate-slide-down">
+          <div className="md:hidden border-t border-slate-200/40 px-6 py-4 space-y-1 animate-slide-down" style={{ background: "rgba(255,255,255,0.97)" }}>
             {navLinks.map(({ to, label }) => (
               <Link key={to} to={to} onClick={() => setMobileOpen(false)}
                 className="block px-4 py-3 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-primary transition-colors">

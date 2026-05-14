@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Navbar from "../../components/common/Navbar";
-import background from "../../assets/images/contact_us.png";
+
+const HERO_IMG    = "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1920&q=90";
+const LOCATION_IMG = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=85";
 
 export default function Contact() {
   const [openFaq, setOpenFaq] = useState(0);
@@ -35,7 +37,7 @@ export default function Contact() {
       <section className="relative h-80 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-surface z-10" />
-          <img alt="Luxury hotel lobby with marble floors and ambient lighting" className="w-full h-full object-cover scale-105" src={background} />
+          <img alt="Luxury hotel grand lobby" className="w-full h-full object-cover scale-105" src={HERO_IMG} />
         </div>
         <div className="relative z-20 text-center px-6">
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4">{t("contact_page.title")}</h1>
@@ -115,10 +117,24 @@ export default function Contact() {
       </section>
 
       <section className="max-w-7xl mx-auto px-6 mb-20">
-        <div className="bg-slate-100 dark:bg-slate-800 rounded-xl h-64 flex flex-col items-center justify-center shadow-lg border border-outline-variant/30">
-          <span className="material-symbols-outlined text-5xl text-primary">location_on</span>
-          <p className="mt-3 text-sm font-semibold text-on-surface-variant">{t("contact_page.map")}</p>
-          <p className="text-xs text-on-surface-variant/60 mt-1">{t("contact_page.map_location")}</p>
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl h-80 group">
+          <img src={LOCATION_IMG} alt="Miami Beach aerial view"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-8 flex items-end justify-between">
+            <div>
+              <p className="text-white font-bold text-lg leading-tight">1 Ocean Drive, Miami Beach</p>
+              <p className="text-white/70 text-sm font-medium mt-1">South Beach · FL 33139 · United States</p>
+            </div>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=1+Ocean+Drive+Miami+Beach+FL+33139"
+              target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-white text-slate-900 px-5 py-3 rounded-xl font-bold text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+            >
+              <span className="material-symbols-outlined text-primary text-base">map</span>
+              Open in Maps
+            </a>
+          </div>
         </div>
       </section>
 

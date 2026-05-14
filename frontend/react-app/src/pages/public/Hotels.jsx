@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../../components/common/Navbar";
+import BookingSearchBar from "../../components/public/BookingSearchBar";
 import { useAuth } from "../../contexts/AuthContext";
 import { useWishlist } from "../../contexts/WishlistContext";
 import api from "../../services/api";
@@ -143,7 +144,6 @@ export default function Hotels() {
   const [mode, setMode]                   = useState(searchParams.get("hotel_id") ? "rooms" : "hotels");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [authModal, setAuthModal]         = useState(false);
-  const [guestsOpen, setGuestsOpen]       = useState(false);
 
   /* hotel state */
   const [hotels, setHotels]               = useState([]);
@@ -341,80 +341,7 @@ export default function Hotels() {
       {/* ── Search bar ────────────────────────────────────────────────────── */}
       <div className="bg-white border-b border-slate-200 shadow-sm" style={{ paddingTop: 72 }}>
         <div className="max-w-[1300px] mx-auto px-6 py-4">
-          <div className="flex items-stretch border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
-
-            {/* Destination */}
-            <div className="flex-1 px-5 py-3 border-r border-slate-200 min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Destination</p>
-              {mode === "rooms" && selectedHotel ? (
-                <button onClick={backToHotels} className="text-sm font-semibold text-slate-900 text-left w-full focus:outline-none hover:text-blue-600 transition-colors truncate block">
-                  {selectedHotel.name}{selectedHotel.city ? ` · ${selectedHotel.city}` : ""}
-                </button>
-              ) : (
-                <input type="text" value={hotelSearch} onChange={(e) => setHotelSearch(e.target.value)}
-                  placeholder="Where are you going?"
-                  className="text-sm font-semibold text-slate-900 w-full focus:outline-none placeholder:text-slate-400 placeholder:font-normal" />
-              )}
-            </div>
-
-            {/* Check-in */}
-            <div className="px-5 py-3 border-r border-slate-200 shrink-0">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-in</p>
-              <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)}
-                className="text-sm font-semibold text-slate-900 focus:outline-none cursor-pointer" />
-            </div>
-
-            {/* Check-out */}
-            <div className="px-5 py-3 border-r border-slate-200 shrink-0">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Check-out</p>
-              <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)}
-                className="text-sm font-semibold text-slate-900 focus:outline-none cursor-pointer" />
-            </div>
-
-            {/* Guests */}
-            <div className="relative px-5 py-3 border-r border-slate-200 shrink-0">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">Guests</p>
-              <button onClick={() => setGuestsOpen((v) => !v)}
-                className="text-sm font-semibold text-slate-900 focus:outline-none whitespace-nowrap">
-                {guestAdults} adult{guestAdults !== 1 ? "s" : ""}
-                {guestChildren > 0 ? ` · ${guestChildren} child` : ""}
-              </button>
-              {guestsOpen && (
-                <div className="absolute top-full left-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl p-5 w-64 z-50">
-                  {[
-                    { label: "Adults", sub: "Ages 18+", val: guestAdults, set: setGuestAdults, min: 1 },
-                    { label: "Children", sub: "Ages 2–17", val: guestChildren, set: setGuestChildren, min: 0 },
-                  ].map(({ label, sub, val, set, min }) => (
-                    <div key={label} className="flex items-center justify-between mb-4 last:mb-0">
-                      <div>
-                        <p className="text-sm font-semibold text-slate-900">{label}</p>
-                        <p className="text-xs text-slate-400">{sub}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <button onClick={() => set((v) => Math.max(min, v - 1))}
-                          className="w-8 h-8 rounded-full border border-slate-300 text-slate-600 hover:border-blue-600 hover:text-blue-600 transition-colors text-lg leading-none flex items-center justify-center">−</button>
-                        <span className="w-5 text-center text-sm font-bold text-slate-900">{val}</span>
-                        <button onClick={() => set((v) => Math.min(10, v + 1))}
-                          className="w-8 h-8 rounded-full border border-slate-300 text-slate-600 hover:border-blue-600 hover:text-blue-600 transition-colors text-lg leading-none flex items-center justify-center">+</button>
-                      </div>
-                    </div>
-                  ))}
-                  <button onClick={() => setGuestsOpen(false)}
-                    className="w-full mt-4 bg-blue-600 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-blue-700 transition-colors">
-                    Done
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Search button */}
-            <button
-              onClick={() => { if (mode === "rooms") fetchRooms(selectedHotel); setGuestsOpen(false); }}
-              className="px-7 flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-colors shrink-0">
-              <span className="material-symbols-outlined text-base">search</span>
-              Search
-            </button>
-          </div>
+          <BookingSearchBar />
         </div>
       </div>
 

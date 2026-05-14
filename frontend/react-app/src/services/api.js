@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL || 'https://allstay.rest'}/api/v1`,
+  baseURL: `${import.meta.env.VITE_API_URL || (import.meta.env.DEV ? '' : 'https://allstay.rest')}/api/v1`,
   headers: {
     'Content-Type': 'application/json',
   },

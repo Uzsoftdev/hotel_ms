@@ -1,8 +1,22 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import background from "../../assets/images/about_us.png";
 import { useTranslation } from "react-i18next";
 import Navbar from "../../components/common/Navbar";
+
+const HERO_IMG = "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1920&q=90";
+
+const GALLERY = [
+  { src: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=700&q=85", alt: "Pool at sunrise" },
+  { src: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=700&q=85", alt: "Luxury suite interior" },
+  { src: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=85", alt: "Ocean view terrace" },
+  { src: "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=700&q=85", alt: "Grand lobby" },
+];
+
+const TEAM_PORTRAITS = [
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=85",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=85",
+  "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=85",
+];
 
 const valueIcons = ["favorite", "verified", "public"];
 
@@ -28,7 +42,7 @@ export default function About() {
       <section className="relative h-96 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-surface z-10" />
-          <img alt="Luxury hotel lobby with marble floors and ambient lighting" className="w-full h-full object-cover scale-105" src={background} />
+          <img alt="Luxury hotel pool at golden hour" className="w-full h-full object-cover scale-105" src={HERO_IMG} />
         </div>
         <div className="relative z-20 text-center px-6">
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4">{t("about.hero.title")}</h1>
@@ -68,6 +82,21 @@ export default function About() {
         </div>
       </section>
 
+      {/* Photo Gallery Strip */}
+      <section className="max-w-7xl mx-auto px-6 pb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {GALLERY.map((g, i) => (
+            <div key={i} className={`relative overflow-hidden rounded-2xl group ${i === 1 ? "md:row-span-2" : "h-52 md:h-48"}`}
+              style={i === 1 ? { height: "auto", minHeight: 200 } : {}}>
+              <img src={g.src} alt={g.alt}
+                className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                style={{ minHeight: i === 1 ? 280 : 0 }} />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/12 transition-colors duration-300 rounded-2xl" />
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Timeline */}
       <section className="bg-surface-container-low py-24 border-t border-outline-variant/30">
         <div className="max-w-3xl mx-auto px-6">
@@ -94,15 +123,14 @@ export default function About() {
           <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mt-2">{t("about.team.title")}</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {team.map((member) => (
-            <div key={member.name} className="p-8 rounded-xl bg-surface-container-lowest border border-outline-variant/30 shadow-lg text-center hover:shadow-2xl transition-all">
-              <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 overflow-hidden">
-                {member.image ? (
-                  <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="material-symbols-outlined text-primary text-4xl">account_circle</span>
-                )}
+          {team.map((member, i) => (
+            <div key={member.name} className="rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-lg text-center hover:shadow-2xl transition-all overflow-hidden">
+              <div className="h-52 overflow-hidden relative">
+                <img src={member.image || TEAM_PORTRAITS[i % TEAM_PORTRAITS.length]} alt={member.name}
+                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               </div>
+              <div className="p-6">
               <h3 className="text-lg font-bold text-on-surface">{member.name}</h3>
               <p className="text-sm text-on-surface-variant font-medium mt-1 mb-4">{member.role}</p>
               {member.linkedin && (
@@ -112,6 +140,7 @@ export default function About() {
                   </svg>
                 </a>
               )}
+              </div>
             </div>
           ))}
         </div>
