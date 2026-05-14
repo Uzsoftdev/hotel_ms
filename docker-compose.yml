@@ -365,7 +365,7 @@ services:
 
   # ── Observability: Loki log aggregation (R12) ────────────────────────────────
   loki:
-    image: grafana/loki:2.9.5
+    image: grafana/loki:3.3.2
     container_name: hotel_loki
     restart: always
     command: -config.file=/etc/loki/loki-config.yml
@@ -379,7 +379,7 @@ services:
 
   # ── Observability: Promtail (ships Docker logs → Loki) ──────────────────────
   promtail:
-    image: grafana/promtail:2.9.5
+    image: grafana/promtail:3.3.2
     container_name: hotel_promtail
     restart: always
     volumes:

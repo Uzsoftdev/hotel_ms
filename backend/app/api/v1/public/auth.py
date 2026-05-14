@@ -108,6 +108,7 @@ def social_login(
 
 class GoogleCodeRequest(BaseModel):
     code: str
+    redirect_uri: str
 
 
 @router.post("/google", response_model=TokenResponse)
@@ -133,7 +134,7 @@ def google_login(
                 "code": payload.code,
                 "client_id": settings.GOOGLE_CLIENT_ID,
                 "client_secret": settings.GOOGLE_CLIENT_SECRET,
-                "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+                "redirect_uri": payload.redirect_uri,
                 "grant_type": "authorization_code",
             },
             timeout=10,

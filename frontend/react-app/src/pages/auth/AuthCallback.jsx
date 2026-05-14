@@ -25,7 +25,9 @@ export default function AuthCallback() {
         setStatusMsg("Verifying your account…");
 
         // Exchange Google code for the app's own JWT via backend
-        const { data } = await api.post("/public/auth/google", { code });
+        // redirect_uri must match exactly what was used in the initial OAuth request
+        const redirectUri = `${window.location.origin}/auth/callback`;
+        const { data } = await api.post("/public/auth/google", { code, redirect_uri: redirectUri });
 
         if (cancelled) return;
 
