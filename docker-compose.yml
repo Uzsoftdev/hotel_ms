@@ -68,29 +68,29 @@ services:
 
   # ── PgBouncer connection pooler ───────────────────────────────────────────────
   pgbouncer:
-    image: bitnami/pgbouncer:1.22.1
+    image: edoburu/pgbouncer:latest
     container_name: hotel_pgbouncer
     restart: always
     environment:
-      POSTGRESQL_HOST: db
-      POSTGRESQL_PORT: 5432
-      POSTGRESQL_DATABASE: ${POSTGRES_DB}
-      POSTGRESQL_USERNAME: ${POSTGRES_USER}
-      POSTGRESQL_PASSWORD: ${POSTGRES_PASSWORD}
-      PGBOUNCER_POOL_MODE: transaction
-      PGBOUNCER_MAX_CLIENT_CONN: 1000
-      PGBOUNCER_DEFAULT_POOL_SIZE: 25
-      PGBOUNCER_RESERVE_POOL_SIZE: 5
-      PGBOUNCER_SERVER_IDLE_TIMEOUT: 600
-      PGBOUNCER_LOG_CONNECTIONS: 0
-      PGBOUNCER_LOG_DISCONNECTIONS: 0
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 1000
+      DEFAULT_POOL_SIZE: 25
+      RESERVE_POOL_SIZE: 5
+      SERVER_IDLE_TIMEOUT: 600
+      LOG_CONNECTIONS: 0
+      LOG_DISCONNECTIONS: 0
     depends_on:
       db:
         condition: service_healthy
     networks:
       - hotel_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h localhost -p 6432 -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5

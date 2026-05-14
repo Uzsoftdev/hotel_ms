@@ -1,4 +1,5 @@
-from typing import Any, List
+from typing import Any, List, Optional
+from datetime import datetime
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -20,7 +21,8 @@ class PaymentResponse(BaseModel):
     currency: str
     method: str
     status: str
-    transaction_id: str | None
+    transaction_id: Optional[str]
+    created_at: Optional[datetime]
 
     class Config:
         from_attributes = True
