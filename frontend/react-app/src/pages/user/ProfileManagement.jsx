@@ -78,12 +78,22 @@ const SECTIONS = [
 
 /* ── main component ──────────────────────────────────────────────────────── */
 export default function ProfileManagement() {
-  const { refreshProfile } = useAuth();
+  const { refreshProfile, user: authUser } = useAuth();
   const [section, setSection] = useState("profile");
   const [editing, setEditing]   = useState(false);
 
-  const [profile, setProfile] = useState({ full_name: "", email: "", phone: "", photo_url: "" });
-  const [editForm, setEditForm] = useState({ full_name: "", email: "", phone: "" });
+  // Seed from AuthContext so Google/social users see their data immediately
+  const [profile, setProfile] = useState({
+    full_name: authUser?.full_name || "",
+    email:     authUser?.email     || "",
+    phone:     authUser?.phone     || "",
+    photo_url: authUser?.photo_url || "",
+  });
+  const [editForm, setEditForm] = useState({
+    full_name: authUser?.full_name || "",
+    email:     authUser?.email     || "",
+    phone:     authUser?.phone     || "",
+  });
   const [pwForm, setPwForm]     = useState({ current_password: "", new_password: "", confirm_password: "" });
   const [notifs, setNotifs]     = useState({ confirmations: true, reminders: true, offers: false, marketing: false });
 
@@ -109,6 +119,9 @@ export default function ProfileManagement() {
         const p = { full_name: d.full_name || "", email: d.email || "", phone: d.phone || "", photo_url: d.photo_url || "" };
         setProfile(p);
         setEditForm({ full_name: p.full_name, email: p.email, phone: p.phone });
+      })
+      .catch(() => {
+        // Keep the AuthContext-seeded state if the API call fails
       })
       .finally(() => setLoading(false));
   }, []);
@@ -225,7 +238,7 @@ export default function ProfileManagement() {
         </div>
 
         {/* ── Hero card ─────────────────────────────────────────────── */}
-        <div className="ah-card" style={{ padding: 28, marginBottom: 28, display: "grid", gridTemplateColumns: "1fr auto", gap: 28, alignItems: "center", position: "relative", overflow: "hidden" }}>
+        <div className="ah-card" style={{ padding: 28, marginBottom: 28, position: "relative", overflow: "hidden" }}>
           {/* decorative blob */}
           <div style={{ position: "absolute", top: -100, right: -100, width: 320, height: 320, borderRadius: "50%", background: "radial-gradient(circle, rgba(37,99,235,0.07), transparent 70%)", pointerEvents: "none" }} />
 
@@ -291,20 +304,6 @@ export default function ProfileManagement() {
             </div>
           </div>
 
-          {/* Stats */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, paddingLeft: 28, borderLeft: "1px solid var(--border)" }}>
-            {[
-              { val: score + "%", label: "Complete", sub: "profile" },
-              { val: profile.phone ? "✓" : "—", label: "Phone", sub: profile.phone || "not added" },
-              { val: photoSrc ? "✓" : "—", label: "Photo", sub: photoSrc ? "uploaded" : "not added" },
-            ].map((s, i) => (
-              <div key={i} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 24, fontWeight: 800, letterSpacing: "-0.025em", color: "var(--text)" }}>{s.val}</div>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--primary)", marginTop: 2 }}>{s.label}</div>
-                <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>{s.sub}</div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* ── Flash messages ────────────────────────────────────────── */}
@@ -324,22 +323,6 @@ export default function ProfileManagement() {
 
           {/* Sticky sidebar */}
           <aside style={{ position: "sticky", top: 24 }}>
-            {/* Profile completion */}
-            <div className="ah-card" style={{ padding: 16, marginBottom: 12 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--text-secondary)" }}>Profile</span>
-                <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text)" }}>{score}%</span>
-              </div>
-              <div style={{ height: 6, background: "var(--border)", borderRadius: 9999, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${score}%`, background: "linear-gradient(90deg, var(--primary) 0%, #06B6D4 100%)", borderRadius: 9999, transition: "width .4s ease" }} />
-              </div>
-              {score < 100 && (
-                <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 10, lineHeight: 1.45 }}>
-                  {!profile.phone ? "Add your phone number to complete your profile." : "Upload a photo to reach 100%."}
-                </div>
-              )}
-            </div>
-
             {/* Nav */}
             <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
               {SECTIONS.map((it) => (
