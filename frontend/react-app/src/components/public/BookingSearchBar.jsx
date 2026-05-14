@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
-const YELLOW = "#FFB700";
+const YELLOW = "#E53E00";
 const BLUE   = "#0071C2";
 const DAYS   = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const FLEX_OPTIONS = [
