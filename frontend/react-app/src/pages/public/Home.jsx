@@ -120,7 +120,7 @@ export default function Home() {
       </section>
 
       {/* Spacer so content clears the floating search bar */}
-      <div style={{ height: 64 }} />
+      <div style={{ height: 120 }} />
 
       {/* ── FEATURED ROOMS ── */}
       <section ref={roomsRef} style={{ padding: "80px 0" }}>
