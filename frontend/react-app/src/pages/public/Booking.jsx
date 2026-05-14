@@ -146,7 +146,7 @@ export default function Booking() {
             {/* Step indicator */}
             <div className="flex items-center justify-between relative isolate">
               <div className="absolute top-5 left-5 right-5 h-0.5 bg-outline-variant z-0" />
-              <div className="absolute top-5 left-5 h-0.5 bg-primary z-0 transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+              <div className="absolute top-5 left-5 h-0.5 bg-primary z-0 transition-all duration-500" style={{ width: `calc(${progressPercent / 100} * (100% - 2.5rem))` }} />
               {steps.map((s) => (
                 <button key={s.num} type="button" onClick={() => step > s.num && setStep(s.num)} className="relative z-10 flex flex-col items-center gap-2">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${step === s.num ? "bg-primary text-white shadow-lg shadow-primary/20" : step > s.num ? "bg-primary/20 text-primary" : "bg-surface-container text-on-surface-variant"}`}>
