@@ -45,16 +45,21 @@ function deriveCategory(typeName = "") {
 }
 
 function normalizeRoom(r) {
-  const category = deriveCategory(r.room_type?.name);
+  const rawTypeName = r.room_type?.name || "";
+  // Discard stub/code names (< 4 chars like "Mo", "St") — use room number instead
+  const typeName = rawTypeName.trim().length >= 4 ? rawTypeName.trim() : "";
+  const category = deriveCategory(typeName || rawTypeName);
   const { amenities, icons } = AMENITY_DEFAULTS[category] || AMENITY_DEFAULTS["Standard Room"];
   const primaryImg = r.images?.find((i) => i.is_primary) ?? r.images?.[0];
+  // Try multiple price field names the API might return
+  const price = Number(r.base_price ?? r.price_per_night ?? r.price ?? 0);
   return {
     id: r.id,
     hotel_id: r.hotel_id,
-    name: r.room_type?.name || `Room ${r.room_number || r.id}`,
+    name: typeName || `Room ${r.room_number || r.id}`,
     category,
     description: r.description || `A ${category.toLowerCase()} with premium amenities.`,
-    price_per_night: Number(r.base_price) || 0,
+    price_per_night: price,
     capacity: r.capacity || 2,
     rating: 4.5,
     amenities,

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { login } from "../../services/auth";
 import { useAuth } from "../../contexts/AuthContext";
 import loginBack from "../../assets/images/background.png";
@@ -30,6 +30,7 @@ function EyeButton({ show, onToggle }) {
 export default function Login() {
   const { loginUser } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -41,9 +42,23 @@ export default function Login() {
 
   useEffect(() => { setTimeout(() => setMounted(true), 40); }, []);
 
+  // Show error message when redirected back from failed Google auth
+  useEffect(() => {
+    const errCode = searchParams.get("error");
+    if (errCode === "google_failed") setError("Google sign-in failed. Please try again or use email and password.");
+    else if (errCode === "no_code")  setError("Google sign-in was cancelled.");
+  }, [searchParams]);
+
+  function getGoogleRedirectUri() {
+    // VITE_GOOGLE_REDIRECT_URI lets you override for local dev without
+    // registering every localhost port in the Google Cloud Console.
+    // E.g. set VITE_GOOGLE_REDIRECT_URI=http://localhost:5173/auth/callback
+    return import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/auth/callback`;
+  }
+
   function handleGoogleSignIn() {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/callback`);
+    const redirectUri = encodeURIComponent(getGoogleRedirectUri());
     const scope = encodeURIComponent("openid email profile");
     const url =
       `https://accounts.google.com/o/oauth2/v2/auth` +

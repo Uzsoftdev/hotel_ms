@@ -24,9 +24,9 @@ export default function AuthCallback() {
 
         setStatusMsg("Verifying your account…");
 
-        // Exchange Google code for the app's own JWT via backend
-        // redirect_uri must match exactly what was used in the initial OAuth request
-        const redirectUri = `${window.location.origin}/auth/callback`;
+        // redirect_uri must match exactly what was used in the initial OAuth request.
+        // Use the same env-var override as Login.jsx so they always agree.
+        const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/auth/callback`;
         const { data } = await api.post("/public/auth/google", { code, redirect_uri: redirectUri });
 
         if (cancelled) return;
