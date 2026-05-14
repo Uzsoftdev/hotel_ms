@@ -79,19 +79,19 @@ export default function Home() {
             <div className="py-4 lg:py-8">
               {/* Tag pills */}
               <div className="flex flex-wrap gap-2 mb-6 md:mb-7">
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#b45309", background: "#fef3c7", padding: "4px 12px", borderRadius: 20 }}>★★★★★</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#1d4ed8", background: "#dbeafe", padding: "4px 12px", borderRadius: 20 }}>★★★★★</span>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#1d4ed8", background: "#dbeafe", padding: "4px 12px", borderRadius: 20 }}>MIAMI</span>
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#64748b", background: "#f1f5f9", padding: "4px 12px", borderRadius: 20 }}>EST. 2012</span>
               </div>
 
               {/* Headline */}
               <h1 className="font-black tracking-tight text-slate-900 mb-4 md:mb-5" style={{ fontSize: "clamp(38px, 5.5vw, 68px)", lineHeight: 1.02, letterSpacing: "-0.035em" }}>
-                Horizon<br />
+                Azure<br />Horizon
               </h1>
 
               {/* Subtitle */}
               <p className="text-slate-500 leading-relaxed mb-8 md:mb-9" style={{ fontSize: 16, maxWidth: 380 }}>
-                Sixty-four oceanfront suites and residences on a private mile of South Beach. Open year-round.
+                An intimate collection of oceanfront suites and residences on Miami's most exclusive private beach.
               </p>
 
               {/* CTAs */}
