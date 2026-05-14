@@ -3,14 +3,10 @@ global:
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: "allStay_backend"
+  - job_name: "allstay_backend"
     static_configs:
       - targets: ["backend1:8000", "backend2:8000"]
     metrics_path: /metrics
-
-  - job_name: "nginx"
-    static_configs:
-      - targets: ["nginx:9113"]
 
   - job_name: "postgres"
     static_configs:
@@ -19,3 +15,8 @@ scrape_configs:
   - job_name: "redis"
     static_configs:
       - targets: ["redis_exporter:9121"]
+
+  - job_name: "promtail"
+    static_configs:
+      - targets: ["promtail:9080"]
+    metrics_path: /metrics
