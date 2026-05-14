@@ -86,7 +86,7 @@ export default function Home() {
 
               {/* Headline */}
               <h1 className="font-black tracking-tight text-slate-900 mb-4 md:mb-5" style={{ fontSize: "clamp(38px, 5.5vw, 68px)", lineHeight: 1.02, letterSpacing: "-0.035em" }}>
-                Horizon<br />of your own.
+                Horizon<br />
               </h1>
 
               {/* Subtitle */}
