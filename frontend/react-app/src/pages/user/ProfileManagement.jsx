@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import UserLayout from "./Layout/UserLayout";
-import { getProfile, updateProfile, changePassword, uploadProfilePhoto, deleteProfilePhoto } from "../../services/user";
+import { getProfile, updateProfile, changePassword, uploadProfilePhoto, deleteProfilePhoto, getPaymentHistory, getMyReviews } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
 
 /* ── helpers ─────────────────────────────────────────────────────────────── */
@@ -68,10 +68,12 @@ function Toggle({ on, onClick }) {
 
 /* ── section nav ─────────────────────────────────────────────────────────── */
 const SECTIONS = [
-  { key: "profile",       icon: "person",        label: "Profile" },
-  { key: "security",      icon: "lock",          label: "Password & security" },
-  { key: "notifications", icon: "notifications", label: "Notifications" },
-  { key: "payments",      icon: "credit_card",   label: "Payment methods" },
+  { key: "profile",         icon: "person",        label: "Profile" },
+  { key: "security",        icon: "lock",          label: "Password & security" },
+  { key: "notifications",   icon: "notifications", label: "Notifications" },
+  { key: "payments",        icon: "credit_card",   label: "Payment methods" },
+  { key: "payment_history", icon: "history",       label: "Payment history" },
+  { key: "my_reviews",      icon: "star",          label: "My reviews" },
 ];
 
 /* ── main component ──────────────────────────────────────────────────────── */
@@ -93,6 +95,11 @@ export default function ProfileManagement() {
   const [err, setErr] = useState("");
   const [showPw, setShowPw] = useState({ current: false, new: false, confirm: false });
 
+  const [payHistory, setPayHistory]     = useState([]);
+  const [payHistLoading, setPayHistLoading] = useState(false);
+  const [myReviews, setMyReviews]       = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -105,6 +112,23 @@ export default function ProfileManagement() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (section === "payment_history" && payHistory.length === 0 && !payHistLoading) {
+      setPayHistLoading(true);
+      getPaymentHistory()
+        .then((r) => setPayHistory(Array.isArray(r.data) ? r.data : r.data?.items || []))
+        .catch(() => {})
+        .finally(() => setPayHistLoading(false));
+    }
+    if (section === "my_reviews" && myReviews.length === 0 && !reviewsLoading) {
+      setReviewsLoading(true);
+      getMyReviews()
+        .then((r) => setMyReviews(Array.isArray(r.data) ? r.data : r.data?.items || []))
+        .catch(() => {})
+        .finally(() => setReviewsLoading(false));
+    }
+  }, [section]); // eslint-disable-line
 
   function flash(message, isErr = false) {
     if (isErr) { setErr(message); setMsg(""); }
@@ -339,15 +363,6 @@ export default function ProfileManagement() {
                 </button>
               ))}
 
-              {/* External links */}
-              <Link to="/payments" style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: "none", color: "var(--text)", transition: "all .15s" }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 17 }}>history</span>
-                <span style={{ flex: 1 }}>Payment history</span>
-              </Link>
-              <Link to="/reviews" style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: "none", color: "var(--text)", transition: "all .15s" }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 17 }}>star</span>
-                <span style={{ flex: 1 }}>My reviews</span>
-              </Link>
             </nav>
 
             {/* Help box */}
@@ -561,6 +576,85 @@ export default function ProfileManagement() {
                   <p style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", margin: 0 }}>No payment methods saved</p>
                   <p style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 6 }}>Payment methods are managed during checkout.</p>
                 </div>
+              </SectionCard>
+            )}
+
+            {/* ════ PAYMENT HISTORY ════ */}
+            {section === "payment_history" && (
+              <SectionCard eyebrow="01" title="Payment history">
+                {payHistLoading ? (
+                  <div style={{ textAlign: "center", padding: "32px 0" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 36, color: "var(--primary)", animation: "spin 1s linear infinite", display: "block", marginBottom: 8 }}>progress_activity</span>
+                    <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>Loading payments…</p>
+                  </div>
+                ) : payHistory.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "32px 0" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--border-strong)", display: "block", marginBottom: 12 }}>receipt_long</span>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", margin: 0 }}>No payments yet</p>
+                    <p style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 6 }}>Your booking payments will appear here.</p>
+                  </div>
+                ) : (
+                  <div>
+                    {payHistory.map((p, i) => (
+                      <div key={p.id || i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 0", borderBottom: i < payHistory.length - 1 ? "1px solid var(--border)" : "none" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                          <div style={{ width: 36, height: 36, borderRadius: 8, background: "var(--success-bg)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: 18, color: "var(--success)" }}>check_circle</span>
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 700, fontSize: 14 }}>{p.description || p.booking_id ? `Booking #${p.booking_id}` : "Payment"}</div>
+                            <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
+                              {p.created_at ? new Date(p.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontWeight: 800, fontSize: 15, color: "var(--text)" }}>${Number(p.amount || 0).toLocaleString()}</div>
+                          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em", color: p.status === "paid" ? "var(--success)" : "var(--text-secondary)", marginTop: 2 }}>{p.status || "paid"}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </SectionCard>
+            )}
+
+            {/* ════ MY REVIEWS ════ */}
+            {section === "my_reviews" && (
+              <SectionCard eyebrow="01" title="My reviews">
+                {reviewsLoading ? (
+                  <div style={{ textAlign: "center", padding: "32px 0" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 36, color: "var(--primary)", animation: "spin 1s linear infinite", display: "block", marginBottom: 8 }}>progress_activity</span>
+                    <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0 }}>Loading reviews…</p>
+                  </div>
+                ) : myReviews.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "32px 0" }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 48, color: "var(--border-strong)", display: "block", marginBottom: 12 }}>rate_review</span>
+                    <p style={{ fontSize: 15, fontWeight: 700, color: "var(--text)", margin: 0 }}>No reviews yet</p>
+                    <p style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 6 }}>After your stay, you can leave a review for the hotel.</p>
+                  </div>
+                ) : (
+                  <div>
+                    {myReviews.map((rv, i) => (
+                      <div key={rv.id || i} style={{ padding: "16px 0", borderBottom: i < myReviews.length - 1 ? "1px solid var(--border)" : "none" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                          <div>
+                            <div style={{ fontWeight: 700, fontSize: 14 }}>{rv.hotel_name || rv.room_name || `Review #${rv.id}`}</div>
+                            <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
+                              {rv.created_at ? new Date(rv.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : ""}
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: 2 }}>
+                            {[...Array(5)].map((_, s) => (
+                              <span key={s} className="material-symbols-outlined" style={{ fontSize: 14, color: s < (rv.rating || 0) ? "#F59E0B" : "var(--border-strong)", fontVariationSettings: s < (rv.rating || 0) ? "'FILL' 1" : "'FILL' 0" }}>star</span>
+                            ))}
+                          </div>
+                        </div>
+                        {rv.comment && <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: 0, lineHeight: 1.55 }}>{rv.comment}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </SectionCard>
             )}
 
