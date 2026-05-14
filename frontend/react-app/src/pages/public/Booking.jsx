@@ -51,7 +51,6 @@ export default function Booking() {
     firstName: nameParts.first,
     lastName: nameParts.last,
     email: user?.email || "",
-    phone: user?.phone || "",
   });
 
   // Sync guest form when user profile loads (async fetch after mount)
@@ -62,7 +61,6 @@ export default function Booking() {
         firstName: g.firstName || parts[0] || "",
         lastName: g.lastName || parts.slice(1).join(" ") || "",
         email: g.email || user.email || "",
-        phone: g.phone || user.phone || "",
       }));
     }
   }, [user]);
@@ -74,7 +72,7 @@ export default function Booking() {
     dates.checkIn && dates.checkOut
       ? Math.max(1, Math.round((new Date(dates.checkOut) - new Date(dates.checkIn)) / 86400000))
       : 1;
-  const total = pricePerNight * nights;
+  const total = pricePerNight * nights * dates.rooms;
   const progressPercent = ((step - 1) / (steps.length - 1)) * 100;
 
   function validatePayment() {
@@ -90,7 +88,6 @@ export default function Booking() {
   }
 
   async function handleConfirm() {
-    if (!roomId) { setError("No room selected. Please go back and choose a room."); return; }
     if (!dates.checkIn || !dates.checkOut) { setError("Please select check-in and check-out dates."); return; }
     const payErr = validatePayment();
     if (payErr) { setError(payErr); return; }
@@ -124,6 +121,22 @@ export default function Booking() {
   }
 
   if (authLoading) return null;
+
+  if (!roomId) {
+    return (
+      <div className="bg-surface text-on-surface min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow flex flex-col items-center justify-center gap-6 px-6">
+          <span className="material-symbols-outlined text-6xl text-on-surface-variant">hotel_off</span>
+          <h2 className="text-2xl font-extrabold">No room selected</h2>
+          <p className="text-on-surface-variant text-center max-w-sm">Please browse rooms and click "Book Now" to start a booking.</p>
+          <Link to="/hotels" className="bg-primary text-white px-8 py-3 rounded-lg font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2">
+            <span className="material-symbols-outlined text-sm">arrow_back</span>Browse Rooms
+          </Link>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-surface text-on-surface min-h-screen flex flex-col">
@@ -161,7 +174,7 @@ export default function Booking() {
               <section className="bg-surface-bright p-8 rounded-xl shadow-sm border border-outline-variant/30">
                 <div className="flex items-center gap-3 mb-8"><span className="material-symbols-outlined text-primary">person</span><h2 className="text-2xl font-extrabold">{t("booking_page.step1.title")}</h2></div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[{ label: t("booking_page.step1.first_name"), key: "firstName", placeholder: "John", type: "text" }, { label: t("booking_page.step1.last_name"), key: "lastName", placeholder: "Doe", type: "text" }, { label: t("booking_page.step1.email"), key: "email", placeholder: "john@example.com", type: "email" }, { label: t("booking_page.step1.phone"), key: "phone", placeholder: "+1 (555) 000-0000", type: "tel" }].map(({ label, key, placeholder, type }) => (
+                  {[{ label: t("booking_page.step1.first_name"), key: "firstName", placeholder: "First name", type: "text" }, { label: t("booking_page.step1.last_name"), key: "lastName", placeholder: "Last name", type: "text" }, { label: t("booking_page.step1.email"), key: "email", placeholder: "Email address", type: "email" }].map(({ label, key, placeholder, type }) => (
                     <div key={key} className="flex flex-col gap-1">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{label}</label>
                       <input className="bg-transparent border-0 border-b border-outline-variant focus:border-primary py-2 text-sm font-semibold outline-none transition-colors" placeholder={placeholder} type={type} value={guest[key]} onChange={(e) => setGuest({ ...guest, [key]: e.target.value })} />
@@ -169,7 +182,20 @@ export default function Booking() {
                   ))}
                 </div>
                 <div className="mt-8 flex justify-end">
-                  <button onClick={() => setStep(2)} type="button" className="bg-primary text-white px-8 py-3 rounded-lg font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2">{t("booking_page.common.continue")} <span className="material-symbols-outlined text-sm">arrow_forward</span></button>
+                  <button
+                    onClick={() => {
+                      if (!guest.firstName.trim() || !guest.lastName.trim() || !guest.email.trim()) {
+                        setError("Please fill in your first name, last name, and email before continuing.");
+                        return;
+                      }
+                      setError("");
+                      setStep(2);
+                    }}
+                    type="button"
+                    className="bg-primary text-white px-8 py-3 rounded-lg font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2"
+                  >
+                    {t("booking_page.common.continue")} <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                  </button>
                 </div>
               </section>
             )}
@@ -260,7 +286,13 @@ export default function Booking() {
                   <div className="flex justify-between text-sm"><span className="text-on-surface-variant">Guests</span><span className="font-bold">{dates.adults + dates.children}</span></div>
                 </div>
                 <div className="space-y-3">
-                  <div className="flex justify-between text-sm"><span className="text-on-surface-variant">${pricePerNight} × {nights} night{nights !== 1 ? "s" : ""}</span><span className="font-semibold">${total.toLocaleString()}</span></div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-on-surface-variant">
+                      ${pricePerNight} × {nights} night{nights !== 1 ? "s" : ""}
+                      {dates.rooms > 1 ? ` × ${dates.rooms} rooms` : ""}
+                    </span>
+                    <span className="font-semibold">${total.toLocaleString()}</span>
+                  </div>
                 </div>
                 <div className="pt-4 border-t border-outline-variant/30 flex justify-between items-end">
                   <div>
