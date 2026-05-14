@@ -249,7 +249,12 @@ export default function ProfileManagement() {
               <div
                 className="ah-avatar-upload"
                 onClick={() => !uploadingPhoto && fileInputRef.current?.click()}
-                style={{ width: 88, height: 88, fontSize: 28, cursor: uploadingPhoto ? "wait" : "pointer" }}
+                style={{
+                  width: 88, height: 88, fontSize: 28, cursor: uploadingPhoto ? "wait" : "pointer",
+                  background: "var(--primary)", borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "#fff", fontWeight: 700, flexShrink: 0,
+                }}
               >
                 {loading ? "…" : photoSrc ? (
                   <img src={photoSrc} alt="avatar" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
@@ -272,10 +277,6 @@ export default function ProfileManagement() {
                 <h1 style={{ fontSize: 26, fontWeight: 800, letterSpacing: "-0.025em", margin: 0 }}>
                   {loading ? "Loading…" : profile.full_name || "Your Name"}
                 </h1>
-                <span style={{ background: "linear-gradient(135deg,#FCD34D,#F59E0B)", color: "#78350F", padding: "3px 10px", borderRadius: 9999, fontSize: 11, fontWeight: 800, letterSpacing: "0.05em", textTransform: "uppercase", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: 11, fontVariationSettings: "'FILL' 1" }}>workspace_premium</span>
-                  Member
-                </span>
               </div>
               <div style={{ color: "var(--text-secondary)", fontSize: 13, fontWeight: 500 }}>
                 {profile.email || "—"}
@@ -370,7 +371,12 @@ export default function ProfileManagement() {
                     <div
                       className="ah-avatar-upload"
                       onClick={() => !uploadingPhoto && fileInputRef.current?.click()}
-                      style={{ width: 80, height: 80, fontSize: 24, cursor: uploadingPhoto ? "wait" : "pointer", flexShrink: 0 }}
+                      style={{
+                        width: 80, height: 80, fontSize: 24, cursor: uploadingPhoto ? "wait" : "pointer", flexShrink: 0,
+                        background: "var(--primary)", borderRadius: "50%",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "#fff", fontWeight: 700,
+                      }}
                     >
                       {loading ? "…" : photoSrc ? (
                         <img src={photoSrc} alt="avatar" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />

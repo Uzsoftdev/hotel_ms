@@ -36,7 +36,7 @@ export default function Contact() {
 
       <section className="relative h-80 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-surface z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/10 z-10" />
           <img alt="Luxury hotel grand lobby" className="w-full h-full object-cover scale-105" src={HERO_IMG} />
         </div>
         <div className="relative z-20 text-center px-6">

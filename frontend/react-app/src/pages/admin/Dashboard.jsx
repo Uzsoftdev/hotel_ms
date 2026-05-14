@@ -30,9 +30,19 @@ export default function AdminDashboard() {
     ]).then(([o, r, b, u, h]) => {
       if (o.status === "fulfilled") setOccupancy(o.value.data);
       if (r.status === "fulfilled") setRevenue(r.value.data);
-      if (b.status === "fulfilled") setRecentBookings(b.value.data.slice(0, 5));
-      if (u.status === "fulfilled") setUsers(Array.isArray(u.value.data) ? u.value.data : []);
-      if (h.status === "fulfilled") setHotels(Array.isArray(h.value.data) ? h.value.data : []);
+      if (b.status === "fulfilled") {
+        const bData = b.value.data;
+        const bList = Array.isArray(bData) ? bData : (bData?.items ?? bData?.data ?? []);
+        setRecentBookings(bList.slice(0, 5));
+      }
+      if (u.status === "fulfilled") {
+        const uData = u.value.data;
+        setUsers(Array.isArray(uData) ? uData : (uData?.items ?? uData?.data ?? []));
+      }
+      if (h.status === "fulfilled") {
+        const hData = h.value.data;
+        setHotels(Array.isArray(hData) ? hData : (hData?.items ?? hData?.data ?? []));
+      }
     }).finally(() => setLoading(false));
   }, []);
 

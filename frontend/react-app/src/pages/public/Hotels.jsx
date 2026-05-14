@@ -162,11 +162,9 @@ export default function Hotels() {
   const [roomsLoading, setRoomsLoading]   = useState(false);
   const [roomsError, setRoomsError]       = useState(false);
 
-  /* search bar */
-  const todayStr     = new Date().toISOString().split("T")[0];
-  const fiveDaysStr  = new Date(Date.now() + 5 * 86400000).toISOString().split("T")[0];
-  const [checkIn, setCheckIn]             = useState(todayStr);
-  const [checkOut, setCheckOut]           = useState(fiveDaysStr);
+  /* search bar — start empty so Hotels page shows no default dates */
+  const [checkIn, setCheckIn]             = useState(searchParams.get("check_in") || "");
+  const [checkOut, setCheckOut]           = useState(searchParams.get("check_out") || "");
   const [guestAdults, setGuestAdults]     = useState(2);
   const [guestChildren, setGuestChildren] = useState(0);
 
@@ -382,7 +380,9 @@ export default function Hotels() {
                 <h1 className="text-2xl font-bold text-slate-900">
                   {hotelsLoading ? "Finding hotels…" : `${filteredHotels.length} hotel${filteredHotels.length !== 1 ? "s" : ""} available`}
                 </h1>
-                <p className="text-sm text-slate-500 mt-0.5">{formatDate(checkIn)} → {formatDate(checkOut)}</p>
+                {checkIn && checkOut && (
+                  <p className="text-sm text-slate-500 mt-0.5">{formatDate(checkIn)} → {formatDate(checkOut)}</p>
+                )}
               </div>
 
               {hotelsLoading ? (
