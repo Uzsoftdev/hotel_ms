@@ -133,7 +133,8 @@ export default function Login() {
       </aside>
 
       {/* ── Right: form ── */}
-      <div className="flex flex-col justify-center items-center overflow-y-auto bg-white px-5 py-10 sm:px-8 sm:py-12" style={{ flex: 1 }}>
+      <div className="overflow-y-auto bg-white" style={{ flex: 1 }}>
+        <div className="flex flex-col justify-center items-center min-h-full px-5 py-10 sm:px-8 sm:py-12">
         <div style={{ width: "100%", maxWidth: 420 }}>
 
           {/* Mobile logo */}
@@ -268,6 +269,7 @@ export default function Login() {
             New here?{" "}
             <Link to="/register" style={{ color: "var(--primary)", fontWeight: 700, textDecoration: "none" }}>Create an account</Link>
           </p>
+        </div>
         </div>
       </div>
 

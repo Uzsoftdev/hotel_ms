@@ -73,8 +73,7 @@ function Sidebar({ open, onClose, logout }) {
               <span className="material-symbols-outlined text-primary text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>hotel</span>
             </div>
             <span className="text-base font-extrabold tracking-tight">
-              <span className="text-slate-900 dark:text-white">Azure </span>
-              <span className="text-primary">Horizon</span>
+              <span className="text-slate-900 dark:text-white">all</span><span className="text-primary">Stay</span>
             </span>
           </Link>
           <div className="flex items-center gap-2">

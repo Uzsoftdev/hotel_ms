@@ -5,7 +5,6 @@ import UserProfileMenu from "../../../components/common/UserProfileMenu";
 const navItems = [
   { to: "/dashboard",     icon: "dashboard",     label: "Dashboard" },
   { to: "/my-bookings",   icon: "book_online",   label: "My Bookings" },
-  { to: "/saved",         icon: "favorite",      label: "Saved Rooms" },
   { to: "/payments",      icon: "receipt_long",  label: "Payments" },
   { to: "/reviews",       icon: "star",          label: "Reviews" },
   { to: "/notifications", icon: "notifications", label: "Notifications" },
@@ -32,7 +31,7 @@ function Sidebar({ open, onClose }) {
               <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#2563EB", fontVariationSettings: "'FILL' 1" }}>hotel</span>
             </div>
             <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: "-0.02em" }}>
-              <span style={{ color: "#0f172a" }}>Azure </span><span style={{ color: "#2563EB" }}>Horizon</span>
+              <span style={{ color: "#0f172a" }}>all</span><span style={{ color: "#2563EB" }}>Stay</span>
             </span>
           </Link>
           <button onClick={onClose} className="lg:hidden p-1 rounded text-gray-400 hover:bg-gray-100">

@@ -164,7 +164,8 @@ export default function Register() {
       </aside>
 
       {/* ── Right: form ── */}
-      <div className="flex flex-col justify-center overflow-y-auto bg-white px-5 py-10 sm:px-10 sm:py-12" style={{ flex: 1 }}>
+      <div className="overflow-y-auto bg-white" style={{ flex: 1 }}>
+        <div className="flex flex-col justify-center min-h-full px-5 py-10 sm:px-10 sm:py-12">
         <div style={{ maxWidth: 460, width: "100%", margin: "0 auto" }}>
           {/* Mobile logo */}
           <Link to="/" className="lg:hidden" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", marginBottom: 32 }}>
@@ -269,6 +270,7 @@ export default function Register() {
               {loading ? "Creating account…" : "Create account"}
             </button>
           </form>
+        </div>
         </div>
       </div>
     </div>

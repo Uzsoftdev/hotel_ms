@@ -37,9 +37,9 @@ export default function AdminDashboard() {
   }, []);
 
   const kpis = [
-    { icon: "hotel", label: "Total Hotels", value: hotels.length || "—", color: "text-indigo-600", bg: "bg-indigo-50" },
+    { icon: "hotel", label: "Total Hotels", value: hotels.length, color: "text-indigo-600", bg: "bg-indigo-50" },
     { icon: "bed", label: "Total Rooms", value: occupancy?.total_rooms ?? "—", color: "text-blue-600", bg: "bg-blue-50" },
-    { icon: "group", label: "Registered Users", value: users.length || "—", color: "text-teal-600", bg: "bg-teal-50" },
+    { icon: "group", label: "Registered Users", value: users.length, color: "text-teal-600", bg: "bg-teal-50" },
     { icon: "book_online", label: "Bookings (30d)", value: occupancy?.total_bookings ?? "—", color: "text-green-600", bg: "bg-green-50" },
     { icon: "percent", label: "Occupancy Rate", value: occupancy ? `${occupancy.occupancy_rate_pct}%` : "—", color: "text-purple-600", bg: "bg-purple-50" },
     { icon: "attach_money", label: "Revenue (30d)", value: revenue ? `$${Number(revenue.total_revenue).toLocaleString()}` : "—", color: "text-primary", bg: "bg-primary/5" },
