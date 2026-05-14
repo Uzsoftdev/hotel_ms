@@ -1,4 +1,4 @@
-/* Azure Horizon — Search, Room Details, Booking flow */
+/* allStay — Search, Room Details, Booking flow */
 
 // ─── SEARCH / ROOMS LISTING ─────────────────────────────────────────────
 const SearchPage = () => {
@@ -327,7 +327,7 @@ const BookingFlow = () => (
           <div className="ah-img ah-img-ocean" style={{ height: 140 }}><span style={{ color: 'rgba(255,255,255,0.5)' }}>Atlantic Sunrise</span></div>
           <div style={{ padding: 20 }}>
             <h3 className="ah-h3">Atlantic Sunrise Suite</h3>
-            <div className="ah-muted" style={{ fontSize: 13, marginTop: 4 }}>Azure Horizon · Miami Beach</div>
+            <div className="ah-muted" style={{ fontSize: 13, marginTop: 4 }}>allStay · Miami Beach</div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 16, padding: '12px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
               <div><div className="ah-muted" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>Check-in</div><div style={{ fontWeight: 700, fontSize: 14 }}>Thu, May 14</div></div>
               <div style={{ textAlign: 'right' }}><div className="ah-muted" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 700 }}>Check-out</div><div style={{ fontWeight: 700, fontSize: 14 }}>Tue, May 19</div></div>

@@ -1,4 +1,4 @@
-# Azure Horizon HMS — Infrastructure Upgrade Plan
+# allStay HMS — Infrastructure Upgrade Plan
 
 ## Codebase Reality Check
 

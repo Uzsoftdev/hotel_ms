@@ -1,4 +1,4 @@
-/* Azure Horizon — Auth, Account, Reviews, Notifications */
+/* allStay — Auth, Account, Reviews, Notifications */
 
 // ─── LOGIN ─────────────────────────────────────────────────────────────
 const Login = () => (
@@ -6,7 +6,7 @@ const Login = () => (
     <div style={{ display: 'flex', minHeight: '100%', alignItems: 'center', justifyContent: 'center', padding: 48, background: 'linear-gradient(135deg, #F0F9FF 0%, #DBEAFE 60%, #EFF6FF 100%)' }}>
       <div className="ah-card" style={{ padding: 40, width: 420 }}>
         <div className="ah-logo" style={{ marginBottom: 24, justifyContent: 'center' }}>
-          <div className="ah-logo-mark"></div><span>Azure Horizon</span>
+          <div className="ah-logo-mark"></div><span>allStay</span>
         </div>
         <h1 className="ah-h2" style={{ textAlign: 'center', marginBottom: 6 }}>Welcome back</h1>
         <p className="ah-muted" style={{ fontSize: 13, textAlign: 'center', marginBottom: 24 }}>Sign in to manage your stay.</p>
@@ -57,7 +57,7 @@ const Register = () => (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.1fr', height: '100%' }}>
       <aside className="ah-img ah-img-ocean" style={{ padding: 56, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
         <div className="ah-logo" style={{ color: 'white' }}>
-          <div className="ah-logo-mark"></div><span>Azure Horizon</span>
+          <div className="ah-logo-mark"></div><span>allStay</span>
         </div>
         <div style={{ position: 'relative', zIndex: 2, color: 'white' }}>
           <div style={{ fontSize: 64, lineHeight: 1, opacity: 0.6, marginBottom: 16 }}>"</div>
@@ -389,7 +389,7 @@ const ReviewsPage = () => (
             <p style={{ fontSize: 14, lineHeight: 1.55, marginTop: 10, fontWeight: 500 }}>{r.body}</p>
             {r.response && (
               <div style={{ marginTop: 14, padding: 14, background: 'var(--bg)', borderRadius: 10, borderLeft: '3px solid var(--primary)' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)', marginBottom: 4 }}>Response from Azure Horizon</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)', marginBottom: 4 }}>Response from allStay</div>
                 <div style={{ fontSize: 13, fontWeight: 500, lineHeight: 1.5 }}>{r.response}</div>
               </div>
             )}

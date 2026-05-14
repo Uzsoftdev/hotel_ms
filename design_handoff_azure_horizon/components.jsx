@@ -1,4 +1,4 @@
-/* Azure Horizon — shared components and pages */
+/* allStay — shared components and pages */
 
 const Icon = ({ name, size }) => (
   <span className="material-symbols-outlined" style={{ fontSize: size || 20 }}>{name}</span>
@@ -18,7 +18,7 @@ const Header = ({ active = 'home', transparent, loggedIn = true }) => (
   <header className={`ah-header ${transparent ? 'is-transparent' : ''}`}>
     <div className="ah-logo">
       <div className="ah-logo-mark"></div>
-      <span>Azure Horizon</span>
+      <span>allStay</span>
     </div>
     <nav className="ah-nav">
       <a className={active === 'home' ? 'is-active' : ''}>Stay</a>
@@ -85,7 +85,7 @@ const SearchBar = () => (
   <div className="ah-searchbar">
     <div>
       <span className="ah-searchbar-label">Destination</span>
-      <span className="ah-searchbar-value">Azure Horizon · Miami</span>
+      <span className="ah-searchbar-value">allStay · Miami</span>
     </div>
     <div>
       <span className="ah-searchbar-label">Check-in</span>
@@ -230,7 +230,7 @@ const Footer = () => (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 40, flexWrap: 'wrap' }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'white', fontWeight: 800, fontSize: 17, marginBottom: 12 }}>
-          <div className="ah-logo-mark"></div> Azure Horizon
+          <div className="ah-logo-mark"></div> allStay
         </div>
         <div style={{ maxWidth: 320, lineHeight: 1.6 }}>1 Ocean Drive, Miami Beach, FL 33139<br />+1 305 555 0140</div>
       </div>
@@ -297,7 +297,7 @@ const HomeC = () => (
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div className="ah-logo" style={{ color: 'white' }}>
           <div className="ah-logo-mark"></div>
-          <span>Azure Horizon</span>
+          <span>allStay</span>
         </div>
         <nav style={{ display: 'flex', gap: 24, fontSize: 14, fontWeight: 600 }}>
           <a style={{ color: 'white', opacity: 0.9 }}>Stays</a>
@@ -308,7 +308,7 @@ const HomeC = () => (
         </nav>
       </div>
       <div style={{ maxWidth: 720, marginBottom: 24 }}>
-        <h1 style={{ fontSize: 38, fontWeight: 800, letterSpacing: '-0.025em', margin: 0, lineHeight: 1.05 }}>Find your next stay at Azure Horizon</h1>
+        <h1 style={{ fontSize: 38, fontWeight: 800, letterSpacing: '-0.025em', margin: 0, lineHeight: 1.05 }}>Find your next stay at allStay</h1>
         <p style={{ fontSize: 16, marginTop: 8, opacity: 0.9, fontWeight: 500 }}>Ocean-view suites, member rates from $389/night.</p>
       </div>
       <SearchBar />

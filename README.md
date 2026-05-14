@@ -1,4 +1,4 @@
-# Azure Horizon Hotel Management System
+# allStay Hotel Management System
 
 Full-stack hotel management platform built with React, FastAPI, PostgreSQL, and Redis. Supports guest bookings, staff operations, admin management, real-time notifications, and dynamic pricing.
 

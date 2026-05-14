@@ -1,8 +1,8 @@
-# Handoff: Azure Horizon Hotel — Guest UI
+# Handoff: allStay Hotel — Guest UI
 
 ## Overview
 
-Azure Horizon Hotel is a luxury oceanfront property in Miami. This handoff covers the **complete guest-facing web app**: 14 pages spanning marketing, booking flow, and authenticated account management. Tone: aspirational but approachable — Booking.com clarity meets Four Seasons polish.
+allStay Hotel is a luxury oceanfront property in Miami. This handoff covers the **complete guest-facing web app**: 14 pages spanning marketing, booking flow, and authenticated account management. Tone: aspirational but approachable — Booking.com clarity meets Four Seasons polish.
 
 ## About the Design Files
 
@@ -217,13 +217,13 @@ Material Symbols Outlined, weight 500, size 24 (default) or 14–18 inline. Impo
 - **Icons**: Material Symbols Outlined via Google Fonts CDN
 - **Images**: All photo regions in the prototype use **striped CSS placeholders** in tinted gradients (ocean = blue, room = orange, suite = purple, pool = teal, spa = pink). **In production, replace with real photography.** Recommended treatment: ocean/exterior shots for hero and "Atlantic" suites, warm interior shots for guest rooms, lifestyle imagery for facilities.
 - **QR code**: placeholder pattern only — generate real QR with booking ref payload server-side or client-side via `qrcode.react` or similar.
-- **Logo**: gradient mark + "Azure Horizon" wordmark — recreate as SVG component. Mark is a 28×28 rounded square with linear-gradient(135deg, #2563EB 0%, #06B6D4 100%) and an inner 6px-inset white circle at 25% opacity.
+- **Logo**: gradient mark + "allStay" wordmark — recreate as SVG component. Mark is a 28×28 rounded square with linear-gradient(135deg, #2563EB 0%, #06B6D4 100%) and an inner 6px-inset white circle at 25% opacity.
 
 ## Files in this bundle
 
 | File | Purpose |
 |---|---|
-| `Azure Horizon Hotel.html` | Entry point — open in browser to see all 15 artboards on the design canvas |
+| `allStay Hotel.html` | Entry point — open in browser to see all 15 artboards on the design canvas |
 | `styles.css` | **All design tokens and component styles** (best reference for visual implementation) |
 | `components.jsx` | Shared components (Header, Footer, RoomCard, SearchBar) + 3 home variants |
 | `pages-flow.jsx` | Search, Room Details, Booking flow, Confirmation |
