@@ -51,6 +51,7 @@ export default function Booking() {
     firstName: nameParts.first,
     lastName: nameParts.last,
     email: user?.email || "",
+    phone: user?.phone || "",
   });
 
   // Sync guest form when user profile loads (async fetch after mount)
@@ -61,6 +62,7 @@ export default function Booking() {
         firstName: g.firstName || parts[0] || "",
         lastName: g.lastName || parts.slice(1).join(" ") || "",
         email: g.email || user.email || "",
+        phone: g.phone || user.phone || "",
       }));
     }
   }, [user]);
@@ -114,7 +116,10 @@ export default function Booking() {
         },
       });
     } catch (err) {
-      setError(err.response?.data?.detail || err.response?.data?.error || "Booking failed. Please try again.");
+      const d = err.response?.data;
+      const msg = d?.detail || d?.error || d?.message ||
+        (err.code === "ERR_NETWORK" ? "Cannot reach the server. Check your connection." : "Booking failed. Please try again.");
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -174,7 +179,7 @@ export default function Booking() {
               <section className="bg-surface-bright p-8 rounded-xl shadow-sm border border-outline-variant/30">
                 <div className="flex items-center gap-3 mb-8"><span className="material-symbols-outlined text-primary">person</span><h2 className="text-2xl font-extrabold">{t("booking_page.step1.title")}</h2></div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[{ label: t("booking_page.step1.first_name"), key: "firstName", placeholder: "First name", type: "text" }, { label: t("booking_page.step1.last_name"), key: "lastName", placeholder: "Last name", type: "text" }, { label: t("booking_page.step1.email"), key: "email", placeholder: "Email address", type: "email" }].map(({ label, key, placeholder, type }) => (
+                  {[{ label: t("booking_page.step1.first_name"), key: "firstName", placeholder: "First name", type: "text" }, { label: t("booking_page.step1.last_name"), key: "lastName", placeholder: "Last name", type: "text" }, { label: t("booking_page.step1.email"), key: "email", placeholder: "Email address", type: "email" }, { label: t("booking_page.step1.phone"), key: "phone", placeholder: "Phone number", type: "tel" }].map(({ label, key, placeholder, type }) => (
                     <div key={key} className="flex flex-col gap-1">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{label}</label>
                       <input className="bg-transparent border-0 border-b border-outline-variant focus:border-primary py-2 text-sm font-semibold outline-none transition-colors" placeholder={placeholder} type={type} value={guest[key]} onChange={(e) => setGuest({ ...guest, [key]: e.target.value })} />

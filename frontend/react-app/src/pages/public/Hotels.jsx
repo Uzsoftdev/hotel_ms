@@ -178,24 +178,34 @@ export default function Hotels() {
   const [sortBy, setSortBy]                       = useState("recommended");
 
   /* fetch hotels */
+  function extractList(data) {
+    if (Array.isArray(data)) return data;
+    // Handle paginated wrappers: { items: [...] } / { data: [...] } / { results: [...] } / { hotels: [...] }
+    if (data && typeof data === "object") {
+      const v = data.items ?? data.data ?? data.results ?? data.hotels;
+      if (Array.isArray(v)) return v;
+    }
+    return null;
+  }
+
   const fetchHotels = useCallback(() => {
     setHotelsLoading(true);
     setHotelsError(false);
-    Promise.allSettled([
-      api.get("/public/search/hotels/browse?per_page=100&page=1"),
-      api.get("/public/search/hotels/browse?per_page=100&page=2"),
-    ]).then((results) => {
-      const all = [];
-      let anyOk = false;
-      for (const r of results) {
-        if (r.status === "fulfilled" && Array.isArray(r.value.data)) {
-          all.push(...r.value.data);
-          anyOk = true;
-        }
-      }
-      if (anyOk) setHotels(all);
-      else setHotelsError(true);
-    }).finally(() => setHotelsLoading(false));
+    api.get("/public/search/hotels/browse?per_page=100&page=1")
+      .then((res) => {
+        const list = extractList(res.data);
+        if (list === null) { setHotelsError(true); return; }
+        setHotels(list);
+        // Page 2 is best-effort — never causes an error state
+        api.get("/public/search/hotels/browse?per_page=100&page=2")
+          .then((res2) => {
+            const list2 = extractList(res2.data);
+            if (list2 && list2.length > 0) setHotels((prev) => [...prev, ...list2]);
+          })
+          .catch(() => {});
+      })
+      .catch(() => setHotelsError(true))
+      .finally(() => setHotelsLoading(false));
   }, []);
 
   useEffect(() => { fetchHotels(); }, [fetchHotels]);
