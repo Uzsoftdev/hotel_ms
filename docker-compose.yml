@@ -51,14 +51,16 @@ services:
       - hotel_network
     # pg_basebackup streams a base backup from the primary then starts postgres
     # in hot-standby mode (read-only replica).
+    # gosu drops from root → postgres user; postgres refuses to run as root.
     command: >
       bash -c "
+        chown -R postgres:postgres /var/lib/postgresql/data
         if [ ! -f /var/lib/postgresql/data/pgdata/PG_VERSION ]; then
-          until pg_basebackup -h db -D /var/lib/postgresql/data/pgdata -U replicator -Fp -Xs -P -R --slot=replica1_slot; do
+          until gosu postgres pg_basebackup -h db -D /var/lib/postgresql/data/pgdata -U replicator -Fp -Xs -P -R --slot=replica1_slot; do
             echo 'Waiting for primary to be ready for replication...'; sleep 3;
           done
         fi
-        postgres -D /var/lib/postgresql/data/pgdata
+        exec gosu postgres postgres -D /var/lib/postgresql/data/pgdata
       "
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -142,7 +144,7 @@ services:
       - "traefik.http.services.backend.loadbalancer.sticky.cookie.secure=true"
       - "traefik.http.services.backend.loadbalancer.sticky.cookie.httponly=true"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -176,7 +178,7 @@ services:
       - "traefik.http.services.backend.loadbalancer.sticky.cookie.secure=true"
       - "traefik.http.services.backend.loadbalancer.sticky.cookie.httponly=true"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\""]
       interval: 15s
       timeout: 5s
       retries: 3
@@ -239,7 +241,7 @@ services:
     networks:
       - hotel_network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/9000' 2>/dev/null"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -423,7 +425,7 @@ services:
     container_name: hotel_pgadmin
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_EMAIL: sunnatakhmad@gmail.com
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
       - "5050:80"

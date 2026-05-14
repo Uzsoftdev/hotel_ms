@@ -122,7 +122,7 @@ export default function Register() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {/* ── Left: ocean brand panel (hidden on mobile) ── */}
-      <aside style={{ flex: "0 0 45%", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 56 }}
+      <aside style={{ flex: "0 0 45%", position: "relative", overflow: "hidden", flexDirection: "column", justifyContent: "space-between", padding: 56 }}
         className="hidden lg:flex">
         <img src={registerBack} alt="allStay Hotel" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(15,23,42,.45) 0%, rgba(15,23,42,.75) 100%)", zIndex: 1 }} />
