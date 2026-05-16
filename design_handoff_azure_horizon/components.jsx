@@ -16,6 +16,7 @@ const Stars = ({ value = 5, size = 14, total = 5 }) => (
   </span>
 );
 
+// Main navigation header with login and booking actions
 const Header = ({ active = 'home', transparent, loggedIn = true }) => (
   <header className={`ah-header ${transparent ? 'is-transparent' : ''}`}>
     <div className="ah-logo">
