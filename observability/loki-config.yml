@@ -22,6 +22,8 @@ common:
   # Single replica setup for standalone deployment
   replication_factor: 1
   ring:
+  # Use in-memory key/value store
+      # Suitable for development environments
     kvstore:
       store: inmemory
 
@@ -29,7 +31,9 @@ query_range:
   results_cache:
     cache:
       embedded_cache:
+      # Enable query result caching
         enabled: true
+        # Maximum cache size in MB
         max_size_mb: 100
 
 schema_config:
