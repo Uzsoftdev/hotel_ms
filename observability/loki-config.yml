@@ -39,11 +39,16 @@ query_range:
 schema_config:
   configs:
     - from: 2024-01-01
+      # Use TSDB storage backend
       store: tsdb
+      # Store logs on local filesystem
       object_store: filesystem
+      # Loki schema version
       schema: v13
       index:
+      # Prefix for generated index files
         prefix: index_
+                # Create indexes every 24 hours
         period: 24h
 
 limits_config:
