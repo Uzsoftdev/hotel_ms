@@ -1,5 +1,6 @@
 /* allStay — shared components and pages */
 
+// Reusable Material Icon component with customizable size
 const Icon = ({ name, size }) => (
   <span className="material-symbols-outlined" style={{ fontSize: size || 20 }}>{name}</span>
 );
