@@ -5,6 +5,7 @@ const Icon = ({ name, size }) => (
   <span className="material-symbols-outlined" style={{ fontSize: size || 20 }}>{name}</span>
 );
 
+// Displays hotel/star ratings dynamically
 const Stars = ({ value = 5, size = 14, total = 5 }) => (
   <span className="ah-stars" style={{ fontSize: size }}>
     {Array.from({ length: total }).map((_, i) => (
