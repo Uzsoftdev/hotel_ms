@@ -1,16 +1,25 @@
+# Disable authentication for local/testing environment
 auth_enabled: false
 
 server:
+  # HTTP API port for Loki
   http_listen_port: 3100
+  # gRPC communication port
   grpc_listen_port: 9096
 
 common:
+  # Local instance address
   instance_addr: 127.0.0.1
+  # Base storage path inside container/server
   path_prefix: /loki
   storage:
     filesystem:
+      # Directory used to store log chunks
       chunks_directory: /loki/chunks
+            # Directory used to store rule files
       rules_directory: /loki/rules
+  
+  # Single replica setup for standalone deployment
   replication_factor: 1
   ring:
     kvstore:
