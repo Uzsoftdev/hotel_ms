@@ -30,5 +30,6 @@ echo "=== FRONTEND DIR ==="
 ls -lah /opt/hms/frontend/ 2>/dev/null || echo "MISSING: /opt/hms/frontend does not exist"
 
 echo ""
+#env
 echo "=== ENV FILE ==="
 ls -lah /opt/hotel/.env 2>/dev/null || echo "MISSING: /opt/hotel/.env does not exist"
