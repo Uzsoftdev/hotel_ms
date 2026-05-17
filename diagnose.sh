@@ -18,6 +18,7 @@ echo "=== TRAEFIK TASKS ==="
 docker service ps hotel_traefik --no-trunc
 
 echo ""
+#echo psrt 
 echo "=== BACKEND LOGS (last 30 lines) ==="
 docker service logs hotel_backend --tail 30 2>&1
 
