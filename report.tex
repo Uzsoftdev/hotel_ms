@@ -431,35 +431,144 @@ The diagram shows the principal entities and their relationships. Cardinalities 
 
 The repository follows a layered monorepo layout separating backend, frontend, infrastructure, and CI/CD concerns:
 
-\begin{lstlisting}[language=bash, numbers=none, frame=single]
+\begin{lstlisting}[language=bash, numbers=none, frame=single, basicstyle=\ttfamily\tiny]
 hotel_management_system/
 |-- backend/
 |   |-- app/
 |   |   |-- api/v1/
-|   |   |   |-- public/     # auth, search (no auth)
-|   |   |   |-- user/       # bookings, profile, payments, reviews
-|   |   |   |-- admin/      # hotels, rooms, pricing, reports
-|   |   |   `-- ws.py       # WebSocket endpoint (R7)
-|   |   |-- models/         # SQLAlchemy ORM models (20 tables)
-|   |   |-- schemas/        # Pydantic v2 request/response models
-|   |   |-- services/       # business logic (availability, pricing, ...)
-|   |   |-- tasks/          # Celery tasks (batch, email, indexing)
-|   |   |-- middleware/     # auth, rate-limit, observability (R11, R12)
-|   |   |-- components/     # from-scratch token bucket (R11)
-|   |   `-- core/           # config, security, tracing (R12)
-|   |-- migrations/         # Alembic migration scripts (R3)
-|   `-- tests/              # pytest integration test suite
-|-- frontend/react-app/
-|   `-- src/
-|       |-- pages/          # public, user, admin, staff pages
-|       `-- components/     # shared UI components (incl. AIHelper)
+|   |   |   |-- public/
+|   |   |   |   |-- auth.py          # register, login, OAuth, verify, reset
+|   |   |   |   `-- search.py        # hotel/room search + availability (R5,R6)
+|   |   |   |-- user/
+|   |   |   |   |-- bookings.py      # create, list, cancel booking
+|   |   |   |   |-- notifications.py # notification list + mark-read
+|   |   |   |   |-- payments.py      # payment history
+|   |   |   |   |-- profile.py       # get/update profile, avatar upload
+|   |   |   |   |-- reviews.py       # CRUD reviews
+|   |   |   |   `-- wishlist.py      # save/remove hotels and rooms
+|   |   |   |-- admin/
+|   |   |   |   |-- blackout_dates.py
+|   |   |   |   |-- bookings.py      # all bookings, check-in/out, status override
+|   |   |   |   |-- hotels.py        # hotel CRUD + image management
+|   |   |   |   |-- pricing.py       # dynamic pricing rules
+|   |   |   |   |-- reports.py       # occupancy, revenue, guest analytics
+|   |   |   |   |-- room_types.py
+|   |   |   |   |-- rooms.py
+|   |   |   |   `-- users.py         # user/staff management
+|   |   |   `-- ws.py                # WebSocket endpoint /ws/{user_id} (R7)
+|   |   |-- components/
+|   |   |   `-- token_bucket.py      # Redis Lua token-bucket (R11)
+|   |   |-- core/
+|   |   |   |-- config.py            # Pydantic settings from .env
+|   |   |   |-- database.py          # SQLAlchemy engine, SessionLocal, replica
+|   |   |   |-- security.py          # JWT encode/decode, password hashing
+|   |   |   `-- tracing.py           # OpenTelemetry + Jaeger setup (R12)
+|   |   |-- middleware/
+|   |   |   |-- auth.py              # DBSessionMiddleware
+|   |   |   |-- observability.py     # PrometheusMiddleware, /metrics (R12)
+|   |   |   |-- rbac.py              # role-based access control
+|   |   |   `-- token_bucket_middleware.py  # ASGI rate-limit wrapper (R11)
+|   |   |-- models/                  # SQLAlchemy ORM (20 tables) (R3)
+|   |   |   |-- activity_log.py      |-- amenity.py
+|   |   |   |-- blackout_date.py     |-- booking.py
+|   |   |   |-- email_verification.py|-- facility.py
+|   |   |   |-- hotel_facility.py    |-- hotel_image.py
+|   |   |   |-- hotel.py             |-- notification.py
+|   |   |   |-- password_reset.py    |-- payment.py
+|   |   |   |-- pricing_rule.py      |-- review.py
+|   |   |   |-- room_amenity.py      |-- room_image.py
+|   |   |   |-- room_type.py         |-- room.py
+|   |   |   |-- user.py              `-- wishlist.py
+|   |   |-- repositories/            # DB query layer
+|   |   |   |-- booking_repository.py  |-- hotel_repository.py
+|   |   |   |-- notification_repository.py
+|   |   |   |-- payment_repository.py  |-- pricing_repository.py
+|   |   |   |-- review_repository.py   |-- room_repository.py
+|   |   |   `-- user_repository.py
+|   |   |-- schemas/                 # Pydantic v2 request/response models
+|   |   |   |-- auth.py  |-- booking.py  |-- hotel.py  |-- payment.py
+|   |   |   |-- pricing.py  |-- review.py  |-- room.py  |-- user.py
+|   |   |-- services/                # business logic layer
+|   |   |   |-- auth.py              # Google OAuth, email verify, password reset
+|   |   |   |-- availability.py      # room availability query (date-range JOIN)
+|   |   |   |-- cache.py             # Redis availability + generic cache (R6)
+|   |   |   |-- email.py             # SMTP / Celery email dispatch
+|   |   |   |-- pricing.py           # dynamic pricing rule resolution
+|   |   |   |-- reports.py           # occupancy and revenue aggregations
+|   |   |   |-- search.py            # Meilisearch client + ILIKE fallback (R5)
+|   |   |   |-- storage.py           # MinIO pre-signed URL helpers
+|   |   |   |-- token_blacklist.py   # JWT blacklist via Redis
+|   |   |   `-- websocket.py         # ConnectionManager + Redis Pub/Sub (R7)
+|   |   |-- tasks/                   # Celery tasks (R10)
+|   |   |   |-- batch_tasks.py       # nightly revenue snapshot, hourly warmup
+|   |   |   |-- email_tasks.py       # async email delivery
+|   |   |   |-- indexing_tasks.py    # Meilisearch re-index on hotel/room change
+|   |   |   `-- payment_tasks.py     # async payment intent processing
+|   |   |-- utils/
+|   |   |   |-- helpers.py  |-- logger.py  |-- seed_data.py  |-- validators.py
+|   |   |-- celery_app.py            # Celery app + Beat schedule config
+|   |   |-- dependencies.py          # FastAPI Depends: get_db, get_current_user
+|   |   `-- main.py                  # FastAPI app, middleware chain, router mount
+|   |-- migrations/                  # Alembic (R3)
+|   |   |-- versions/
+|   |   |   |-- 001_initial_schema.py
+|   |   |   |-- 002_add_pricing_rules.py
+|   |   |   |-- 003_add_blackout_dates.py
+|   |   |   |-- 004_add_reviews.py
+|   |   |   |-- 005_add_email_verification.py
+|   |   |   |-- 006_add_partitioning.py
+|   |   |   `-- 007_add_wishlist.py
+|   |   `-- env.py
+|   |-- scripts/
+|   |   |-- meilisearch_seed.py      # one-time Meilisearch index seed (R5)
+|   |   |-- migrate_avatars_to_minio.py
+|   |   `-- migrate_hotel_images_to_minio.py
+|   |-- tests/                       # pytest integration suite
+|   |   |-- conftest.py  |-- factories.py
+|   |   |-- test_admin.py  |-- test_auth.py
+|   |   |-- test_bookings.py  |-- test_pricing.py
+|   |   `-- test_rooms.py
+|   |-- requirements.txt
+|   `-- alembic.ini
+|-- frontend/react-app/src/
+|   |-- components/
+|   |   |-- admin/                   # admin-specific UI widgets
+|   |   |-- common/                  # Toast, Navbar, Footer, etc.
+|   |   |-- public/                  # AIHelper concierge chat
+|   |   |-- staff/                   # staff dashboard widgets
+|   |   `-- user/                    # NotificationItem, BookingCard, etc.
+|   |-- contexts/
+|   |   |-- AuthContext.jsx          # JWT token, user profile, login/logout
+|   |   |-- NotificationContext.jsx  # real-time toast state (R7)
+|   |   |-- SocketContext.jsx        # WebSocket connection lifecycle (R7)
+|   |   |-- ThemeContext.jsx
+|   |   `-- WishlistContext.jsx
+|   |-- pages/
+|   |   |-- admin/   |-- auth/   |-- public/   |-- staff/   |-- user/
+|   |-- services/
+|   |   |-- api.js                   # Axios instance with JWT interceptor
+|   |   |-- auth.js  |-- user.js  |-- admin.js
+|   |-- locales/                     # i18next translations (11 languages)
+|   |   |-- en/  ar/  de/  es/  fr/  it/  ja/  ko/  pt/  ru/  zh/
+|   |-- utils/
+|   |   |-- i18n.js                  # i18next initialisation
+|   |-- App.jsx  |-- main.jsx        # root component + Vite entry point
 |-- docker/
-|   |-- Dockerfile.backend
-|   |-- Dockerfile.celery
-|   |-- traefik.yml         # Traefik static config (R8)
-|   `-- traefik-dynamic.yml # middlewares, circuit breaker (R8)
-|-- .github/workflows/      # CI/CD pipelines (R13)
-|-- docker-compose.yml      # 21-service stack with healthchecks (R9)
+|   |-- Dockerfile.backend           # Python 3.11-slim, gunicorn + uvicorn
+|   |-- Dockerfile.celery            # same base, celery entrypoint
+|   |-- Dockerfile.frontend          # node:20 build -> nginx:alpine serve
+|   |-- deploy.sh                    # Docker Swarm stack deploy script
+|   |-- traefik.yml                  # Traefik static config (R8)
+|   |-- traefik-dynamic.yml          # middlewares, circuit breaker (R8)
+|   |-- nginx-static.conf            # nginx config for React SPA
+|   `-- pgbouncer.ini                # PgBouncer connection pool config
+|-- .github/workflows/
+|   |-- deploy-backend.yml           # build + push GHCR + swarm deploy (R13)
+|   |-- deploy-frontend.yml          # npm build + rsync dist/ (R13)
+|   |-- certbot.yml                  # monthly TLS cert renewal
+|   `-- reset-credentials.yml        # utility: reset admin credentials
+|-- docker-compose.yml               # 21-service local dev stack (R9)
+|-- docker-stack.yml                 # production Swarm stack (8 services)
 `-- README.md
 \end{lstlisting}
 
@@ -545,7 +654,7 @@ GET & /metrics & Prometheus metrics     & internal \\
 
 \subsection{Non-REST Protocol: WebSocket (R7)}
 
-\textbf{Endpoint:} \texttt{ws://\{host\}/api/v1/ws/\{user\_id\}}
+\textbf{Endpoint:} \texttt{wss://\{host\}/ws/\{user\_id\}?token=\{jwt\}}
 
 \textbf{Justification:} Booking confirmations and status changes must reach the browser within milliseconds of the server-side state change. A polling approach would either add latency (long intervals) or create unnecessary load (short intervals). WebSocket maintains a persistent, full-duplex channel with negligible overhead after the handshake, making it the natural fit for push notifications.
 
@@ -830,10 +939,10 @@ Traefik reads its static configuration from \texttt{docker/traefik.yml} and its 
 The production deployment uses two \textbf{DigitalOcean} droplets on a private VLAN:
 \begin{itemize}[noitemsep]
   \item \texttt{hms-backend} (167.99.138.191) --- Traefik, Gunicorn/Uvicorn $\times$2, Celery, Redis, Meilisearch, MinIO, observability stack.
-  \item \texttt{hms-db} (134.122.66.174) --- PostgreSQL~15 primary + replica (private network only, no public exposure).
+  \item \texttt{hms-db} (164.92.193.226) --- PostgreSQL~15 primary + replica (private network only, no public exposure).
 \end{itemize}
 
-GitHub Actions workflows (\texttt{.github/workflows/}) deploy on every push to \texttt{main}: backend changes trigger an rsync + \texttt{alembic upgrade head} + systemd restart; frontend changes trigger \texttt{npm run build} + rsync of \texttt{dist/} + \texttt{nginx -s reload}.
+GitHub Actions workflows (\texttt{.github/workflows/}) deploy on every push to \texttt{main}: backend changes build and push Docker images to GHCR, then run \texttt{docker stack deploy} via SSH to perform a rolling update of the Swarm services; frontend changes run \texttt{npm run build} + rsync the \texttt{dist/} bundle to \texttt{/opt/hms/frontend} on the server.
 
 % ══════════════════════════════════════════════════════════════════════════════
 %  9. OBSERVABILITY
