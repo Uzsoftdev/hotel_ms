@@ -6,6 +6,7 @@ echo "=== SWARM SERVICES ==="
 docker service ls
 
 echo ""
+#backend
 echo "=== BACKEND TASKS ==="
 docker service ps hotel_backend --no-trunc
 
