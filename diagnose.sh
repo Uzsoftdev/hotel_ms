@@ -22,6 +22,7 @@ echo "=== BACKEND LOGS (last 30 lines) ==="
 docker service logs hotel_backend --tail 30 2>&1
 
 echo ""
+# front
 echo "=== FRONTEND DIR ==="
 ls -lah /opt/hms/frontend/ 2>/dev/null || echo "MISSING: /opt/hms/frontend does not exist"
 
