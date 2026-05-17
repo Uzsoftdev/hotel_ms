@@ -26,6 +26,16 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
+    # Skip if already partitioned (idempotency guard)
+    from sqlalchemy.sql import text
+    conn = op.get_bind()
+    row = conn.execute(text(
+        "SELECT relkind FROM pg_class WHERE relname = 'bookings' AND relnamespace = 'public'::regnamespace"
+    )).fetchone()
+    if row and row[0] == 'p':
+        # Already a partitioned table — nothing to do
+        return
+
     # ── 1. Drop FK from payments → bookings ──────────────────────────────────
     # PostgreSQL cannot reference a partitioned table via FK unless the
     # partition key is part of the referenced unique/primary key.
