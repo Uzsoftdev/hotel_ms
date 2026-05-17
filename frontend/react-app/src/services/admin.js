@@ -29,6 +29,10 @@ export const getUsers = (role) => api.get('/admin/users/', { params: role ? { ro
 export const createUser = (data) => api.post('/admin/users/', data);
 export const updateUser = (id, data) => api.put(`/admin/users/${id}`, data);
 export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
+export const banUser = (id, ban, reason) => api.patch(`/admin/users/${id}/ban`, { ban, reason });
+export const toggleVip = (id) => api.patch(`/admin/users/${id}/vip`);
+export const updateLoyalty = (id, points_delta, tier) => api.patch(`/admin/users/${id}/loyalty`, { points_delta, tier });
+export const getUserDetail = (id) => api.get(`/admin/users/${id}/detail`);
 
 // Reports
 export const getOccupancyReport = (days) => api.get('/admin/reports/occupancy', { params: { days } });

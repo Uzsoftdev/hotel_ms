@@ -23,6 +23,15 @@ class User(Base):
     hotel_id = Column(Integer, ForeignKey("hotels.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
+    # Guest / Staff extended fields
+    is_banned       = Column(Boolean, nullable=False, server_default="false")
+    ban_reason      = Column(String, nullable=True)
+    vip_status      = Column(Boolean, nullable=False, server_default="false")
+    loyalty_points  = Column(Integer, nullable=False, server_default="0")
+    loyalty_tier    = Column(String, nullable=False, server_default="'bronze'")  # bronze/silver/gold/platinum
+    notes           = Column(String, nullable=True)   # admin-only internal notes
+    department      = Column(String, nullable=True)   # for staff: e.g. Front Desk, Housekeeping, F&B
+
     hotel = relationship("Hotel")
 
     def __repr__(self) -> str:

@@ -19,6 +19,9 @@ class UserAdminCreate(BaseModel):
     email: EmailStr
     password: str
     role: str = "guest"
+    phone: Optional[str] = None
+    department: Optional[str] = None  # staff only
+    notes: Optional[str] = None
 
 
 class UserAdminUpdate(BaseModel):
@@ -26,13 +29,21 @@ class UserAdminUpdate(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     role: Optional[str] = None
+    vip_status: Optional[bool] = None
+    loyalty_points: Optional[int] = None
+    loyalty_tier: Optional[str] = None
+    notes: Optional[str] = None
+    department: Optional[str] = None
 
-    @classmethod
-    def validate_role(cls, v: Optional[str]) -> Optional[str]:
-        allowed = {"guest", "staff", "hotel_admin", "super_admin"}
-        if v is not None and v not in allowed:
-            raise ValueError(f"role must be one of: {allowed}")
-        return v
+
+class BanRequest(BaseModel):
+    ban: bool           # True = ban, False = unban
+    reason: Optional[str] = None
+
+
+class LoyaltyRequest(BaseModel):
+    points_delta: int   # positive = add, negative = deduct
+    tier: Optional[str] = None  # if provided, override tier
 
 
 class UserAdminResponse(BaseModel):
@@ -40,8 +51,17 @@ class UserAdminResponse(BaseModel):
     full_name: Optional[str]
     email: str
     role: str
-    hotel_id: Optional[int]
+    phone: Optional[str] = None
+    photo_url: Optional[str] = None
+    hotel_id: Optional[int] = None
     is_email_verified: Optional[bool] = None
+    is_banned: Optional[bool] = None
+    ban_reason: Optional[str] = None
+    vip_status: Optional[bool] = None
+    loyalty_points: Optional[int] = None
+    loyalty_tier: Optional[str] = None
+    notes: Optional[str] = None
+    department: Optional[str] = None
     created_at: Optional[datetime] = None
 
     class Config:
@@ -98,3 +118,78 @@ def remove_user(
 ) -> None:
     if not delete_user(db, user_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+
+@router.patch("/{user_id}/ban", response_model=UserAdminResponse)
+def ban_user(user_id: int, body: BanRequest, db: Session = Depends(get_db), _: User = Depends(require_admin)) -> Any:
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    user.is_banned = body.ban  # type: ignore[assignment]
+    user.ban_reason = body.reason if body.ban else None  # type: ignore[assignment]
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.patch("/{user_id}/vip", response_model=UserAdminResponse)
+def toggle_vip(user_id: int, db: Session = Depends(get_db), _: User = Depends(require_admin)) -> Any:
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    user.vip_status = not bool(user.vip_status)  # type: ignore[assignment]
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.patch("/{user_id}/loyalty", response_model=UserAdminResponse)
+def update_loyalty(user_id: int, body: LoyaltyRequest, db: Session = Depends(get_db), _: User = Depends(require_admin)) -> Any:
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    _raw_pts: int = int(user.loyalty_points or 0)  # type: ignore[arg-type]
+    new_pts: int = max(0, _raw_pts + body.points_delta)
+    user.loyalty_points = new_pts  # type: ignore[assignment]
+    # Auto-tier if not overridden
+    if body.tier:
+        user.loyalty_tier = body.tier  # type: ignore[assignment]
+    elif new_pts >= 5000:
+        user.loyalty_tier = "platinum"  # type: ignore[assignment]
+    elif new_pts >= 2000:
+        user.loyalty_tier = "gold"  # type: ignore[assignment]
+    elif new_pts >= 500:
+        user.loyalty_tier = "silver"  # type: ignore[assignment]
+    else:
+        user.loyalty_tier = "bronze"  # type: ignore[assignment]
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@router.get("/{user_id}/detail")
+def get_user_detail(user_id: int, db: Session = Depends(get_db), _: User = Depends(require_admin)) -> Any:
+    from app.models.booking import Booking
+    from app.models.payment import Payment
+    from sqlalchemy import func
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(404, "User not found")
+    bookings = db.query(Booking).filter(Booking.user_id == user_id).order_by(Booking.created_at.desc()).limit(10).all()
+    total_spent = db.query(func.sum(Payment.amount)).join(Booking, Booking.id == Payment.booking_id).filter(Booking.user_id == user_id, Payment.status == "succeeded").scalar() or 0
+    total_bookings = db.query(func.count(Booking.id)).filter(Booking.user_id == user_id).scalar() or 0
+    return {
+        "user": UserAdminResponse.model_validate(user),
+        "stats": {
+            "total_bookings": total_bookings,
+            "total_spent": float(total_spent),
+            "recent_bookings": [
+                {
+                    "id": b.id, "hotel_id": b.hotel_id, "room_id": b.room_id,
+                    "check_in": str(b.check_in), "check_out": str(b.check_out),
+                    "status": b.status, "total_price": float(b.total_price or 0)  # type: ignore[arg-type]
+                }
+                for b in bookings
+            ]
+        }
+    }

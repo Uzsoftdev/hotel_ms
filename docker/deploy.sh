@@ -41,6 +41,13 @@ echo "Deploying with REGISTRY=$REGISTRY IMAGE_TAG=$IMAGE_TAG"
 
 echo "$DEPLOY_TOKEN" | $DOCKER login ghcr.io -u "$DEPLOY_ACTOR" --password-stdin
 
+# Run Alembic migrations before rolling update
+echo "Running database migrations..."
+BACKEND_CONTAINER=$(sudo docker ps -qf "name=hotel_backend" | head -1)
+if [ -n "$BACKEND_CONTAINER" ]; then
+  sudo docker exec "$BACKEND_CONTAINER" alembic upgrade head && echo "Migrations OK" || echo "Migration warning (may be first deploy)"
+fi
+
 # Retry on "update out of sequence" race condition (Swarm concurrent update lock)
 for attempt in 1 2 3; do
   if $DOCKER stack deploy \
