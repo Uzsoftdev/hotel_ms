@@ -14,6 +14,7 @@ echo "=== NGINX_STATIC TASKS ==="
 docker service ps hotel_nginx_static --no-trunc
 
 echo ""
+#backend
 echo "=== TRAEFIK TASKS ==="
 docker service ps hotel_traefik --no-trunc
 
