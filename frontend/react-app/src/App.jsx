@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import PrivateRoute from "./routes/PrivateRoute";
+import Toast from "./components/common/Toast";
 
 // Public
 import Home from "./pages/public/Home";
@@ -62,6 +63,8 @@ import SavedRooms from "./pages/user/SavedRooms";
 
 export default function App() {
   return (
+    <>
+    <Toast />
     <Routes>
       {/* Public */}
       <Route path="/" element={<Home />} />
@@ -123,5 +126,6 @@ export default function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   );
 }
