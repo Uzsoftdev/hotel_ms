@@ -73,6 +73,8 @@ def get_current_hotel(user: User = Depends(get_current_user)) -> int:
 
 
 def get_optional_hotel(user: User = Depends(get_current_user)):
-    """Returns hotel_id or None for super_admin users not tied to a hotel."""
+    """Returns hotel_id scoped to the user's hotel, or None for super_admin (sees all data)."""
+    if str(getattr(user, "role", "")) == "super_admin":
+        return None
     hotel_id = getattr(user, "hotel_id", None)
     return int(hotel_id) if hotel_id is not None else None
