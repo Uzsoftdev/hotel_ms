@@ -255,6 +255,7 @@ services:
     restart: always
     command: celery -A app.celery_app worker --loglevel=info --concurrency=8
     depends_on:
+    #dbs 
       redis:
         condition: service_healthy
       db:
@@ -308,6 +309,7 @@ services:
     networks:
       - hotel_network
     healthcheck:
+    #command part 
       test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
       interval: 15s
       timeout: 5s
@@ -332,6 +334,7 @@ services:
     container_name: hotel_prometheus
     restart: always
     command:
+    #config psrt
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
       - "--web.console.libraries=/usr/share/prometheus/console_libraries"
@@ -346,6 +349,7 @@ services:
 
   # ── Observability: Grafana (R12) ─────────────────────────────────────────────
   grafana:
+  #gravena version
     image: grafana/grafana:10.4.0
     container_name: hotel_grafana
     restart: always
@@ -379,6 +383,7 @@ services:
 
   # ── Observability: Promtail (ships Docker logs → Loki) ──────────────────────
   promtail:
+    #image part 
     image: grafana/promtail:3.3.2
     container_name: hotel_promtail
     restart: always
@@ -434,7 +439,7 @@ services:
         condition: service_healthy
     networks:
       - hotel_network
-
+#volume part 
 volumes:
   postgres_data:
   postgres_replica1_data:
@@ -445,7 +450,7 @@ volumes:
   traefik_certs:
   meilisearch_data:
   minio_data:
-
+#network psrt 
 networks:
   hotel_network:
     driver: bridge
