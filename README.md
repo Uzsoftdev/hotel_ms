@@ -73,15 +73,6 @@ npm install
 npm run dev                               # http://localhost:5173
 ```
 
----
-
-## Default Accounts (after seeding)
-
-| Role | Email | Password |
-|---|---|---|
-| Super Admin | admin@azurehorizon.com | Admin@12345 |
-| Staff | staff@azurehorizon.com | Staff@12345 |
-| Guest | guest@example.com | Guest@12345 |
 
 ---
 
