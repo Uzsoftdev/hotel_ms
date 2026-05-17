@@ -27,13 +27,26 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);  // full profile from API (full_name, email, phone)
   const [isLoading, setIsLoading] = useState(true);
 
-  // On mount: restore token + load profile
+  // On mount: restore token + profile. Serve cached profile instantly so
+  // PrivateRoute never blocks on a network round-trip.
   useEffect(() => {
     const storedToken = localStorage.getItem('access_token');
     if (storedToken) {
       setToken(storedToken);
       setJwtData(decodeJwt(storedToken));
-      fetchProfile().then(setProfile).finally(() => setIsLoading(false));
+      const cached = localStorage.getItem('profile_cache');
+      if (cached) {
+        try { setProfile(JSON.parse(cached)); } catch {}
+        setIsLoading(false);           // unblock PrivateRoute immediately
+        fetchProfile().then((p) => {   // refresh in background
+          if (p) { setProfile(p); localStorage.setItem('profile_cache', JSON.stringify(p)); }
+        });
+      } else {
+        fetchProfile().then((p) => {
+          setProfile(p);
+          if (p) localStorage.setItem('profile_cache', JSON.stringify(p));
+        }).finally(() => setIsLoading(false));
+      }
     } else {
       setIsLoading(false);
     }
@@ -43,14 +56,15 @@ export function AuthProvider({ children }) {
     localStorage.setItem('access_token', newToken);
     setToken(newToken);
     setJwtData(decodeJwt(newToken));
-    // Fetch full profile so full_name/email are available immediately
     const p = await fetchProfile();
     setProfile(p);
+    if (p) localStorage.setItem('profile_cache', JSON.stringify(p));
   }, []);
 
   const logoutUser = useCallback(() => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('profile_cache');
     setToken(null);
     setJwtData(null);
     setProfile(null);
