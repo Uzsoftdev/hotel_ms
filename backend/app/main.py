@@ -73,9 +73,9 @@ app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description="allStay Hotel Management API — full-stack distributed system",
-    docs_url=None,
-    redoc_url=None,
-    openapi_url=None,
+    docs_url="/api/v1/docs",
+    redoc_url="/api/v1/redoc",
+    openapi_url="/api/v1/openapi.json",
     lifespan=lifespan,
 )
 

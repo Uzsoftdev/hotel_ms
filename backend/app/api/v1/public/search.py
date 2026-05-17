@@ -7,9 +7,11 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.dependencies import get_read_db
 from app.models.hotel import Hotel
+from app.models.room import Room
 from app.schemas.hotel import HotelResponse
 from app.schemas.room import RoomResponse
 from app.services.availability import get_available_rooms
+from app.services.cache import get_cached_availability, set_cached_availability
 from app.services.pricing import calculate_booking_price
 from app.services.search import search_hotels
 
@@ -134,9 +136,21 @@ def search_available_rooms(
     check_out: date,
     db: Session = Depends(get_read_db),
 ) -> List[RoomSearchResponse]:
-    rooms = get_available_rooms(db, hotel_id, check_in, check_out)
-    results: List[RoomSearchResponse] = []
+    # R6: check Redis cache before hitting the DB
+    cached_ids = get_cached_availability(hotel_id, check_in, check_out)
+    if cached_ids is not None:
+        # Cache hit — fetch Room objects by ID (simple PK lookup, no availability JOIN)
+        rooms = (
+            db.query(Room)
+            .filter(Room.id.in_(cached_ids), Room.is_active == True)  # noqa: E712
+            .all()
+        )
+    else:
+        # Cache miss — run the full availability query and populate the cache
+        rooms = get_available_rooms(db, hotel_id, check_in, check_out)
+        set_cached_availability(hotel_id, check_in, check_out, [int(r.id) for r in rooms])
 
+    results: List[RoomSearchResponse] = []
     for room in rooms:
         total_price = calculate_booking_price(
             db=db,

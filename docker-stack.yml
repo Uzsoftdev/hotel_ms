@@ -5,6 +5,8 @@ x-backend-common: &backend-common
   env_file: .env
   environment:
     DATABASE_URL: ${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}
+    DATABASE_URL_REPLICA: ${DATABASE_URL_REPLICA:-}
+    JAEGER_ENDPOINT: ${JAEGER_ENDPOINT:-}
     MINIO_ENDPOINT: "http://hotel_minio:9000"
     MINIO_PUBLIC_URL: "https://${DOMAIN:-allstay.rest}/storage"
   networks:
