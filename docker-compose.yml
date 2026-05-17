@@ -195,6 +195,7 @@ services:
     container_name: hotel_traefik
     restart: always
     ports:
+    # port
       - "80:80"
       - "443:443"
       - "8080:8080"   # Traefik dashboard — firewall this port in production
