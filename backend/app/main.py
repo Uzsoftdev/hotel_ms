@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 # Public routes
 from app.api.v1.public.auth import router as public_auth_router
 from app.api.v1.public.search import router as public_search_router
+from app.api.v1.public.ai import router as public_ai_router
 
 # User routes
 from app.api.v1.user.bookings import router as user_bookings_router
@@ -25,6 +26,7 @@ from app.api.v1.admin.reports import router as admin_reports_router
 from app.api.v1.admin.room_types import router as admin_room_types_router
 from app.api.v1.admin.rooms import router as admin_rooms_router
 from app.api.v1.admin.users import router as admin_users_router
+from app.api.v1.admin.ai_insights import router as admin_ai_insights_router
 
 # WebSocket (R7)
 from app.api.v1.ws import router as ws_router
@@ -106,6 +108,7 @@ app.include_router(ws_router)
 # ── Public ────────────────────────────────────────────────────────────────────
 app.include_router(public_auth_router,         prefix="/api/v1/public")
 app.include_router(public_search_router,       prefix="/api/v1/public")
+app.include_router(public_ai_router,           prefix="/api/v1/public")
 
 # ── User ──────────────────────────────────────────────────────────────────────
 app.include_router(user_bookings_router,       prefix="/api/v1/user")
@@ -124,6 +127,7 @@ app.include_router(admin_pricing_router,       prefix="/api/v1/admin")
 app.include_router(admin_blackout_router,      prefix="/api/v1/admin")
 app.include_router(admin_users_router,         prefix="/api/v1/admin")
 app.include_router(admin_reports_router,       prefix="/api/v1/admin")
+app.include_router(admin_ai_insights_router,   prefix="/api/v1/admin")
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

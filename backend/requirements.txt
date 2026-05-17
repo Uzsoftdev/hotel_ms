@@ -57,5 +57,8 @@ opentelemetry-instrumentation-fastapi==0.46b0
 opentelemetry-instrumentation-sqlalchemy==0.46b0
 opentelemetry-instrumentation-redis==0.46b0
 
+# AI / LLM
+anthropic>=0.28.0
+
 # Utilities
 python-dotenv==1.0.1

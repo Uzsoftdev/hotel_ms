@@ -1,194 +1,479 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 
-const SUGGESTIONS = [
-  { icon: "king_bed",      label: "Find a suite",         query: "Suite" },
-  { icon: "savings",       label: "Budget rooms",          query: "Economy" },
-  { icon: "pool",          label: "Rooms with pool",       query: "Pool" },
-  { icon: "wb_sunny",      label: "Ocean view stays",      query: "Ocean View" },
+const BUBBLE_HINTS = [
+  "Need help choosing a room?",
+  "Ask me about our suites!",
+  "I can find your perfect stay.",
 ];
 
-const GREETING_LINES = [
-  "Looking for the perfect room?",
-  "Need help choosing a suite?",
-  "I can find your ideal stay ✨",
-  "Where would you like to go?",
+const QUICK_CHIPS = [
+  "Romantic suite",
+  "Family rooms",
+  "Budget-friendly",
+  "Ocean view",
+  "Business travel",
+  "Pet-friendly",
 ];
+
+const WELCOME_MESSAGE = {
+  role: "assistant",
+  content:
+    "Hi there! 👋 I'm your allStay AI concierge. Ask me anything about our rooms, amenities, or I can help you find the perfect stay for any occasion!",
+};
 
 export default function AIHelper() {
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [greeting, setGreeting] = useState(GREETING_LINES[0]);
-  const [typed, setTyped] = useState("");
-  const [inputVal, setInputVal] = useState("");
-  const [bubble, setBubble] = useState(true); // hint bubble
-  const panelRef = useRef(null);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [bubbleIdx, setBubbleIdx] = useState(0);
+
+  const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Cycle greeting in the hint bubble
+  // Cycle hint bubble text
   useEffect(() => {
-    let idx = 0;
     const id = setInterval(() => {
-      idx = (idx + 1) % GREETING_LINES.length;
-      setGreeting(GREETING_LINES[idx]);
+      setBubbleIdx((i) => (i + 1) % BUBBLE_HINTS.length);
     }, 3500);
     return () => clearInterval(id);
   }, []);
 
-  // Typewriter for greeting inside the panel
+  // Show welcome message when first opened
   useEffect(() => {
-    if (!open) { setTyped(""); return; }
-    const msg = "Hi there! 👋 I'm your allStay AI concierge. Tell me what you're looking for and I'll help you find it.";
-    let i = 0;
-    setTyped("");
-    const id = setInterval(() => {
-      i++;
-      setTyped(msg.slice(0, i));
-      if (i >= msg.length) clearInterval(id);
-    }, 22);
-    return () => clearInterval(id);
+    if (open && messages.length === 0) {
+      setMessages([WELCOME_MESSAGE]);
+    }
+    if (open) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
   }, [open]);
 
-  // Auto-focus input when panel opens
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 350);
-  }, [open]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
-  // Open via custom event (triggered by "Chat with the concierge" button)
+  // Listen for external open event
   useEffect(() => {
-    const handler = () => { setOpen(true); setBubble(false); };
+    const handler = () => { setOpen(true); };
     window.addEventListener("ai-helper:open", handler);
     return () => window.removeEventListener("ai-helper:open", handler);
   }, []);
 
-  // Close on outside click
-  useEffect(() => {
-    function handle(e) {
-      if (panelRef.current && !panelRef.current.contains(e.target)) setOpen(false);
+  async function send(text) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+
+    const userMsg = { role: "user", content: trimmed };
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const history = messages.slice(-6);
+      const res = await api.post("/public/ai/chat", { message: trimmed, history });
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: res.data.reply },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "Sorry, I'm having trouble connecting right now. Please try again in a moment.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
     }
-    document.addEventListener("mousedown", handle);
-    return () => document.removeEventListener("mousedown", handle);
-  }, []);
-
-  // Hide hint bubble once user opens panel
-  function handleToggle() {
-    setOpen((o) => !o);
-    setBubble(false);
-  }
-
-  function handleSearch(q) {
-    setOpen(false);
-    navigate(`/search?location=${encodeURIComponent(q)}`);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!inputVal.trim()) return;
-    handleSearch(inputVal.trim());
+    send(input);
   }
 
+  function handleChip(chip) {
+    send(chip);
+  }
+
+  const showChips = messages.length <= 1;
+
   return (
-    <div ref={panelRef} className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <>
+      {/* Keyframe animations */}
+      <style>{`
+        @keyframes aiPulseRing {
+          0% { transform: scale(1); opacity: 0.6; }
+          100% { transform: scale(1.7); opacity: 0; }
+        }
+        @keyframes aiDot {
+          0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+          40% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes aiSlideUp {
+          from { opacity: 0; transform: translateY(16px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes aiFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+      `}</style>
 
-      {/* Chat panel */}
+      {/* Floating chat panel */}
       {open && (
-        <div className="w-80 rounded-2xl shadow-2xl overflow-hidden animate-scale-in"
-          style={{ background: "#fff", border: "1px solid rgba(37,99,235,.15)" }}>
-
+        <div
+          style={{
+            position: "fixed",
+            bottom: 90,
+            right: 24,
+            width: 380,
+            height: 520,
+            borderRadius: 20,
+            boxShadow: "0 20px 60px rgba(0,0,0,0.2)",
+            background: "#fff",
+            display: "flex",
+            flexDirection: "column",
+            zIndex: 1000,
+            animation: "aiSlideUp 0.25s ease-out",
+            overflow: "hidden",
+          }}
+        >
           {/* Header */}
-          <div className="flex items-center gap-3 px-4 py-3.5"
-            style={{ background: "linear-gradient(135deg,#1D4ED8,#2563EB)" }}>
-            <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-white text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>
+          <div
+            style={{
+              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              padding: "14px 16px",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              flexShrink: 0,
+            }}
+          >
+            <div
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.2)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ color: "#fff", fontSize: 20, fontVariationSettings: "'FILL' 1" }}
+              >
+                smart_toy
+              </span>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white font-bold text-sm leading-tight">allStay AI</p>
-              <p className="text-white/70 text-[11px] font-medium flex items-center gap-1">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                Online · always ready
-              </p>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ color: "#fff", fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>
+                allStay AI
+              </div>
+              <div style={{ color: "rgba(255,255,255,0.75)", fontSize: 11, display: "flex", alignItems: "center", gap: 5 }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34d399", display: "inline-block" }} />
+                AI Concierge · always ready
+              </div>
             </div>
-            <button onClick={() => setOpen(false)}
-              className="text-white/60 hover:text-white transition-colors">
-              <span className="material-symbols-outlined text-base">close</span>
+            <button
+              onClick={() => setOpen(false)}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "rgba(255,255,255,0.7)",
+                display: "flex",
+                alignItems: "center",
+                padding: 4,
+              }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
             </button>
           </div>
 
-          {/* Body */}
-          <div className="px-4 pt-4 pb-2 space-y-4" style={{ background: "#F8FAFC" }}>
-            {/* Typewriter message */}
-            <div className="flex gap-2.5">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                style={{ background: "linear-gradient(135deg,#1D4ED8,#2563EB)" }}>
-                <span className="material-symbols-outlined text-white text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>
-              </div>
-              <div className="bg-white rounded-2xl rounded-tl-sm px-3.5 py-2.5 shadow-sm text-sm text-slate-700 font-medium leading-relaxed max-w-[220px]"
-                style={{ border: "1px solid #E2E8F0" }}>
-                {typed}<span className="animate-pulse">|</span>
-              </div>
-            </div>
+          {/* Messages */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "16px 14px 8px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+              background: "#f8fafc",
+            }}
+          >
+            {messages.map((msg, i) =>
+              msg.role === "assistant" ? (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                  <div
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      background: "#6366f1",
+                      marginTop: 10,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <div
+                    style={{
+                      background: "#fff",
+                      borderRadius: "16px 16px 16px 4px",
+                      padding: "10px 14px",
+                      fontSize: 13.5,
+                      color: "#334155",
+                      lineHeight: 1.55,
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                      maxWidth: 280,
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  key={i}
+                  style={{ display: "flex", justifyContent: "flex-end" }}
+                >
+                  <div
+                    style={{
+                      background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+                      borderRadius: "16px 16px 4px 16px",
+                      padding: "10px 14px",
+                      fontSize: 13.5,
+                      color: "#fff",
+                      lineHeight: 1.55,
+                      maxWidth: 260,
+                      wordBreak: "break-word",
+                    }}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              )
+            )}
 
-            {/* Quick suggestion chips */}
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Quick picks</p>
-              <div className="grid grid-cols-2 gap-1.5">
-                {SUGGESTIONS.map(({ icon, label, query }) => (
-                  <button key={label} onClick={() => handleSearch(query)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-primary transition-all text-left"
-                    style={{ background: "#fff", border: "1px solid #E2E8F0" }}>
-                    <span className="material-symbols-outlined text-primary text-sm">{icon}</span>
-                    {label}
-                  </button>
-                ))}
+            {/* Typing indicator */}
+            {loading && (
+              <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                <div
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: "50%",
+                    background: "#6366f1",
+                    marginTop: 10,
+                    flexShrink: 0,
+                  }}
+                />
+                <div
+                  style={{
+                    background: "#fff",
+                    borderRadius: "16px 16px 16px 4px",
+                    padding: "12px 16px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                    display: "flex",
+                    gap: 4,
+                    alignItems: "center",
+                  }}
+                >
+                  {[0, 1, 2].map((n) => (
+                    <span
+                      key={n}
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: "50%",
+                        background: "#a5b4fc",
+                        display: "inline-block",
+                        animation: `aiDot 1.2s ease-in-out ${n * 0.2}s infinite`,
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
-          <form onSubmit={handleSubmit} className="px-3 py-3 flex gap-2 items-center"
-            style={{ borderTop: "1px solid #E2E8F0", background: "#fff" }}>
+          {/* Quick chips — only on first message */}
+          {showChips && !loading && (
+            <div
+              style={{
+                padding: "6px 14px 0",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 6,
+                background: "#f8fafc",
+              }}
+            >
+              {QUICK_CHIPS.map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => handleChip(chip)}
+                  style={{
+                    padding: "5px 11px",
+                    borderRadius: 20,
+                    border: "1px solid #c7d2fe",
+                    background: "#eef2ff",
+                    color: "#4f46e5",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "background 0.15s",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Input area */}
+          <form
+            onSubmit={handleSubmit}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 12px",
+              borderTop: "1px solid #e2e8f0",
+              background: "#fff",
+              flexShrink: 0,
+            }}
+          >
             <input
               ref={inputRef}
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              placeholder="e.g. ocean view suite…"
-              className="flex-1 text-sm font-medium text-slate-800 placeholder:text-slate-400 outline-none bg-transparent"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask me anything…"
+              disabled={loading}
+              style={{
+                flex: 1,
+                border: "none",
+                outline: "none",
+                fontSize: 13.5,
+                color: "#1e293b",
+                background: "transparent",
+                fontFamily: "inherit",
+              }}
             />
-            <button type="submit"
-              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all active:scale-90"
-              style={{ background: inputVal.trim() ? "#2563EB" : "#E2E8F0" }}>
-              <span className="material-symbols-outlined text-sm" style={{ color: inputVal.trim() ? "#fff" : "#94A3B8" }}>send</span>
+            <button
+              type="submit"
+              disabled={!input.trim() || loading}
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: "50%",
+                border: "none",
+                cursor: input.trim() && !loading ? "pointer" : "default",
+                background:
+                  input.trim() && !loading
+                    ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+                    : "#e2e8f0",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                transition: "background 0.2s",
+              }}
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: 17,
+                  color: input.trim() && !loading ? "#fff" : "#94a3b8",
+                  fontVariationSettings: "'FILL' 1",
+                }}
+              >
+                send
+              </span>
             </button>
           </form>
         </div>
       )}
 
       {/* Hint bubble */}
-      {bubble && !open && (
-        <div className="bg-white text-slate-700 text-xs font-semibold px-3.5 py-2 rounded-full shadow-lg animate-fade-in"
-          style={{ border: "1px solid rgba(37,99,235,.15)", whiteSpace: "nowrap" }}
-          key={greeting}>
-          {greeting}
+      {!open && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 92,
+            right: 90,
+            background: "#fff",
+            color: "#334155",
+            fontSize: 12,
+            fontWeight: 600,
+            padding: "8px 14px",
+            borderRadius: 20,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+            border: "1px solid rgba(99,102,241,0.2)",
+            whiteSpace: "nowrap",
+            zIndex: 1001,
+            animation: "aiFadeIn 0.4s ease",
+          }}
+          key={bubbleIdx}
+        >
+          {BUBBLE_HINTS[bubbleIdx]}
         </div>
       )}
 
-      {/* Floating button */}
+      {/* FAB button */}
       <button
-        onClick={handleToggle}
+        onClick={() => setOpen((o) => !o)}
         aria-label="AI concierge"
-        className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-transform hover:scale-110 active:scale-95 animate-float"
-        style={{ background: "linear-gradient(135deg,#1D4ED8,#2563EB)", boxShadow: "0 8px 32px rgba(37,99,235,.45)" }}
+        style={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+          zIndex: 1001,
+          cursor: "pointer",
+          border: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 8px 24px rgba(99,102,241,0.45)",
+        }}
       >
         {/* Pulse ring */}
-        <span className="absolute inset-0 rounded-full animate-pulse-ring pointer-events-none" />
-
         <span
-          className="material-symbols-outlined text-white text-2xl transition-all duration-300"
-          style={{ fontVariationSettings: "'FILL' 1" }}
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "50%",
+            border: "2px solid rgba(99,102,241,0.6)",
+            animation: "aiPulseRing 1.8s ease-out infinite",
+            pointerEvents: "none",
+          }}
+        />
+        <span
+          className="material-symbols-outlined"
+          style={{
+            color: "#fff",
+            fontSize: 24,
+            fontVariationSettings: "'FILL' 1",
+            transition: "transform 0.2s",
+          }}
         >
-          {open ? "close" : "smart_toy"}
+          {open ? "close" : "chat_bubble"}
         </span>
       </button>
-    </div>
+    </>
   );
 }

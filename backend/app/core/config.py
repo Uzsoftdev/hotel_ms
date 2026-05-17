@@ -78,10 +78,13 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = ""
     GOOGLE_REDIRECT_URI: str = "https://allstay.rest/auth/callback"
 
+    # Anthropic / Claude AI
+    ANTHROPIC_API_KEY: str = ""
+
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    return Settings()  # type: ignore[call-arg]
 
 
 settings = get_settings()

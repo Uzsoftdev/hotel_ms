@@ -34,7 +34,7 @@ def create_booking_endpoint(
     if not room:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Room not found")
 
-    hotel_id = room.hotel_id
+    hotel_id = int(room.hotel_id)  # type: ignore[arg-type]
 
     available_rooms = get_available_rooms(db, hotel_id, data.check_in, data.check_out)
     if data.room_id not in {r.id for r in available_rooms}:
@@ -60,7 +60,7 @@ def create_booking_endpoint(
         },
     )
     invalidate_availability(hotel_id, data.check_in, data.check_out)
-    return booking
+    return booking  # type: ignore[return-value]
 
 
 @router.get("/", response_model=List[BookingResponse])
@@ -72,7 +72,7 @@ def list_user_bookings_endpoint(
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid user context")
 
-    return get_user_bookings(db, int(user_id))
+    return get_user_bookings(db, int(user_id))  # type: ignore[return-value]
 
 
 @router.get("/{booking_id}", response_model=BookingResponse)
@@ -86,9 +86,9 @@ def get_booking_endpoint(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid user context")
 
     booking = get_booking_by_id(db, booking_id)
-    if not booking or booking.user_id != int(user_id):
+    if not booking or int(booking.user_id) != int(user_id):  # type: ignore[arg-type]
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
-    return booking
+    return booking  # type: ignore[return-value]
 
 
 @router.put("/{booking_id}/cancel", response_model=BookingResponse)
@@ -102,11 +102,11 @@ def cancel_booking_endpoint(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid user context")
 
     booking = get_booking_by_id(db, booking_id)
-    if not booking or booking.user_id != int(user_id):
+    if not booking or int(booking.user_id) != int(user_id):  # type: ignore[arg-type]
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
 
     cancelled = update_booking_status(db, booking_id, "cancelled")
     if not cancelled:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
-    invalidate_availability(booking.hotel_id, booking.check_in, booking.check_out)
-    return cancelled
+    invalidate_availability(booking.hotel_id, booking.check_in, booking.check_out)  # type: ignore[arg-type]
+    return cancelled  # type: ignore[return-value]

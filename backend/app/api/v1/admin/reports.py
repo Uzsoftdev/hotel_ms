@@ -118,7 +118,7 @@ def guest_analytics(
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
-    start, _ = _date_range(days)
+    start, _end = _date_range(days)
 
     new_q = db.query(func.count(func.distinct(Booking.user_id))).filter(Booking.created_at >= start)
     if hotel_id is not None:
@@ -138,11 +138,44 @@ def guest_analytics(
         status_q = status_q.filter(Booking.hotel_id == hotel_id)
     status_counts = status_q.group_by(Booking.status).all()
 
+    total_guests = (new_guests or 0) + (returning or 0)
+    return_rate = round((returning / total_guests) * 100, 1) if total_guests > 0 else 0
+
+    from app.models.payment import Payment
+    top_guests_q = (
+        db.query(
+            User.id, User.full_name, User.email,
+            func.count(Booking.id).label("booking_count"),
+            func.sum(Payment.amount).label("total_spent"),
+        )
+        .join(Booking, Booking.user_id == User.id)
+        .join(Payment, Payment.booking_id == Booking.id)
+        .filter(Payment.status == "succeeded")
+        .group_by(User.id, User.full_name, User.email)
+        .order_by(func.sum(Payment.amount).desc())
+        .limit(10)
+    )
+    if hotel_id is not None:
+        top_guests_q = top_guests_q.filter(Booking.hotel_id == hotel_id)
+    top_guests = top_guests_q.all()
+
     return {
         "period_days": days,
         "new_guests": new_guests,
         "returning_guests": returning,
+        "total_guests": total_guests,
+        "return_rate_pct": return_rate,
         "bookings_by_status": {s.status: s.count for s in status_counts},
+        "top_guests": [
+            {
+                "user_id": g.id,
+                "name": g.full_name or "Guest",
+                "email": g.email,
+                "booking_count": g.booking_count,
+                "total_spent": float(g.total_spent or 0),
+            }
+            for g in top_guests
+        ],
     }
 
 
@@ -158,9 +191,9 @@ def activity_logs(
         hotel_user_ids = (
             db.query(User.id)
             .filter(User.hotel_id == hotel_id)
-            .subquery()
+            .scalar_subquery()
         )
-        q = q.filter(ActivityLog.user_id.in_(hotel_user_ids) | ActivityLog.user_id.is_(None))
+        q = q.filter(ActivityLog.user_id.in_(hotel_user_ids) | ActivityLog.user_id.is_(None))  # type: ignore[arg-type]
     logs = q.order_by(ActivityLog.created_at.desc()).limit(limit).all()
 
     return [

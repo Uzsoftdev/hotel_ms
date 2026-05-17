@@ -35,3 +35,10 @@ export const getOccupancyReport = (days) => api.get('/admin/reports/occupancy', 
 export const getRevenueReport = (days) => api.get('/admin/reports/revenue', { params: { days } });
 export const getGuestAnalytics = (days) => api.get('/admin/reports/guests', { params: { days } });
 export const getActivityLogs = (limit) => api.get('/admin/reports/activity-logs', { params: { limit } });
+
+// AI
+export const getAIInsights = () => api.get('/admin/ai/insights');
+
+// Public AI (used by frontend components)
+export const aiChat = (message, history = []) => api.post('/public/ai/chat', { message, history });
+export const aiRecommend = (prefs) => api.post('/public/ai/recommend', prefs);
