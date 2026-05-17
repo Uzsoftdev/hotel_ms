@@ -156,7 +156,7 @@ services:
     image: getmeili/meilisearch:v1.7.3
     environment:
       MEILI_MASTER_KEY: ${MEILISEARCH_KEY:-changeme}
-      MEILI_ENV: production
+      MEILI_ENV: development
     volumes:
       - meilisearch_data:/meili_data
     networks:
