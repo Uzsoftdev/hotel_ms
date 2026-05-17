@@ -43,6 +43,7 @@ import AllGuests from "./pages/admin/users/AllGuests";
 import StaffAccounts from "./pages/admin/users/StaffAccounts";
 import AddUser from "./pages/admin/users/AddUser";
 import ActivityLogs from "./pages/admin/system/ActivityLogs";
+import SystemHealth from "./pages/admin/system/SystemHealth";
 import Settings from "./pages/admin/system/Settings";
 import AdminProfile from "./pages/admin/AdminProfile";
 import TodaySummary from "./pages/admin/overview/TodaySummary";
@@ -114,6 +115,7 @@ export default function App() {
       <Route path="/admin/staff" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><StaffAccounts /></PrivateRoute>} />
       <Route path="/admin/users/add" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AddUser /></PrivateRoute>} />
       <Route path="/admin/activity-logs" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><ActivityLogs /></PrivateRoute>} />
+      <Route path="/admin/system/health" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><SystemHealth /></PrivateRoute>} />
       <Route path="/admin/settings" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><Settings /></PrivateRoute>} />
       <Route path="/admin/profile" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AdminProfile /></PrivateRoute>} />
       <Route path="/admin/overview/today" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><TodaySummary /></PrivateRoute>} />

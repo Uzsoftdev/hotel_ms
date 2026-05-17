@@ -53,6 +53,7 @@ const sections = [
     label: "System",
     items: [
       { to: "/admin/activity-logs", icon: "history", label: "Activity Logs" },
+      { to: "/admin/system/health", icon: "monitor_heart", label: "System Health" },
     ],
   },
 ];

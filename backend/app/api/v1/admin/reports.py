@@ -1,7 +1,9 @@
-from datetime import date, timedelta
+import io
+from datetime import date, timedelta, datetime, timezone
 from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import Response
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -9,8 +11,10 @@ from app.dependencies import get_optional_hotel, get_read_db
 from app.middleware.rbac import require_staff_or_admin
 from app.models.activity_log import ActivityLog
 from app.models.booking import Booking
+from app.models.hotel import Hotel
 from app.models.payment import Payment
 from app.models.room import Room
+from app.models.room_type import RoomType
 from app.models.user import User
 
 router = APIRouter(prefix="/reports", tags=["Admin Reports"])
@@ -64,12 +68,106 @@ def occupancy_report(
         daily_q = daily_q.filter(Booking.hotel_id == hotel_id)
     daily = daily_q.group_by(Booking.check_in).order_by(Booking.check_in).all()
 
+    # ── vs_previous ──────────────────────────────────────────────────────────
+    prev_end = start
+    prev_start = prev_end - timedelta(days=days)
+
+    prev_booked_q = (
+        db.query(func.count(Booking.id))
+        .filter(
+            Booking.status.in_(["confirmed", "completed"]),
+            Booking.check_in >= prev_start,
+            Booking.check_in < prev_end,
+        )
+    )
+    if hotel_id is not None:
+        prev_booked_q = prev_booked_q.filter(Booking.hotel_id == hotel_id)
+    prev_booked = int(prev_booked_q.scalar() or 0)  # type: ignore[arg-type]
+    prev_occupancy_rate = round((prev_booked / (total_rooms * days)) * 100, 2) if total_rooms else 0
+
+    # ── by_room_type ─────────────────────────────────────────────────────────
+    # Total rooms per room type
+    rt_total_q = (
+        db.query(
+            RoomType.name.label("room_type"),
+            func.count(Room.id).label("total_rooms"),
+        )
+        .join(Room, Room.room_type_id == RoomType.id)
+        .filter(Room.is_active == True)
+    )
+    if hotel_id is not None:
+        rt_total_q = rt_total_q.filter(Room.hotel_id == hotel_id)
+    rt_totals = {r.room_type: int(r.total_rooms or 0) for r in rt_total_q.group_by(RoomType.name).all()}  # type: ignore[arg-type]
+
+    # Booked rooms per room type in period
+    rt_booked_q = (
+        db.query(
+            RoomType.name.label("room_type"),
+            func.count(Booking.id).label("booked"),
+        )
+        .join(Room, Room.id == Booking.room_id)
+        .join(RoomType, RoomType.id == Room.room_type_id)
+        .filter(
+            Booking.status.in_(["confirmed", "completed"]),
+            Booking.check_in >= start,
+            Booking.check_in <= end,
+        )
+    )
+    if hotel_id is not None:
+        rt_booked_q = rt_booked_q.filter(Booking.hotel_id == hotel_id)
+    rt_booked_map = {r.room_type: int(r.booked or 0) for r in rt_booked_q.group_by(RoomType.name).all()}  # type: ignore[arg-type]
+
+    by_room_type = []
+    for rt_name, rt_count in rt_totals.items():
+        booked_count = rt_booked_map.get(rt_name, 0)
+        occ_pct = round((booked_count / (rt_count * days)) * 100, 2) if rt_count else 0
+        by_room_type.append({
+            "room_type": rt_name,
+            "total_rooms": rt_count,
+            "booked": booked_count,
+            "occupancy_pct": occ_pct,
+        })
+
+    # ── heatmap ───────────────────────────────────────────────────────────────
+    daily_map = {str(d.check_in): int(d.bookings or 0) for d in daily}  # type: ignore[arg-type]
+    heatmap = []
+    for i in range(days):
+        day = start + timedelta(days=i)
+        day_str = str(day)
+        heatmap.append({
+            "date": day_str,
+            "dow": day.weekday(),  # Monday=0
+            "bookings": daily_map.get(day_str, 0),
+        })
+
+    # ── forecast: next 14 days ────────────────────────────────────────────────
+    forecast = []
+    for f_i in range(14):
+        future_day = date.today() + timedelta(days=f_i + 1)
+        target_dow = future_day.weekday()
+        # collect up to last 4 occurrences of that DOW in the current period
+        same_dow_counts = [
+            daily_map.get(str(start + timedelta(days=j)), 0)
+            for j in range(days)
+            if (start + timedelta(days=j)).weekday() == target_dow
+        ]
+        last_4 = same_dow_counts[-4:] if len(same_dow_counts) >= 4 else same_dow_counts
+        projected = round(sum(last_4) / len(last_4), 1) if last_4 else 0.0
+        forecast.append({"date": str(future_day), "projected": projected})
+
     return {
         "period_days": days,
         "total_rooms": total_rooms,
         "total_bookings": booked,
         "occupancy_rate_pct": occupancy_rate,
         "daily_bookings": [{"date": str(d.check_in), "bookings": d.bookings} for d in daily],
+        "vs_previous": {
+            "total_bookings": prev_booked,
+            "occupancy_rate_pct": prev_occupancy_rate,
+        },
+        "by_room_type": by_room_type,
+        "heatmap": heatmap,
+        "forecast": forecast,
     }
 
 
@@ -90,6 +188,7 @@ def revenue_report(
     if hotel_id is not None:
         rev_q = rev_q.filter(Booking.hotel_id == hotel_id)
     total = rev_q.scalar() or 0
+    total_revenue = float(total)  # type: ignore[arg-type]
 
     daily_q = (
         db.query(
@@ -103,11 +202,67 @@ def revenue_report(
         daily_q = daily_q.filter(Booking.hotel_id == hotel_id)
     daily = daily_q.group_by(func.date(Payment.created_at)).order_by(func.date(Payment.created_at)).all()
 
+    # ── vs_previous ──────────────────────────────────────────────────────────
+    prev_end = start
+    prev_start = prev_end - timedelta(days=days)
+    prev_rev_q = (
+        db.query(func.sum(Payment.amount))
+        .join(Booking, Booking.id == Payment.booking_id)
+        .filter(Payment.status == "succeeded", Payment.created_at >= prev_start, Payment.created_at < prev_end)
+    )
+    if hotel_id is not None:
+        prev_rev_q = prev_rev_q.filter(Booking.hotel_id == hotel_id)
+    prev_total = prev_rev_q.scalar() or 0
+    prev_revenue = float(prev_total)  # type: ignore[arg-type]
+
+    # ── by_hotel ─────────────────────────────────────────────────────────────
+    by_hotel_q = (
+        db.query(
+            Hotel.id.label("hotel_id"),
+            Hotel.name.label("hotel_name"),
+            func.sum(Payment.amount).label("revenue"),
+        )
+        .join(Booking, Booking.id == Payment.booking_id)
+        .join(Hotel, Hotel.id == Booking.hotel_id)
+        .filter(Payment.status == "succeeded", Payment.created_at >= start)
+    )
+    if hotel_id is not None:
+        by_hotel_q = by_hotel_q.filter(Booking.hotel_id == hotel_id)
+    by_hotel_rows = by_hotel_q.group_by(Hotel.id, Hotel.name).order_by(func.sum(Payment.amount).desc()).all()
+    by_hotel = [
+        {
+            "hotel_id": int(r.hotel_id or 0),  # type: ignore[arg-type]
+            "hotel_name": r.hotel_name or "",
+            "revenue": float(r.revenue or 0),  # type: ignore[arg-type]
+        }
+        for r in by_hotel_rows
+    ]
+
+    # ── cancellation_losses ───────────────────────────────────────────────────
+    cancel_q = (
+        db.query(func.sum(Booking.total_price))
+        .filter(Booking.status == "cancelled", Booking.created_at >= start)
+    )
+    if hotel_id is not None:
+        cancel_q = cancel_q.filter(Booking.hotel_id == hotel_id)
+    cancellation_losses = float(cancel_q.scalar() or 0)  # type: ignore[arg-type]
+
+    # ── derived metrics ───────────────────────────────────────────────────────
+    tax_estimate = round(total_revenue * 0.10, 2)
+    net_revenue = round(total_revenue - tax_estimate, 2)
+    avg_daily_revenue = round(total_revenue / max(days, 1), 2)
+
     return {
         "period_days": days,
-        "total_revenue": float(total),
+        "total_revenue": total_revenue,
         "currency": "USD",
-        "daily_revenue": [{"date": str(d.day), "revenue": float(d.revenue or 0)} for d in daily],
+        "daily_revenue": [{"date": str(d.day), "revenue": float(d.revenue or 0)} for d in daily],  # type: ignore[arg-type]
+        "vs_previous": {"total_revenue": prev_revenue},
+        "by_hotel": by_hotel,
+        "cancellation_losses": cancellation_losses,
+        "tax_estimate": tax_estimate,
+        "net_revenue": net_revenue,
+        "avg_daily_revenue": avg_daily_revenue,
     }
 
 
@@ -141,7 +296,6 @@ def guest_analytics(
     total_guests = (new_guests or 0) + (returning or 0)
     return_rate = round((returning / total_guests) * 100, 1) if total_guests > 0 else 0
 
-    from app.models.payment import Payment
     top_guests_q = (
         db.query(
             User.id, User.full_name, User.email,
@@ -159,6 +313,62 @@ def guest_analytics(
         top_guests_q = top_guests_q.filter(Booking.hotel_id == hotel_id)
     top_guests = top_guests_q.all()
 
+    # ── avg_nights ────────────────────────────────────────────────────────────
+    period_bookings_q = (
+        db.query(Booking.check_in, Booking.check_out)
+        .filter(Booking.created_at >= start)
+    )
+    if hotel_id is not None:
+        period_bookings_q = period_bookings_q.filter(Booking.hotel_id == hotel_id)
+    period_bookings = period_bookings_q.all()
+
+    if period_bookings:
+        nights_list = [(b.check_out - b.check_in).days for b in period_bookings if b.check_out and b.check_in]
+        avg_nights = round(sum(nights_list) / len(nights_list), 1) if nights_list else 0.0
+    else:
+        avg_nights = 0.0
+
+    # ── clv_segments (all-time payment totals per user) ───────────────────────
+    clv_q = (
+        db.query(
+            Payment.user_id,
+            func.sum(Payment.amount).label("total_spend"),
+        )
+        .filter(Payment.status == "succeeded")
+        .group_by(Payment.user_id)
+        .all()
+    )
+    clv_segments = {"under_500": 0, "500_to_2000": 0, "2000_to_5000": 0, "over_5000": 0}
+    for row in clv_q:
+        spend = float(row.total_spend or 0)  # type: ignore[arg-type]
+        if spend < 500:
+            clv_segments["under_500"] += 1
+        elif spend < 2000:
+            clv_segments["500_to_2000"] += 1
+        elif spend < 5000:
+            clv_segments["2000_to_5000"] += 1
+        else:
+            clv_segments["over_5000"] += 1
+
+    # ── booking_frequency (all-time bookings per user) ────────────────────────
+    freq_q = (
+        db.query(
+            Booking.user_id,
+            func.count(Booking.id).label("booking_count"),
+        )
+        .group_by(Booking.user_id)
+        .all()
+    )
+    booking_frequency = {"one_time": 0, "repeat_2x": 0, "loyal_3plus": 0}
+    for row in freq_q:
+        cnt = int(row.booking_count or 0)  # type: ignore[arg-type]
+        if cnt == 1:
+            booking_frequency["one_time"] += 1
+        elif cnt == 2:
+            booking_frequency["repeat_2x"] += 1
+        else:
+            booking_frequency["loyal_3plus"] += 1
+
     return {
         "period_days": days,
         "new_guests": new_guests,
@@ -172,10 +382,14 @@ def guest_analytics(
                 "name": g.full_name or "Guest",
                 "email": g.email,
                 "booking_count": g.booking_count,
-                "total_spent": float(g.total_spent or 0),
+                "total_spent": float(g.total_spent or 0),  # type: ignore[arg-type]
             }
             for g in top_guests
         ],
+        "avg_nights": avg_nights,
+        "avg_stay_days": avg_nights,
+        "clv_segments": clv_segments,
+        "booking_frequency": booking_frequency,
     }
 
 
@@ -208,3 +422,75 @@ def activity_logs(
         }
         for log in logs
     ]
+
+
+@router.get("/export/{report_type}")
+def export_report(
+    report_type: str,
+    days: int = Query(30, ge=1, le=365),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
+    db: Session = Depends(get_read_db),
+    _: User = Depends(require_staff_or_admin),
+) -> Any:
+    start, end = _date_range(days)
+    buf = io.StringIO()
+
+    if report_type == "occupancy":
+        buf.write("date,bookings\n")
+        daily_q = (
+            db.query(Booking.check_in, func.count(Booking.id).label("bookings"))
+            .filter(Booking.check_in >= start, Booking.check_in <= end)
+        )
+        if hotel_id is not None:
+            daily_q = daily_q.filter(Booking.hotel_id == hotel_id)
+        daily = daily_q.group_by(Booking.check_in).order_by(Booking.check_in).all()
+        daily_map = {str(d.check_in): int(d.bookings or 0) for d in daily}  # type: ignore[arg-type]
+        for i in range(days):
+            day = start + timedelta(days=i)
+            buf.write(f"{day},{daily_map.get(str(day), 0)}\n")
+
+    elif report_type == "revenue":
+        buf.write("date,revenue\n")
+        daily_q = (
+            db.query(
+                func.date(Payment.created_at).label("day"),
+                func.sum(Payment.amount).label("revenue"),
+            )
+            .join(Booking, Booking.id == Payment.booking_id)
+            .filter(Payment.status == "succeeded", Payment.created_at >= start)
+        )
+        if hotel_id is not None:
+            daily_q = daily_q.filter(Booking.hotel_id == hotel_id)
+        daily = daily_q.group_by(func.date(Payment.created_at)).order_by(func.date(Payment.created_at)).all()
+        daily_map_rev = {str(d.day): float(d.revenue or 0) for d in daily}  # type: ignore[arg-type]
+        for i in range(days):
+            day = start + timedelta(days=i)
+            buf.write(f"{day},{daily_map_rev.get(str(day), 0.0)}\n")
+
+    elif report_type == "guests":
+        buf.write("user_id,name,email,booking_count,total_spent\n")
+        all_guests_q = (
+            db.query(
+                User.id, User.full_name, User.email,
+                func.count(Booking.id).label("booking_count"),
+                func.sum(Payment.amount).label("total_spent"),
+            )
+            .join(Booking, Booking.user_id == User.id)
+            .join(Payment, Payment.booking_id == Booking.id)
+            .filter(Payment.status == "succeeded")
+            .group_by(User.id, User.full_name, User.email)
+            .order_by(func.sum(Payment.amount).desc())
+        )
+        if hotel_id is not None:
+            all_guests_q = all_guests_q.filter(Booking.hotel_id == hotel_id)
+        for g in all_guests_q.all():
+            name = (g.full_name or "Guest").replace(",", " ")
+            email = (g.email or "").replace(",", " ")
+            buf.write(f"{g.id},{name},{email},{g.booking_count},{float(g.total_spent or 0)}\n")  # type: ignore[arg-type]
+
+    csv_bytes = buf.getvalue().encode("utf-8")
+    return Response(
+        content=csv_bytes,
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={report_type}_export.csv"},
+    )

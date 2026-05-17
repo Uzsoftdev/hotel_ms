@@ -27,6 +27,7 @@ from app.api.v1.admin.room_types import router as admin_room_types_router
 from app.api.v1.admin.rooms import router as admin_rooms_router
 from app.api.v1.admin.users import router as admin_users_router
 from app.api.v1.admin.ai_insights import router as admin_ai_insights_router
+from app.api.v1.admin.system_health import router as admin_system_health_router
 
 # WebSocket (R7)
 from app.api.v1.ws import router as ws_router
@@ -128,6 +129,7 @@ app.include_router(admin_blackout_router,      prefix="/api/v1/admin")
 app.include_router(admin_users_router,         prefix="/api/v1/admin")
 app.include_router(admin_reports_router,       prefix="/api/v1/admin")
 app.include_router(admin_ai_insights_router,   prefix="/api/v1/admin")
+app.include_router(admin_system_health_router, prefix="/api/v1/admin")
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
