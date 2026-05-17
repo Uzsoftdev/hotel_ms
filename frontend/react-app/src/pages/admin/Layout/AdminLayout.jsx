@@ -3,11 +3,19 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import UserProfileMenu from "../../../components/common/UserProfileMenu";
 
 const sections = [
-  { label: "Overview", items: [{ to: "/admin/dashboard", icon: "dashboard", label: "Dashboard" }] },
+  {
+    label: "Overview",
+    items: [
+      { to: "/admin/dashboard", icon: "dashboard", label: "Dashboard" },
+      { to: "/admin/overview/today", icon: "today", label: "Today's Summary" },
+    ],
+  },
   {
     label: "Bookings",
     items: [
       { to: "/admin/bookings", icon: "book_online", label: "All Bookings" },
+      { to: "/admin/bookings/calendar", icon: "calendar_month", label: "Booking Calendar" },
+      { to: "/admin/bookings/pending", icon: "pending_actions", label: "Pending Approvals" },
       { to: "/admin/checkinout", icon: "swap_horiz", label: "Check-In / Out" },
     ],
   },

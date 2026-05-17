@@ -45,6 +45,9 @@ import AddUser from "./pages/admin/users/AddUser";
 import ActivityLogs from "./pages/admin/system/ActivityLogs";
 import Settings from "./pages/admin/system/Settings";
 import AdminProfile from "./pages/admin/AdminProfile";
+import TodaySummary from "./pages/admin/overview/TodaySummary";
+import BookingCalendar from "./pages/admin/bookings/BookingCalendar";
+import PendingApprovals from "./pages/admin/bookings/PendingApprovals";
 
 // Staff
 import AssignedBookings from "./pages/staff/AssignedBookings";
@@ -113,6 +116,9 @@ export default function App() {
       <Route path="/admin/activity-logs" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><ActivityLogs /></PrivateRoute>} />
       <Route path="/admin/settings" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><Settings /></PrivateRoute>} />
       <Route path="/admin/profile" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AdminProfile /></PrivateRoute>} />
+      <Route path="/admin/overview/today" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><TodaySummary /></PrivateRoute>} />
+      <Route path="/admin/bookings/calendar" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><BookingCalendar /></PrivateRoute>} />
+      <Route path="/admin/bookings/pending" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><PendingApprovals /></PrivateRoute>} />
 
       {/* Staff */}
       <Route path="/staff/bookings" element={<PrivateRoute roles={["staff","hotel_admin","super_admin"]}><AssignedBookings /></PrivateRoute>} />
