@@ -7,6 +7,7 @@ x-backend-common: &backend-common
     DATABASE_URL: ${DATABASE_URL:-postgresql://hotel_user:hotelpass123@164.92.193.226:5432/hotel_system}
     DATABASE_URL_REPLICA: ${DATABASE_URL_REPLICA:-}
     JAEGER_ENDPOINT: ${JAEGER_ENDPOINT:-}
+    MEILISEARCH_URL: "http://hotel_meilisearch:7700"
     MINIO_ENDPOINT: "http://hotel_minio:9000"
     MINIO_PUBLIC_URL: "https://${DOMAIN:-allstay.rest}/storage"
   networks:
@@ -150,6 +151,26 @@ services:
         limits:
           memory: 256M
 
+  # ── Meilisearch full-text search (R5) ────────────────────────────────────────
+  meilisearch:
+    image: getmeili/meilisearch:v1.7.3
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_KEY:-changeme}
+      MEILI_ENV: production
+    volumes:
+      - meilisearch_data:/meili_data
+    networks:
+      - hotel_network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: any
+      resources:
+        limits:
+          memory: 256M
+
   # ── Frontend static ───────────────────────────────────────────────────────────
   nginx_static:
     image: nginx:1.25-alpine
@@ -177,6 +198,7 @@ services:
 volumes:
   redis_data:
   minio_data:
+  meilisearch_data:
   traefik_certs:
 
 networks:
