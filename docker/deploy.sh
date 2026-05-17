@@ -12,7 +12,7 @@ fi
 if [ "$(id -u)" != "0" ]; then
   DOCKER="sudo -E $DOCKER"
 fi
-
+#docker ysml 
 STACK_FILE=/opt/hotel/docker-stack.yml
 ENV_FILE=/opt/hotel/.env
 
