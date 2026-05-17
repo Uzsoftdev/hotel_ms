@@ -47,6 +47,7 @@ services:
       - postgres_replica1_data:/var/lib/postgresql/data
     depends_on:
       db:
+      #db condition
         condition: service_healthy
     networks:
       - hotel_network
