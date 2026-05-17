@@ -456,7 +456,7 @@ hotel_management_system/
 |   |-- traefik.yml         # Traefik static config (R8)
 |   `-- traefik-dynamic.yml # middlewares, circuit breaker (R8)
 |-- .github/workflows/      # CI/CD pipelines (R13)
-|-- docker-compose.yml      # 19-service stack with healthchecks (R9)
+|-- docker-compose.yml      # 21-service stack with healthchecks (R9)
 `-- README.md
 \end{lstlisting}
 
@@ -807,7 +807,7 @@ The full stack starts with \texttt{docker compose up -d} from the repository roo
 \end{tabularx}
 \end{table}
 
-All stateful services use named Docker volumes (\texttt{postgres\_data}, \texttt{redis\_data}, \texttt{meilisearch\_data}, \texttt{minio\_data}, \texttt{prometheus\_data}, \texttt{grafana\_data}, \texttt{loki\_data}, \texttt{traefik\_certs}). Every service exposes a \texttt{healthcheck} stanza so dependants wait for genuine readiness before starting.
+All stateful services use named Docker volumes (\texttt{postgres\_data}, \texttt{redis\_data}, \texttt{meilisearch\_data}, \texttt{minio\_data}, \texttt{prometheus\_data}, \texttt{grafana\_data}, \texttt{loki\_data}, \texttt{traefik\_certs}). Eight services (\texttt{db}, \texttt{db\_replica1}, \texttt{pgbouncer}, \texttt{redis}, \texttt{backend1}, \texttt{backend2}, \texttt{minio}, \texttt{meilisearch}) expose a \texttt{healthcheck} stanza so dependants wait for genuine readiness before starting.
 
 \subsection{Gateway Configuration (R8)}
 
