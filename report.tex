@@ -263,6 +263,7 @@ The relational schema comprises \textbf{20 tables}. Key entities are described b
 \end{tabularx}
 \end{table}
 
+\clearpage
 \subsection{ER Diagram}
 
 The diagram shows the principal entities and their relationships. Cardinalities are annotated on each line. Junction tables (\texttt{room\_amenities}, \texttt{hotel\_facilities}) represent M:N associations.
@@ -270,7 +271,7 @@ The diagram shows the principal entities and their relationships. Cardinalities 
 % FIX: use explicit (x,y) absolute coordinates so nodes never overlap
 \begin{figure}[H]
 \centering
-\begin{adjustbox}{max width=\linewidth}
+\begin{adjustbox}{max width=\linewidth, max totalheight=0.80\textheight, keepaspectratio}
 \begin{tikzpicture}[font=\scriptsize]
 
 % ── Row 3 (y=4) ──────────────────────────────────────────────────────────────
@@ -353,12 +354,13 @@ The diagram shows the principal entities and their relationships. Cardinalities 
 % ══════════════════════════════════════════════════════════════════════════════
 %  3. SYSTEM ARCHITECTURE
 % ══════════════════════════════════════════════════════════════════════════════
+\clearpage
 \section{System Architecture}
 
 % FIX: all nodes use explicit (x,y) coordinates to eliminate any overlap
 \begin{figure}[H]
 \centering
-\begin{adjustbox}{max width=\linewidth}
+\begin{adjustbox}{max width=\linewidth, max totalheight=0.72\textheight, keepaspectratio}
 \begin{tikzpicture}[font=\scriptsize, node distance=0pt]
 
 % ── Row 1: Browser ───────────────────────────────────────────────────────────
@@ -424,6 +426,7 @@ The diagram shows the principal entities and their relationships. Cardinalities 
   \item \textbf{Nginx} --- serves the compiled React SPA (static files) behind Traefik.
 \end{itemize}
 
+\clearpage
 \subsection{Project Structure}
 
 The repository follows a layered monorepo layout separating backend, frontend, infrastructure, and CI/CD concerns:
@@ -616,6 +619,7 @@ GET /search/hotels (full-text, Meilisearch)  & $\sim$200 ms (ILIKE) & $<$10 ms  
 % ══════════════════════════════════════════════════════════════════════════════
 %  6. PIPELINE — BATCH PROCESSING
 % ══════════════════════════════════════════════════════════════════════════════
+\clearpage
 \section{Pipeline: Batch Processing (R10)}
 
 The batch pipeline is implemented with \textbf{Celery~5} and \textbf{Celery Beat}. Two scheduled workflows run inside the \texttt{celery\_worker} container; the \texttt{celery\_beat} container owns the schedule and enqueues tasks into Redis. This separation means the FastAPI process is never blocked by batch work, and the Beat container runs as a single replica (preventing duplicate job submissions).
@@ -625,7 +629,7 @@ The batch pipeline is implemented with \textbf{Celery~5} and \textbf{Celery Beat
 % FIX: use explicit (x,y) coordinates and only horizontal flow to avoid disconnected nodes
 \begin{figure}[H]
 \centering
-\begin{adjustbox}{max width=\linewidth}
+\begin{adjustbox}{max width=\linewidth, max totalheight=0.45\textheight, keepaspectratio}
 \begin{tikzpicture}[font=\scriptsize]
 
 % ── Main horizontal flow ──────────────────────────────────────────────────────
@@ -666,7 +670,7 @@ The batch pipeline is implemented with \textbf{Celery~5} and \textbf{Celery Beat
 % FIX: clean linear flow with loop-back shown as a curved arrow, gateway connected
 \begin{figure}[H]
 \centering
-\begin{adjustbox}{max width=\linewidth}
+\begin{adjustbox}{max width=\linewidth, max totalheight=0.45\textheight, keepaspectratio}
 \begin{tikzpicture}[font=\scriptsize]
 
 % ── Linear flow ───────────────────────────────────────────────────────────────
@@ -857,19 +861,19 @@ The following screenshots were captured from a live Prometheus + Grafana instanc
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{report_assets/grafana_http.png}
+  \includegraphics[width=\linewidth, height=0.38\textheight, keepaspectratio]{report_assets/grafana_http.png}
   \caption{Grafana Explore --- \texttt{http\_requests\_total} counter by endpoint, method, and status code scraped from the live production backend}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{report_assets/grafana_latency.png}
+  \includegraphics[width=\linewidth, height=0.38\textheight, keepaspectratio]{report_assets/grafana_latency.png}
   \caption{Grafana Explore --- \texttt{http\_request\_duration\_seconds\_sum} showing per-endpoint cumulative latency; login at $\sim$0.56\,s (includes bcrypt), profile and booking endpoints at $<$50\,ms}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\linewidth]{report_assets/jaeger_trace.png}
+  \includegraphics[width=\linewidth, height=0.38\textheight, keepaspectratio]{report_assets/jaeger_trace.png}
   \caption{Jaeger UI --- distributed trace spans exported via OTLP gRPC from \texttt{app/core/tracing.py} to Jaeger on port~4317; the waterfall view shows end-to-end request timing across service boundaries}
 \end{figure}
 
