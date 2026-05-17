@@ -168,6 +168,7 @@ services:
     networks:
       - hotel_network
     labels:
+    #labels
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(`${DOMAIN:-localhost}`) && (PathPrefix(`/api`) || PathPrefix(`/ws`) || PathPrefix(`/health`) || PathPrefix(`/metrics`) || PathPrefix(`/static`))"
       - "traefik.http.routers.backend.entrypoints=websecure"
