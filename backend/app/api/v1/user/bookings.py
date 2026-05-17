@@ -13,6 +13,7 @@ from app.repositories.booking_repository import (
 )
 from app.schemas.booking import BookingCreate, BookingResponse
 from app.services.availability import get_available_rooms
+from app.services.cache import invalidate_availability
 from app.services.pricing import calculate_booking_price
 
 router = APIRouter(prefix="/bookings", tags=["User Bookings"])
@@ -58,6 +59,7 @@ def create_booking_endpoint(
             "status": "pending",
         },
     )
+    invalidate_availability(hotel_id, data.check_in, data.check_out)
     return booking
 
 
@@ -106,4 +108,5 @@ def cancel_booking_endpoint(
     cancelled = update_booking_status(db, booking_id, "cancelled")
     if not cancelled:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
+    invalidate_availability(booking.hotel_id, booking.check_in, booking.check_out)
     return cancelled
