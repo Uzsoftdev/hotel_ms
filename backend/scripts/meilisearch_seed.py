@@ -16,6 +16,24 @@ from app.core.config import settings
 from app.core.database import SessionLocal
 from app.models.hotel import Hotel
 from app.models.room import Room
+import app.models.hotel_image        # noqa: F401
+import app.models.room_image         # noqa: F401
+import app.models.room_type          # noqa: F401
+import app.models.hotel_facility     # noqa: F401
+import app.models.room_amenity       # noqa: F401
+import app.models.amenity            # noqa: F401
+import app.models.facility           # noqa: F401
+import app.models.booking            # noqa: F401
+import app.models.pricing_rule       # noqa: F401
+import app.models.blackout_date      # noqa: F401
+import app.models.review             # noqa: F401
+import app.models.notification       # noqa: F401
+import app.models.user               # noqa: F401
+import app.models.payment            # noqa: F401
+import app.models.activity_log       # noqa: F401
+import app.models.wishlist           # noqa: F401
+import app.models.email_verification # noqa: F401
+import app.models.password_reset     # noqa: F401
 import meilisearch
 
 
