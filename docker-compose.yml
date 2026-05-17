@@ -118,6 +118,7 @@ services:
 
   # ── Backend replica 1 (R8 — load balancing) ─────────────────────────────────
   backend1:
+  #docker 
     build:
       context: .
       dockerfile: docker/Dockerfile.backend
