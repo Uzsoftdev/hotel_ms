@@ -41,13 +41,6 @@ echo "Deploying with REGISTRY=$REGISTRY IMAGE_TAG=$IMAGE_TAG"
 
 echo "$DEPLOY_TOKEN" | $DOCKER login ghcr.io -u "$DEPLOY_ACTOR" --password-stdin
 
-# Run Alembic migrations before rolling update
-echo "Running database migrations..."
-BACKEND_CONTAINER=$(sudo docker ps -qf "name=hotel_backend" | head -1)
-if [ -n "$BACKEND_CONTAINER" ]; then
-  sudo docker exec "$BACKEND_CONTAINER" alembic upgrade head && echo "Migrations OK" || echo "Migration warning (may be first deploy)"
-fi
-
 # Retry on "update out of sequence" race condition (Swarm concurrent update lock)
 for attempt in 1 2 3; do
   if $DOCKER stack deploy \
@@ -64,4 +57,18 @@ for attempt in 1 2 3; do
   else
     echo "Deploy failed after 3 attempts." && exit 1
   fi
+done
+
+# Run Alembic migrations inside the NEW container after it starts
+echo "Waiting for new backend container to be ready..."
+for i in $(seq 1 24); do
+  BACKEND_CONTAINER=$(sudo docker ps -qf "name=hotel_backend" --filter "status=running" | head -1)
+  if [ -n "$BACKEND_CONTAINER" ]; then
+    echo "Backend container $BACKEND_CONTAINER is running. Running migrations..."
+    sudo docker exec "$BACKEND_CONTAINER" alembic upgrade head && echo "Migrations OK" && break
+    echo "Migration attempt $i failed, retrying in 5s..."
+  else
+    echo "Waiting for container... ($i/24)"
+  fi
+  sleep 5
 done
