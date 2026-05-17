@@ -1,7 +1,7 @@
 #!/bin/bash
 # Run this on your DigitalOcean server: ssh root@167.99.138.191
 # Then: bash diagnose.sh
-
+#docker
 echo "=== SWARM SERVICES ==="
 docker service ls
 
