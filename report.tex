@@ -149,7 +149,7 @@ Izbosarov Bekzod        & U2310113 & Observability \& Testing \\
 
 allStay is a full-stack distributed hotel management system designed to serve guests, hotel staff, and administrators through a unified platform. Guests can search and book rooms, make payments, and receive real-time booking updates via WebSocket. Staff can manage check-ins, room status, and guest requests. Administrators have full control over room inventory, dynamic pricing, user accounts, and business analytics reports.
 
-The backend is built on \textbf{FastAPI} with a \textbf{PostgreSQL~15} primary database, a hot-standby streaming replica, and \textbf{PgBouncer} for connection pooling. \textbf{Redis} serves triple duty as an availability cache, Celery task broker, and token-bucket state store. \textbf{Meilisearch} provides millisecond full-text hotel and room search. Files (avatars, hotel images) are stored in \textbf{MinIO} (S3-compatible). Two FastAPI replicas sit behind a \textbf{Traefik~v3.1} API gateway with TLS termination and load balancing. A \textbf{Celery Beat} scheduler drives nightly revenue aggregation and hourly cache warm-up. A token-bucket rate limiter---implemented from scratch using Redis Lua scripts---protects all endpoints. The entire stack is observable through \textbf{Prometheus}, \textbf{Grafana}, \textbf{Loki}, and \textbf{Jaeger} via OpenTelemetry.
+The backend is built on \textbf{FastAPI} with a \textbf{PostgreSQL~15} primary database, a hot-standby streaming replica, and \textbf{PgBouncer} for connection pooling. \textbf{Redis} serves as an availability cache (with atomic invalidation on booking mutations), Celery task broker, and token-bucket state store. \textbf{Meilisearch} provides millisecond full-text hotel and room search with a PostgreSQL \texttt{ILIKE} fallback. Files (avatars, hotel images) are stored in \textbf{MinIO} (S3-compatible). Two FastAPI replicas sit behind a \textbf{Traefik~v3.1} API gateway with TLS termination and load balancing. A \textbf{Celery Beat} scheduler drives nightly revenue aggregation and hourly cache warm-up. A token-bucket rate limiter---implemented from scratch using Redis Lua scripts---protects all endpoints. Real-time booking notifications are delivered via \textbf{WebSocket} with Redis Pub/Sub cross-replica fan-out; the React frontend connects automatically on login and displays toast notifications. The entire stack is observable through \textbf{Prometheus}, \textbf{Grafana}, \textbf{Loki}, and \textbf{Jaeger} via OpenTelemetry.
 
 % ══════════════════════════════════════════════════════════════════════════════
 %  1. BUSINESS REQUIREMENTS
@@ -511,13 +511,13 @@ hotel_management_system/
 |   |   `-- main.py                  # FastAPI app, middleware chain, router mount
 |   |-- migrations/                  # Alembic (R3)
 |   |   |-- versions/
-|   |   |   |-- 001_initial_schema.py
-|   |   |   |-- 002_add_pricing_rules.py
-|   |   |   |-- 003_add_blackout_dates.py
-|   |   |   |-- 004_add_reviews.py
-|   |   |   |-- 005_add_email_verification.py
-|   |   |   |-- 006_add_partitioning.py
-|   |   |   `-- 007_add_wishlist.py
+|   |   |   |-- 20260415_0001_create_hotel_tables.py
+|   |   |   |-- 20260427_0002_add_guest_count_cancellation.py
+|   |   |   |-- 20260428_0003_add_photo_url_to_users.py
+|   |   |   |-- 20260428_0004_assign_hotel_to_admin_staff.py
+|   |   |   |-- 20260428_0005_partition_bookings.py
+|   |   |   |-- 20260428_0006_auth_email_verify_password_reset.py
+|   |   |   `-- 20260429_0007_add_room_id_to_wishlist.py
 |   |   `-- env.py
 |   |-- scripts/
 |   |   |-- meilisearch_seed.py      # one-time Meilisearch index seed (R5)
@@ -658,17 +658,20 @@ GET & /metrics & Prometheus metrics     & internal \\
 
 \textbf{Justification:} Booking confirmations and status changes must reach the browser within milliseconds of the server-side state change. A polling approach would either add latency (long intervals) or create unnecessary load (short intervals). WebSocket maintains a persistent, full-duplex channel with negligible overhead after the handshake, making it the natural fit for push notifications.
 
-\textbf{Cross-replica fan-out:} Because two backend replicas share the same Redis instance, each replica publishes notification messages to a Redis Pub/Sub channel (\texttt{ws:user:\{id\}}). Both replicas subscribe and forward messages to the correct connected client, ensuring a guest stays connected regardless of which replica Traefik routed their HTTP upgrade to.
+\textbf{Cross-replica fan-out:} Because two backend replicas share the same Redis instance, each replica publishes notification events to a Redis Pub/Sub channel (\texttt{ws:events}). Every replica subscribes and fans out to locally-connected WebSocket clients, ensuring a guest receives notifications regardless of which replica Traefik routed their HTTP upgrade to.
+
+\textbf{React frontend client:} Three React modules implement the client side:
+\begin{itemize}[noitemsep]
+  \item \texttt{contexts/SocketContext.jsx} --- opens \texttt{wss://allstay.rest/ws/\{user\_id\}?token=\{jwt\}} on login; automatically reconnects after 3 seconds if the connection drops.
+  \item \texttt{contexts/NotificationContext.jsx} --- listens to \texttt{SocketContext} and queues incoming events (\texttt{booking\_update}, \texttt{notification}) as timed toasts (4.5-second auto-dismiss).
+  \item \texttt{components/common/Toast.jsx} --- renders a fixed-position toast stack in the bottom-right corner of every page; click to dismiss early.
+\end{itemize}
 
 \textbf{Sample server$\to$client payload:}
 \begin{lstlisting}[language={}]
-{
-  "type": "booking_status_update",
-  "booking_id": "a3f4c8d1-...",
-  "new_status": "confirmed",
-  "message": "Your booking has been confirmed!",
-  "timestamp": "2026-05-17T08:30:00Z"
-}
+{"event": "booking_update", "data": {"booking_id": 42, "status": "confirmed"}}
+{"event": "notification",   "data": {"title": "Check-in ready", "message": "..."}}
+{"event": "ping",           "data": {}}
 \end{lstlisting}
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -688,23 +691,27 @@ GET & /metrics & Prometheus metrics     & internal \\
 
 \subsection{Polyglot Persistence (R5)}
 
+Four distinct storage engines are used, each chosen for its data model strengths:
+
 \begin{table}[H]
 \centering\small
 \begin{tabularx}{\linewidth}{@{} l l X @{}}
 \toprule
 \textbf{Store} & \textbf{Model} & \textbf{Justification} \\
 \midrule
-PostgreSQL   & Relational    & Transactional consistency, FK integrity, ACID guarantees for bookings and payments. \\[3pt]
-Redis        & Key-value     & Sub-millisecond reads for availability cache; atomic Lua scripts for token-bucket state; Pub/Sub for WS fan-out; list-based Celery queue. A relational store cannot match Redis's throughput on these hot paths. \\[3pt]
-Meilisearch  & Search index  & Full-text search with typo tolerance and faceted filters over hotel names, descriptions, cities, and room-type names. PostgreSQL \texttt{ILIKE} scans degrade on partial matches and cannot rank by relevance. \\[3pt]
-MinIO        & Object (S3)   & Binary large objects (avatars, hotel photos) do not belong in relational rows. MinIO scales independently, avoids DB bloat, and exposes pre-signed URLs for direct browser download. \\
+PostgreSQL~15  & Relational    & Transactional consistency, FK integrity, ACID guarantees for bookings and payments. Primary handles all writes; hot-standby replica serves analytics read queries. \\[3pt]
+Redis~7        & Key-value     & Sub-millisecond reads for availability cache (5-min TTL); atomic Lua scripts for token-bucket rate-limiter state; Pub/Sub for WebSocket cross-replica fan-out; list-based Celery task queue. \\[3pt]
+Meilisearch    & Search index  & Full-text hotel and room search with typo tolerance and faceted filters. PostgreSQL \texttt{ILIKE} scans cannot rank by relevance and degrade on large datasets. Deployed as a Docker Swarm service (1/1 replica); index is seeded via \texttt{scripts/meilisearch\_seed.py} and kept fresh by \texttt{indexing\_tasks.py} on hotel/room mutations. The search endpoint falls back to PostgreSQL \texttt{ILIKE} automatically when Meilisearch is unreachable. \\[3pt]
+MinIO          & Object (S3)   & Binary large objects (guest avatars, hotel photos) are stored as S3-compatible objects. MinIO scales independently, avoids DB bloat, and exposes pre-signed URLs for direct browser download without proxying through the API. \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \subsection{Caching Strategy and Measurements (R6)}
 
-\textbf{Availability cache:} When a guest searches for available rooms for a specific (hotel, check\_in, check\_out) triple, the result is written to Redis with a 5-minute TTL. Key: \texttt{avail:\{hotel\_id\}:\{ci\}:\{co\}}. On cache hit the handler returns immediately; on miss it queries PostgreSQL and populates the cache.
+\textbf{Availability cache:} When a guest searches for available rooms for a specific (hotel, check\_in, check\_out) triple, the result is written to Redis with a 5-minute TTL. Key: \texttt{avail:\{hotel\_id\}:\{ci\}:\{co\}}. On cache hit the handler returns immediately; on miss it queries PostgreSQL and populates the cache (\texttt{services/cache.py}).
+
+\textbf{Cache invalidation:} When a booking is created or cancelled, \texttt{invalidate\_availability(hotel\_id, check\_in, check\_out)} is called immediately after the database write. The function deletes the exact cache key plus $\pm$1-day overlap keys to handle bookings that span multiple cached windows. This prevents stale availability data from being served after a room becomes unavailable.
 
 \textbf{Cache warm-up:} Celery Beat triggers \texttt{hourly\_cache\_warmup} every hour, pre-fetching the next 7 days of availability for every hotel so the first request of each hour hits the cache rather than the database.
 
@@ -1014,9 +1021,9 @@ Tests use a dedicated test database (configured via \texttt{pytest.ini} and \tex
 \begin{itemize}[noitemsep]
   \item \textbf{Payment integration:} The payment flow records payment-intent metadata but does not integrate a real payment gateway (e.g.\ Stripe). The \texttt{payments} table stores card-method metadata only.
   \item \textbf{Single Redis node:} Token-bucket state and availability cache share one Redis instance. Redis AOF persistence mitigates crash risk, but true HA would require Redis Sentinel or Cluster.
-  \item \textbf{WebSocket sticky sessions:} If the pinned replica restarts, the client must reconnect. Redis Pub/Sub handles message delivery across replicas but not automatic reconnection.
+  \item \textbf{WebSocket reconnection:} The React \texttt{SocketContext} auto-reconnects after 3 seconds on disconnect. However, events published during the disconnection window are not replayed --- the client misses any notifications sent while offline.
   \item \textbf{Read-replica lag:} The hot-standby replica may lag 1--2 replication cycles behind the primary; analytics reports could show slightly stale data during peak write periods.
-  \item \textbf{Meilisearch index freshness:} The Celery \texttt{indexing\_tasks} re-index on hotel/room mutations. A worker crash between a write and its index update could cause a brief inconsistency window (eventual consistency).
+  \item \textbf{Meilisearch initial seed:} Meilisearch is deployed and running in production (1/1 replica). The \texttt{indexing\_tasks} Celery task keeps the index fresh on hotel/room mutations. The one-time initial bulk seed (\texttt{scripts/meilisearch\_seed.py}) is pending; until it completes, the search endpoint falls back to PostgreSQL \texttt{ILIKE}.
   \item \textbf{No end-to-end frontend tests:} The React SPA is tested manually; there are no Playwright or Cypress tests at this stage.
 \end{itemize}
 
