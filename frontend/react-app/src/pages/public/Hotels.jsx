@@ -189,21 +189,35 @@ export default function Hotels() {
   const fetchHotels = useCallback(() => {
     setHotelsLoading(true);
     setHotelsError(false);
-    api.get("/public/search/hotels/browse?per_page=100&page=1")
-      .then((res) => {
-        const list = extractList(res.data);
-        if (list === null) { setHotelsError(true); return; }
-        setHotels(list);
-        // Page 2 is best-effort — never causes an error state
-        api.get("/public/search/hotels/browse?per_page=100&page=2")
-          .then((res2) => {
-            const list2 = extractList(res2.data);
-            if (list2 && list2.length > 0) setHotels((prev) => [...prev, ...list2]);
-          })
-          .catch(() => {});
-      })
-      .catch(() => setHotelsError(true))
-      .finally(() => setHotelsLoading(false));
+
+    let tries = 0;
+    function attempt() {
+      api.get("/public/search/hotels/browse?per_page=100&page=1")
+        .then((res) => {
+          const list = extractList(res.data);
+          if (list === null) { setHotelsError(true); setHotelsLoading(false); return; }
+          setHotels(list);
+          setHotelsLoading(false);
+          // Page 2 best-effort — never causes error state
+          api.get("/public/search/hotels/browse?per_page=100&page=2")
+            .then((res2) => {
+              const list2 = extractList(res2.data);
+              if (list2 && list2.length > 0) setHotels((prev) => [...prev, ...list2]);
+            })
+            .catch(() => {});
+        })
+        .catch(() => {
+          tries += 1;
+          if (tries < 3) {
+            // Retry up to 2 times (1.5s, 3s) before showing error
+            setTimeout(attempt, tries * 1500);
+          } else {
+            setHotelsError(true);
+            setHotelsLoading(false);
+          }
+        });
+    }
+    attempt();
   }, []);
 
   useEffect(() => { fetchHotels(); }, [fetchHotels]);
@@ -445,7 +459,7 @@ export default function Hotels() {
                                 {[hotel.city, hotel.country].filter(Boolean).join(", ")}
                               </p>
                             )}
-                            {hotel.description && (
+                            {hotel.description && hotel.description !== "nan" && (
                               <p className="text-sm text-slate-400 mt-2 line-clamp-2 leading-relaxed">{hotel.description}</p>
                             )}
                           </div>

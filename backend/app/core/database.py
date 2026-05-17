@@ -23,8 +23,8 @@ _read_url = settings.DATABASE_URL_REPLICA or _write_url
 read_engine = create_engine(
     _read_url,
     pool_pre_ping=True,
-    pool_size=20,   # larger pool — read traffic is higher
-    max_overflow=40,
+    pool_size=5,
+    max_overflow=10,
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

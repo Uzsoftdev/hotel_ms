@@ -10,7 +10,7 @@ COPY backend/ .
 
 CMD ["gunicorn", "app.main:app", \
      "--worker-class", "uvicorn.workers.UvicornWorker", \
-     "--workers", "4", \
+     "--workers", "2", \
      "--bind", "0.0.0.0:8000", \
      "--max-requests", "1000", \
      "--max-requests-jitter", "100", \

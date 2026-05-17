@@ -54,6 +54,13 @@ export default function AIHelper() {
     if (open) setTimeout(() => inputRef.current?.focus(), 350);
   }, [open]);
 
+  // Open via custom event (triggered by "Chat with the concierge" button)
+  useEffect(() => {
+    const handler = () => { setOpen(true); setBubble(false); };
+    window.addEventListener("ai-helper:open", handler);
+    return () => window.removeEventListener("ai-helper:open", handler);
+  }, []);
+
   // Close on outside click
   useEffect(() => {
     function handle(e) {
