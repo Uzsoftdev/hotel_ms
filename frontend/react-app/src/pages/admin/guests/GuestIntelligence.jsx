@@ -214,6 +214,7 @@ export default function GuestIntelligence() {
   const [loadingPanel, setLoadingPanel] = useState(false);
   const [loadingNoteAdd, setLoadingNoteAdd] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
   // Load overview + guests on mount
   useEffect(() => {
@@ -231,7 +232,10 @@ export default function GuestIntelligence() {
     try {
       const res = await getGuestIntelligenceOverview();
       setOverview(res.data);
+      setApiError(null);
     } catch (e) {
+      const msg = e.response?.data?.detail || e.message || 'Unknown error';
+      setApiError(`Failed to load overview: ${msg}`);
       console.error('Failed to load overview', e);
     } finally {
       setLoadingOverview(false);
@@ -248,6 +252,8 @@ export default function GuestIntelligence() {
       const res = await getGuestIntelligenceList(params);
       setGuests(res.data.guests || []);
     } catch (e) {
+      const msg = e.response?.data?.detail || e.message || 'Unknown error';
+      setApiError(`Failed to load guests: ${msg}`);
       console.error('Failed to load guests', e);
     } finally {
       setLoadingGuests(false);
@@ -409,6 +415,20 @@ export default function GuestIntelligence() {
             AI-powered guest insights, segmentation, and lifecycle management
           </p>
         </div>
+
+        {/* API error banner */}
+        {apiError && (
+          <div style={{ marginBottom: 20, padding: '12px 16px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#DC2626', flexShrink: 0 }}>error</span>
+            <span style={{ fontSize: 13, color: '#DC2626', flex: 1 }}>{apiError}</span>
+            <button
+              onClick={() => { setApiError(null); loadOverview(); loadGuests(); }}
+              style={{ fontSize: 12, fontWeight: 700, color: '#DC2626', background: 'none', border: '1px solid #FECACA', borderRadius: 6, padding: '4px 10px', cursor: 'pointer' }}
+            >
+              Retry
+            </button>
+          </div>
+        )}
 
         {/* KPI Cards */}
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 28 }}>
