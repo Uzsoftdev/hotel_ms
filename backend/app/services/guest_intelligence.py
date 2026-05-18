@@ -124,7 +124,7 @@ def compute_churn_probability(
 ) -> int:
     """Estimate churn probability as an integer 0–100."""
     if not completed_stays:
-        return 80
+        return 0  # never stayed → new/unconverted, not churning
 
     days = _days_since(last_visit)
     if days is None:

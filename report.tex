@@ -114,16 +114,16 @@
 {\large\bfseries Team Members}
 
 \vspace{0.6em}
-\begin{tabular}{@{}lll@{}}
+\begin{tabular}{@{}llll@{}}
 \toprule
-\textbf{Name} & \textbf{Student ID} & \textbf{Role} \\
+\textbf{Name} & \textbf{Student ID} & \textbf{Section} & \textbf{Role} \\
 \midrule
-Axmadov Sunnat          & U2310044 & Team Lead $\cdot$ Backend Architecture \\
-Mirshod Hamroyev        & U2310088 & Backend API \& Authentication \\
-Nurmuhammad Fazliddinov & U2310082 & Database Design \& Migrations \\
-Hamidov Abror           & U2310087 & DevOps \& Infrastructure \\
-Yusufova Muxlisa        & U2310298 & Frontend \& UI Design \\
-Izbosarov Bekzod        & U2310113 & Observability \& Testing \\
+Axmadov Sunnat          & U2310044 & 002 & Team Lead $\cdot$ Backend Architecture \\
+Mirshod Hamroyev        & U2310088 & 001 & Backend API \& Authentication \\
+Nurmuhammad Fazliddinov & U2310082 & 001 & Database Design \& Migrations \\
+Hamidov Abror           & U2310087 & 001 & DevOps \& Infrastructure \\
+Yusufova Muxlisa        & U2310298 & 001 & Frontend \& UI Design \\
+Izbosarov Bekzod        & U2310113 & 003 & Observability \& Testing \\
 \bottomrule
 \end{tabular}
 
@@ -1062,6 +1062,23 @@ Izbosarov Bekzod & U2310113
 \end{table}
 
 % ══════════════════════════════════════════════════════════════════════════════
+%  12. DEFAULT ACCOUNTS
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Default Accounts (after seeding)}
+
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{} l l l @{}}
+\toprule
+\textbf{Role} & \textbf{Email} & \textbf{Password} \\
+\midrule
+Super Admin & admin@allstay.rest & Admin@2024 \\
+Staff & sunnakh@allstay.rest & Admin@2024 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ══════════════════════════════════════════════════════════════════════════════
 %  REFERENCES
 % ══════════════════════════════════════════════════════════════════════════════
 \section{References}
@@ -1090,4 +1107,9 @@ Izbosarov Bekzod & U2310113
 
 \end{enumerate}
 
+\vspace{2em}
+\noindent
+\textit{Note:} Due to workflow convenience during development, the project repository activity appears under a single GitHub account. However, the project tasks and implementation work were completed collaboratively by all team members according to the distributed responsibilities.
+
 \end{document}
+

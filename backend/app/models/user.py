@@ -31,6 +31,8 @@ class User(Base):
     loyalty_tier    = Column(String, nullable=False, server_default="'bronze'")  # bronze/silver/gold/platinum
     notes           = Column(String, nullable=True)   # admin-only internal notes
     department      = Column(String, nullable=True)   # for staff: e.g. Front Desk, Housekeeping, F&B
+    segment         = Column(String, nullable=True)   # admin override; None = auto-computed
+    risk_score      = Column(Integer, nullable=False, server_default="0")
 
     hotel = relationship("Hotel")
 
