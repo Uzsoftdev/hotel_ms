@@ -201,6 +201,7 @@ function DetailPanel({ guestId, onClose }) {
 export default function AllGuests() {
   const [guests, setGuests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all"); // all | vip | banned
   const [sortBy, setSortBy] = useState("joined"); // joined | name | points
@@ -212,7 +213,11 @@ export default function AllGuests() {
 
   function reload() {
     setLoading(true);
-    getUsers("guest").then((r) => setGuests(r.data)).catch(() => {}).finally(() => setLoading(false));
+    setError(null);
+    getUsers("guest")
+      .then((r) => setGuests(r.data))
+      .catch((e) => setError(e.response?.data?.detail || "Failed to load guests. The server may be starting up — try again in a moment."))
+      .finally(() => setLoading(false));
   }
   useEffect(reload, []);
 
@@ -327,6 +332,14 @@ export default function AllGuests() {
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-20"><span className="material-symbols-outlined text-4xl text-primary animate-spin">progress_activity</span></div>
+        ) : error ? (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-start gap-3">
+            <span className="material-symbols-outlined text-red-500 shrink-0">error</span>
+            <div>
+              <p className="font-semibold text-red-700 text-sm">{error}</p>
+              <button onClick={reload} className="mt-2 text-xs font-bold text-red-600 underline">Retry</button>
+            </div>
+          </div>
         ) : (
           <div className="bg-white rounded-xl border border-outline-variant/30 overflow-x-auto">
             <table className="w-full text-sm">
