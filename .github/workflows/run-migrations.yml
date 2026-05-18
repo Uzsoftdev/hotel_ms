@@ -1,0 +1,31 @@
+name: Run Database Migrations
+
+on:
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    name: Run alembic upgrade head on production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/hms_prod
+          chmod 600 ~/.ssh/hms_prod
+          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Run migrations inside backend container
+        run: |
+          ssh -i ~/.ssh/hms_prod -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "CONTAINER=\$(sudo docker ps -q -f name=hotel_backend --filter status=running | head -1)
+             if [ -z \"\$CONTAINER\" ]; then
+               echo 'ERROR: No running hotel_backend container found'
+               exit 1
+             fi
+             echo \"Running migrations in container \$CONTAINER...\"
+             sudo docker exec \"\$CONTAINER\" alembic upgrade head
+             echo 'Done.'"
