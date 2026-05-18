@@ -6,7 +6,9 @@ export const changePassword = (data) => api.put('/user/profile/change-password',
 export const uploadProfilePhoto = (file) => {
   const form = new FormData();
   form.append('file', file);
-  return api.post('/user/profile/photo', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+  // Content-Type must be undefined so the browser sets multipart/form-data with the correct boundary.
+  // The axios instance default ('application/json') would break multipart parsing on the server.
+  return api.post('/user/profile/photo', form, { headers: { 'Content-Type': undefined } });
 };
 
 export const deleteProfilePhoto = () => api.delete('/user/profile/photo');
