@@ -15,7 +15,7 @@ class Room(Base):
     capacity = Column(Integer)
     base_price = Column(Numeric(10, 2))
     description = Column(Text)
-    is_active = Column(Boolean, nullable=False, default=True)
+    is_active = Column(Boolean, nullable=False, default=True, server_default="true")
 
     hotel = relationship("Hotel")
     room_type = relationship("RoomType")

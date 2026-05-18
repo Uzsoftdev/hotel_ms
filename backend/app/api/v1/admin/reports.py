@@ -4,6 +4,7 @@ from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import Response
+import sqlalchemy as sa
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -36,13 +37,31 @@ def occupancy_report(
 ) -> Any:
     start, end = _date_range(days)
 
-    room_q = db.query(func.count(Room.id)).filter(Room.is_active == True)
+    # Bug fix: include rooms where is_active is NULL (Python default=True, no server_default)
+    room_q = db.query(func.count(Room.id)).filter(
+        (Room.is_active == True) | (Room.is_active == None)  # noqa: E711
+    )
     if hotel_id is not None:
         room_q = room_q.filter(Room.hotel_id == hotel_id)
     total_rooms = room_q.scalar() or 1
 
+    # Bug fix: count bookings by created_at (not check_in) so future bookings are included.
+    # Also count all non-cancelled statuses (pending + confirmed + completed).
     booked_q = (
         db.query(func.count(Booking.id))
+        .filter(
+            Booking.status.in_(["pending", "confirmed", "completed"]),
+            Booking.created_at >= start,
+        )
+    )
+    if hotel_id is not None:
+        booked_q = booked_q.filter(Booking.hotel_id == hotel_id)
+    booked = booked_q.scalar() or 0
+
+    # Bug fix: occupancy rate uses room-nights (sum of stay durations), not booking count.
+    # booking_count / (rooms * days) gives a near-zero number for any real hotel.
+    nights_q = (
+        db.query(func.sum(func.cast(Booking.check_out - Booking.check_in, sa.Integer)))
         .filter(
             Booking.status.in_(["confirmed", "completed"]),
             Booking.check_in >= start,
@@ -50,10 +69,9 @@ def occupancy_report(
         )
     )
     if hotel_id is not None:
-        booked_q = booked_q.filter(Booking.hotel_id == hotel_id)
-    booked = booked_q.scalar() or 0
-
-    occupancy_rate = round((booked / (total_rooms * days)) * 100, 2) if total_rooms else 0
+        nights_q = nights_q.filter(Booking.hotel_id == hotel_id)
+    total_nights = int(nights_q.scalar() or 0)  # type: ignore[arg-type]
+    occupancy_rate = round((total_nights / (total_rooms * days)) * 100, 2) if total_rooms and days else 0
 
     daily_q = (
         db.query(Booking.check_in, func.count(Booking.id).label("bookings"))
@@ -70,25 +88,38 @@ def occupancy_report(
     prev_booked_q = (
         db.query(func.count(Booking.id))
         .filter(
+            Booking.status.in_(["pending", "confirmed", "completed"]),
+            Booking.created_at >= prev_start,
+            Booking.created_at < prev_end,
+        )
+    )
+    if hotel_id is not None:
+        prev_booked_q = prev_booked_q.filter(Booking.hotel_id == hotel_id)
+    prev_booked = int(prev_booked_q.scalar() or 0)  # type: ignore[arg-type]
+
+    # Use room-nights for prev period too
+    prev_nights_q = (
+        db.query(func.sum(func.cast(Booking.check_out - Booking.check_in, sa.Integer)))
+        .filter(
             Booking.status.in_(["confirmed", "completed"]),
             Booking.check_in >= prev_start,
             Booking.check_in < prev_end,
         )
     )
     if hotel_id is not None:
-        prev_booked_q = prev_booked_q.filter(Booking.hotel_id == hotel_id)
-    prev_booked = int(prev_booked_q.scalar() or 0)  # type: ignore[arg-type]
-    prev_occupancy_rate = round((prev_booked / (total_rooms * days)) * 100, 2) if total_rooms else 0
+        prev_nights_q = prev_nights_q.filter(Booking.hotel_id == hotel_id)
+    prev_nights = int(prev_nights_q.scalar() or 0)  # type: ignore[arg-type]
+    prev_occupancy_rate = round((prev_nights / (total_rooms * days)) * 100, 2) if total_rooms else 0
 
     # ── by_room_type ─────────────────────────────────────────────────────────
-    # Total rooms per room type
+    # Total rooms per room type (include is_active=NULL rooms)
     rt_total_q = (
         db.query(
             RoomType.name.label("room_type"),
             func.count(Room.id).label("total_rooms"),
         )
         .join(Room, Room.room_type_id == RoomType.id)
-        .filter(Room.is_active == True)
+        .filter((Room.is_active == True) | (Room.is_active == None))  # noqa: E711
     )
     if hotel_id is not None:
         rt_total_q = rt_total_q.filter(Room.hotel_id == hotel_id)

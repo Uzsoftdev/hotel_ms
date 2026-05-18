@@ -89,13 +89,25 @@ export default function AdminDashboard() {
   }, {});
   const totalBookings = allBookings.length;
 
+  // Derive true counts directly from allBookings so they're never 0 due to date-range filtering.
+  // The reports API filters by check_in date which excludes future bookings entirely.
+  const activeBookingsCount = allBookings.filter(
+    (b) => b.status === "confirmed" || b.status === "pending" || b.status === "completed"
+  ).length;
+
+  // Sum booking total_price for confirmed/completed bookings as the real revenue figure.
+  // The revenue API requires Payment records to exist; total_price always reflects what was charged.
+  const confirmedRevenue = allBookings
+    .filter((b) => b.status === "confirmed" || b.status === "completed")
+    .reduce((sum, b) => sum + Number(b.total_price || 0), 0);
+
   const kpis = [
-    { icon: "hotel", label: "Total Hotels", value: hotels.length, color: "text-indigo-600", bg: "bg-indigo-50" },
-    { icon: "bed", label: "Total Rooms", value: occupancy?.total_rooms ?? "—", color: "text-blue-600", bg: "bg-blue-50" },
-    { icon: "group", label: "Registered Users", value: users.length, color: "text-teal-600", bg: "bg-teal-50" },
-    { icon: "book_online", label: `Bookings (${PERIOD_OPTIONS.find(p => p.days === period)?.label})`, value: occupancy?.total_bookings ?? "—", color: "text-green-600", bg: "bg-green-50" },
-    { icon: "percent", label: "Occupancy Rate", value: occupancy ? `${occupancy.occupancy_rate_pct}%` : "—", color: "text-purple-600", bg: "bg-purple-50" },
-    { icon: "attach_money", label: `Revenue (${PERIOD_OPTIONS.find(p => p.days === period)?.label})`, value: revenue ? `$${Number(revenue.total_revenue).toLocaleString()}` : "—", color: "text-primary", bg: "bg-primary/5" },
+    { icon: "hotel",        label: "Total Hotels",       value: hotels.length,                                                                                   color: "text-indigo-600", bg: "bg-indigo-50" },
+    { icon: "bed",          label: "Total Rooms",         value: occupancy?.total_rooms ?? "—",                                                                   color: "text-blue-600",   bg: "bg-blue-50" },
+    { icon: "group",        label: "Registered Users",    value: users.length,                                                                                    color: "text-teal-600",   bg: "bg-teal-50" },
+    { icon: "book_online",  label: "Active Bookings",     value: activeBookingsCount,                                                                             color: "text-green-600",  bg: "bg-green-50" },
+    { icon: "percent",      label: `Occupancy (${PERIOD_OPTIONS.find(p => p.days === period)?.label})`, value: occupancy ? `${occupancy.occupancy_rate_pct}%` : "—", color: "text-purple-600", bg: "bg-purple-50" },
+    { icon: "attach_money", label: "Confirmed Revenue",   value: `$${confirmedRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`,                  color: "text-primary",    bg: "bg-primary/5" },
   ];
 
   const filteredUsers = users.filter((u) => {
