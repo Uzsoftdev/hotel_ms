@@ -38,7 +38,8 @@ export const getUserDetail = (id) => api.get(`/admin/users/${id}/detail`);
 export const getOccupancyReport = (days) => api.get('/admin/reports/occupancy', { params: { days } });
 export const getRevenueReport = (days) => api.get('/admin/reports/revenue', { params: { days } });
 export const getGuestAnalytics = (days) => api.get('/admin/reports/guests', { params: { days } });
-export const getActivityLogs = (limit) => api.get('/admin/reports/activity-logs', { params: { limit } });
+export const getActivityLogs = (params) => api.get('/admin/reports/activity-logs', { params });
+export const getActivityLogStats = (days) => api.get('/admin/reports/activity-logs/stats', { params: { days } });
 export const exportReport = (reportType, days) => api.get(`/admin/reports/export/${reportType}`, { params: { days }, responseType: 'text' });
 
 // System

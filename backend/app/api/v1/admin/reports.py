@@ -1,6 +1,6 @@
 import io
 from datetime import date, timedelta, datetime, timezone
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import Response
@@ -25,11 +25,6 @@ def _date_range(days: int) -> tuple[date, date]:
     start = end - timedelta(days=days)
     return start, end
 
-
-def _apply_hotel(q, model, hotel_id):
-    if hotel_id is not None:
-        q = q.filter(model.hotel_id == hotel_id)
-    return q
 
 
 @router.get("/occupancy")
@@ -178,7 +173,7 @@ def revenue_report(
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
-    start, end = _date_range(days)
+    start, _rev_end = _date_range(days)
 
     rev_q = (
         db.query(func.sum(Payment.amount))
@@ -273,7 +268,7 @@ def guest_analytics(
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
-    start, _end = _date_range(days)
+    start, _guest_end = _date_range(days)
 
     new_q = db.query(func.count(func.distinct(Booking.user_id))).filter(Booking.created_at >= start)
     if hotel_id is not None:
@@ -393,14 +388,114 @@ def guest_analytics(
     }
 
 
-@router.get("/activity-logs")
-def activity_logs(
-    limit: int = Query(50, ge=1, le=200),
+def _severity(action: str) -> str:
+    a = (action or "").lower()
+    if any(k in a for k in ("ban", "delete", "drop", "force", "wipe", "revoke")):
+        return "critical"
+    if any(k in a for k in ("error", "fail", "unauthoriz", "block", "cancel", "suspend")):
+        return "high"
+    if any(k in a for k in ("update", "change", "modify", "reset", "disable", "edit")):
+        return "medium"
+    if any(k in a for k in ("create", "add", "login", "register", "checkin", "checkout", "payment", "export")):
+        return "low"
+    return "info"
+
+
+@router.get("/activity-logs/stats")
+def activity_log_stats(
+    days: int = Query(30, ge=1, le=90),
     hotel_id: Optional[int] = Depends(get_optional_hotel),
     db: Session = Depends(get_read_db),
     _: User = Depends(require_staff_or_admin),
 ) -> Any:
-    q = db.query(ActivityLog)
+    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+
+    base_q = db.query(ActivityLog).filter(ActivityLog.created_at >= cutoff)
+    if hotel_id is not None:
+        hotel_user_ids = db.query(User.id).filter(User.hotel_id == hotel_id).scalar_subquery()
+        base_q = base_q.filter(  # type: ignore[assignment]
+            ActivityLog.user_id.in_(hotel_user_ids) | ActivityLog.user_id.is_(None)  # type: ignore[arg-type]
+        )
+
+    logs = base_q.order_by(ActivityLog.created_at.asc()).all()
+
+    # Hourly distribution
+    hourly: dict[int, int] = {h: 0 for h in range(24)}
+    # Severity distribution
+    severity_counts: dict[str, int] = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0}
+    # Action distribution (top 10)
+    action_counts: dict[str, int] = {}
+    # User activity
+    user_counts: dict[int, int] = {}
+    # 14-day trend
+    day_counts: dict[str, int] = {}
+
+    for log in logs:
+        log_ts = log.created_at  # type: ignore[assignment]
+        if log_ts:  # type: ignore[truthy-function]
+            hourly[log_ts.hour] = hourly.get(log_ts.hour, 0) + 1
+            day_str = log_ts.strftime("%Y-%m-%d")
+            day_counts[day_str] = day_counts.get(day_str, 0) + 1
+        sev = _severity(str(log.action or ""))  # type: ignore[arg-type]
+        severity_counts[sev] = severity_counts.get(sev, 0) + 1
+        act = str(log.action or "other").lower()  # type: ignore[arg-type]
+        action_counts[act] = action_counts.get(act, 0) + 1
+        uid: Optional[int] = log.user_id  # type: ignore[assignment]
+        if uid:
+            user_counts[uid] = user_counts.get(uid, 0) + 1
+
+    # Resolve user names for top users
+    top_user_ids = sorted(user_counts, key=lambda u_id: user_counts[u_id], reverse=True)[:10]
+    users_map: dict[int, dict] = {
+        int(u.id): {"name": u.full_name or u.email, "role": u.role}  # type: ignore[arg-type]
+        for u in db.query(User).filter(User.id.in_(top_user_ids)).all()
+    } if top_user_ids else {}
+
+    top_users = [
+        {
+            "user_id": u_id,
+            "name": users_map.get(u_id, {}).get("name", f"User #{u_id}"),
+            "role": users_map.get(u_id, {}).get("role", "unknown"),
+            "count": user_counts[u_id],
+        }
+        for u_id in top_user_ids
+    ]
+
+    # Top 10 actions
+    top_actions = sorted(action_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+
+    # 14-day trend (fill gaps)
+    trend = []
+    for i in range(14):
+        d = (datetime.now(timezone.utc) - timedelta(days=13 - i)).strftime("%Y-%m-%d")
+        trend.append({"date": d, "count": day_counts.get(d, 0)})
+
+    return {
+        "total": len(logs),
+        "severity_counts": severity_counts,
+        "hourly_distribution": [{"hour": h, "count": hourly[h]} for h in range(24)],
+        "top_users": top_users,
+        "top_actions": [{"action": a, "count": c} for a, c in top_actions],
+        "trend": trend,
+    }
+
+
+@router.get("/activity-logs")
+def activity_logs(
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+    severity_filter: Optional[str] = Query(None, alias="severity"),
+    action_filter: Optional[str] = Query(None, alias="action"),
+    role_filter: Optional[str] = Query(None, alias="role"),
+    date_from: Optional[str] = Query(None),
+    date_to: Optional[str] = Query(None),
+    hotel_id: Optional[int] = Depends(get_optional_hotel),
+    db: Session = Depends(get_read_db),
+    _: User = Depends(require_staff_or_admin),
+) -> Any:
+    from sqlalchemy.orm import joinedload
+    q = db.query(ActivityLog).options(joinedload(ActivityLog.user))
+
     if hotel_id is not None:
         hotel_user_ids = (
             db.query(User.id)
@@ -408,20 +503,49 @@ def activity_logs(
             .scalar_subquery()
         )
         q = q.filter(ActivityLog.user_id.in_(hotel_user_ids) | ActivityLog.user_id.is_(None))  # type: ignore[arg-type]
-    logs = q.order_by(ActivityLog.created_at.desc()).limit(limit).all()
 
-    return [
-        {
+    if action_filter:
+        q = q.filter(ActivityLog.action == action_filter)
+
+    if date_from:
+        try:
+            q = q.filter(ActivityLog.created_at >= date_from)
+        except Exception:
+            pass
+    if date_to:
+        try:
+            q = q.filter(ActivityLog.created_at <= date_to + "T23:59:59")
+        except Exception:
+            pass
+
+    if role_filter:
+        role_user_ids = db.query(User.id).filter(User.role == role_filter).scalar_subquery()
+        q = q.filter(ActivityLog.user_id.in_(role_user_ids))  # type: ignore[arg-type]
+
+    total = q.count()
+    logs = q.order_by(ActivityLog.created_at.desc()).offset(offset).limit(limit).all()
+
+    result = []
+    for log in logs:
+        sev = _severity(str(log.action or ""))  # type: ignore[arg-type]
+        if severity_filter and sev != severity_filter:
+            continue
+        u = log.user
+        result.append({
             "id": log.id,
             "action": log.action,
+            "severity": sev,
             "resource": log.resource,
             "resource_id": log.resource_id,
             "detail": log.detail,
             "user_id": log.user_id,
+            "user_name": getattr(u, "full_name", None) or getattr(u, "email", None) if u else None,
+            "user_role": getattr(u, "role", None) if u else None,
+            "ip_address": log.ip_address,
             "created_at": str(log.created_at),
-        }
-        for log in logs
-    ]
+        })
+
+    return {"items": result, "total": total, "offset": offset, "limit": limit}
 
 
 @router.get("/export/{report_type}")
