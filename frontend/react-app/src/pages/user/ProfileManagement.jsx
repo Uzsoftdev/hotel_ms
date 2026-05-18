@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import UserLayout from "./Layout/UserLayout";
+import PhoneInput from "../../components/PhoneInput";
 import { getProfile, updateProfile, changePassword, uploadProfilePhoto, deleteProfilePhoto, getPaymentHistory, getMyReviews } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -446,9 +447,7 @@ export default function ProfileManagement() {
                         </div>
                         <div className="ah-field">
                           <label className="ah-label">Phone</label>
-                          <input className="ah-input" type="tel" value={editForm.phone || ""}
-                            onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                            placeholder="+1 (555) 000-0000" />
+                          <PhoneInput value={editForm.phone || ""} onChange={(v) => setEditForm({ ...editForm, phone: v })} />
                         </div>
                       </div>
                       <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 20 }}>
