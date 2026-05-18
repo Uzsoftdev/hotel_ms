@@ -171,6 +171,7 @@ def google_login(
 
     email: str = (google_user.get("email") or "").lower().strip()
     full_name: str = google_user.get("name") or email.split("@")[0]
+    google_picture: str | None = google_user.get("picture") or None
 
     if not email:
         raise HTTPException(status_code=400, detail="No email returned from Google")
@@ -184,10 +185,20 @@ def google_login(
             hashed_password=hash_password(secrets.token_urlsafe(32)),
             role="guest",
             is_email_verified=True,
+            photo_url=google_picture,
         )
         db.add(user)
         db.commit()
         db.refresh(user)
+    elif google_picture:
+        # Sync Google picture only when the user hasn't uploaded a custom photo
+        current_photo: str = user.photo_url or ""  # type: ignore[assignment]
+        has_custom_photo = "allstay.rest/storage" in current_photo or "hotel-avatars" in current_photo
+        if not has_custom_photo and current_photo != google_picture:
+            user.photo_url = google_picture  # type: ignore[assignment]
+            db.commit()
+            from app.services.cache import cache_delete, user_profile_key
+            cache_delete(user_profile_key(user.id))  # type: ignore[arg-type]
 
     data = _token_payload(user)
     return TokenResponse(
