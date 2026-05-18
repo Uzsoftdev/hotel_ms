@@ -40,6 +40,7 @@ import OccupancyReport from "./pages/admin/reports/OccupancyReport";
 import RevenueReport from "./pages/admin/reports/RevenueReport";
 import GuestAnalytics from "./pages/admin/reports/GuestAnalytics";
 import AllGuests from "./pages/admin/users/AllGuests";
+import GuestIntelligence from "./pages/admin/guests/GuestIntelligence";
 import StaffAccounts from "./pages/admin/users/StaffAccounts";
 import AddUser from "./pages/admin/users/AddUser";
 import ActivityLogs from "./pages/admin/system/ActivityLogs";
@@ -112,6 +113,7 @@ export default function App() {
       <Route path="/admin/reports/revenue" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><RevenueReport /></PrivateRoute>} />
       <Route path="/admin/reports/guests" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><GuestAnalytics /></PrivateRoute>} />
       <Route path="/admin/guests" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AllGuests /></PrivateRoute>} />
+      <Route path="/admin/guest-intelligence" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><GuestIntelligence /></PrivateRoute>} />
       <Route path="/admin/staff" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><StaffAccounts /></PrivateRoute>} />
       <Route path="/admin/users/add" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><AddUser /></PrivateRoute>} />
       <Route path="/admin/activity-logs" element={<PrivateRoute roles={["hotel_admin","super_admin"]}><ActivityLogs /></PrivateRoute>} />

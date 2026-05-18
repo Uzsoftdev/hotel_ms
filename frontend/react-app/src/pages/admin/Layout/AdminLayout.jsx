@@ -37,6 +37,7 @@ const sections = [
     label: "Guests & Staff",
     items: [
       { to: "/admin/guests", icon: "group", label: "All Guests" },
+      { to: "/admin/guest-intelligence", icon: "psychology", label: "Guest Intelligence" },
       { to: "/admin/staff", icon: "badge", label: "Staff Accounts" },
       { to: "/admin/users/add", icon: "person_add", label: "Add User" },
     ],

@@ -28,6 +28,7 @@ from app.api.v1.admin.rooms import router as admin_rooms_router
 from app.api.v1.admin.users import router as admin_users_router
 from app.api.v1.admin.ai_insights import router as admin_ai_insights_router
 from app.api.v1.admin.system_health import router as admin_system_health_router
+from app.api.v1.admin.guest_intelligence import router as admin_guest_intelligence_router
 
 # WebSocket (R7)
 from app.api.v1.ws import router as ws_router
@@ -53,6 +54,7 @@ import app.models.user            # noqa: F401
 import app.models.wishlist        # noqa: F401
 import app.models.email_verification  # noqa: F401
 import app.models.password_reset      # noqa: F401
+import app.models.guest_note          # noqa: F401
 
 from app.core.config import settings
 from app.core.tracing import setup_tracing
@@ -130,6 +132,7 @@ app.include_router(admin_users_router,         prefix="/api/v1/admin")
 app.include_router(admin_reports_router,       prefix="/api/v1/admin")
 app.include_router(admin_ai_insights_router,   prefix="/api/v1/admin")
 app.include_router(admin_system_health_router, prefix="/api/v1/admin")
+app.include_router(admin_guest_intelligence_router, prefix="/api/v1/admin")
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

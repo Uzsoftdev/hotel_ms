@@ -48,6 +48,17 @@ export const getSystemHealth = () => api.get('/admin/system/health');
 // AI
 export const getAIInsights = () => api.get('/admin/ai/insights');
 
+// Guest Intelligence
+export const getGuestIntelligenceList = (params) => api.get('/admin/guest-intelligence/', { params });
+export const getGuestIntelligenceOverview = () => api.get('/admin/guest-intelligence/overview');
+export const getGuestIntelligenceProfile = (id) => api.get(`/admin/guest-intelligence/${id}`);
+export const getGuestTimeline = (id) => api.get(`/admin/guest-intelligence/${id}/timeline`);
+export const getGuestNotes = (id) => api.get(`/admin/guest-intelligence/${id}/notes`);
+export const addGuestNote = (id, content, note_type = 'general') => api.post(`/admin/guest-intelligence/${id}/notes`, { content, note_type });
+export const deleteGuestNote = (userId, noteId) => api.delete(`/admin/guest-intelligence/${userId}/notes/${noteId}`);
+export const updateGuestSegment = (id, segment) => api.patch(`/admin/guest-intelligence/${id}/segment`, { segment });
+export const blacklistGuest = (id, ban, reason) => api.patch(`/admin/guest-intelligence/${id}/blacklist`, { ban, reason });
+
 // Public AI (used by frontend components)
 export const aiChat = (message, history = []) => api.post('/public/ai/chat', { message, history });
 export const aiRecommend = (prefs) => api.post('/public/ai/recommend', prefs);
