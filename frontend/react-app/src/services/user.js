@@ -6,9 +6,15 @@ export const changePassword = (data) => api.put('/user/profile/change-password',
 export const uploadProfilePhoto = (file) => {
   const form = new FormData();
   form.append('file', file);
-  // Content-Type must be undefined so the browser sets multipart/form-data with the correct boundary.
-  // The axios instance default ('application/json') would break multipart parsing on the server.
-  return api.post('/user/profile/photo', form, { headers: { 'Content-Type': undefined } });
+  // axios 1.x deepMerge skips undefined values, so `headers: { 'Content-Type': undefined }` doesn't
+  // override the instance default 'application/json'. Using transformRequest is the only reliable way
+  // to strip Content-Type so the browser auto-sets multipart/form-data with the correct boundary.
+  return api.post('/user/profile/photo', form, {
+    transformRequest: (data, headers) => {
+      delete headers['Content-Type'];
+      return data;
+    },
+  });
 };
 
 export const deleteProfilePhoto = () => api.delete('/user/profile/photo');
