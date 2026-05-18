@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "../Layout/AdminLayout";
 import { createUser } from "../../../services/admin";
+import PhoneInput from "../../../components/PhoneInput";
 
 const ROLES = [
   { value: "guest", label: "Guest", icon: "person", desc: "Standard hotel guest with booking access" },
@@ -103,8 +104,7 @@ export default function AddUser() {
               </div>
               <div className="col-span-2 sm:col-span-1">
                 <label className="block text-xs font-bold text-on-surface-variant mb-1">Phone</label>
-                <input type="tel" value={form.phone} onChange={(e) => set("phone", e.target.value)}
-                  className="w-full border border-outline-variant rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary" placeholder="+1 555 000 0000" />
+                <PhoneInput value={form.phone} onChange={(v) => set("phone", v)} />
               </div>
               <div className="col-span-2">
                 <label className="block text-xs font-bold text-on-surface-variant mb-1">Email Address *</label>

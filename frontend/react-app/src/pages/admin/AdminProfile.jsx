@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AdminLayout from "./Layout/AdminLayout";
 import { getProfile, updateProfile, changePassword } from "../../services/user";
 import { useAuth } from "../../contexts/AuthContext";
+import PhoneInput from "../../components/PhoneInput";
 
 export default function AdminProfile() {
   const { user } = useAuth();
@@ -87,17 +88,23 @@ export default function AdminProfile() {
             {[
               { label: "Full Name", key: "full_name", type: "text", placeholder: "Admin User" },
               { label: "Email Address", key: "email", type: "email", placeholder: "admin@allstay.com" },
-              { label: "Phone Number", key: "phone", type: "tel", placeholder: "+1 555 000 0000" },
             ].map(({ label, key, type, placeholder }) => (
               <div key={key} className="space-y-1.5">
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{label}</label>
                 <input
-                  type={type} placeholder={placeholder} value={profile[key]}
+                  type={type} placeholder={placeholder} value={profile[key] || ""}
                   onChange={(e) => setProfile({ ...profile, [key]: e.target.value })}
                   className="w-full rounded-lg border border-outline-variant/40 bg-surface-container-low px-4 py-2.5 text-sm font-semibold focus:outline-none focus:border-primary transition-colors"
                 />
               </div>
             ))}
+            <div className="space-y-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Phone Number</label>
+              <PhoneInput
+                value={profile.phone || ""}
+                onChange={(v) => setProfile({ ...profile, phone: v })}
+              />
+            </div>
             <button type="submit" disabled={saving}
               className="bg-primary text-white px-5 py-2.5 rounded-lg font-bold text-sm hover:bg-primary/90 disabled:opacity-50 transition-all">
               {saving ? "Saving…" : "Save Changes"}

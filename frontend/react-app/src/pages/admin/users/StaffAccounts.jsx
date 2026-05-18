@@ -116,6 +116,7 @@ function DetailPanel({ staffId, onClose }) {
 export default function StaffAccounts() {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [acting, setActing] = useState(null);
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("all");
@@ -125,9 +126,10 @@ export default function StaffAccounts() {
 
   function reload() {
     setLoading(true);
+    setError(null);
     Promise.all([getUsers("super_admin"), getUsers("hotel_admin"), getUsers("staff")])
       .then(([sa, ha, s]) => setStaff([...sa.data, ...ha.data, ...s.data]))
-      .catch(() => {})
+      .catch((e) => setError("Failed to load staff: " + (e.response?.data?.detail || e.message)))
       .finally(() => setLoading(false));
   }
   useEffect(reload, []);
@@ -218,10 +220,21 @@ export default function StaffAccounts() {
           </div>
         </div>
 
+        {/* Error banner */}
+        {error && !loading && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-start gap-3">
+            <span className="material-symbols-outlined text-red-500 shrink-0">error</span>
+            <div>
+              <p className="font-semibold text-red-700 text-sm">{error}</p>
+              <button onClick={reload} className="mt-2 text-xs font-bold text-red-600 underline">Retry</button>
+            </div>
+          </div>
+        )}
+
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-20"><span className="material-symbols-outlined text-4xl text-primary animate-spin">progress_activity</span></div>
-        ) : (
+        ) : !error && (
           <div className="bg-white rounded-xl border border-outline-variant/30 overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-surface-container-low">
